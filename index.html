@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HPCL - Lucky Draw Event</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <!-- कन्फ़ेटी लाइब्रेरी -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="countdown-overlay hidden" id="countdown-overlay">
+    <div class="film-leader">
+         <div class="film-burn-overlay" id="film-burn-overlay"></div>
+        <!-- क्रॉसहेयर लाइन्स -->
+        <div class="crosshair-h"></div>
+        <div class="crosshair-v"></div>
+        <!-- घूमने वाली लाइन -->
+        <div class="rotating-wipe" id="rotating-wipe"></div>
+        <!-- डबल सर्कल बॉर्डर -->
+        <div class="circle-border"></div>
+        <!-- काउंटडाउन नंबर -->
+        <span class="countdown-number" id="countdown-number"></span>
+    </div>
+</div>
+    <!-- 1. स्प्लैश स्क्रीन एनीमेशन -->
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-header" id="splash-header">A Lucky Draw Event presented by<br><strong>Hindustan Petroleum Corporation Limited</strong></h1>
+            
+            <div class="logo-animation">
+                <svg class="aspire-a" viewBox="0 0 100 120">
+                    <path class="shape shape-outer" d="M0,120 L50,0 L100,120 L80,120 L50,45 L20,120 Z" />
+                    <path class="shape shape-middle" d="M12,120 L50,20 L88,120 L72,120 L50,65 L28,120 Z" />
+                    <path class="shape shape-inner" d="M24,120 L50,40 L76,120 L64,120 L50,85 L36,120 Z" />
+                </svg>
+                <div class="text-animation">
+                    <span class="aspire-text">spire</span>
+                    <span class="subtext business-link">BUSINESS LINK</span>
+                </div>
+            </div>
+
+            <p class="splash-tagline" id="splash-tagline">Elevating Service, Inspiring Success.</p>
+        </div>
+    </div>
+
+    <!-- बाकी का पेज कंटेंट -->
+    <header class="site-header">
+        <!-- ***** यहाँ बदलाव किया गया है ***** -->
+        <div class="header-logo-container">
+            <!-- अपना पहला लोगो (मौजूदा) -->
+            <img src="images/hpcl-logo.jpg" alt="HPCL Logo">
+            
+            <!-- यहाँ अपने images फोल्डर से और लोगो जोड़ें -->
+            <!-- <img src="images/logo2.png" alt="Logo 2"> -->
+              <img src="images/Club-hp.png" alt="CLUB HP">
+            <!-- <img src="images/logo3.png" alt="Logo 3"> -->
+              <img src="images/Petrol-logo.png" alt="Petrol Logo">
+            <!-- <img src="images/logo4.png" alt="Logo 4"> -->
+              <img src="images/Power Petrol.jpg" alt="Power Petrol">
+        </div>
+        <!-- ************************************ -->
+
+        <div class="lang-switcher">
+            <a href="#" id="lang-hi" class="active">हिंदी</a>
+            <span>|</span>
+            <a href="#" id="lang-en">English</a>
+        </div>
+    </header>
+    <main class="main-content">
+
+    <div class="slideshow-container" id="slideshow-container">
+    <div class="slideshow-wrapper" id="slideshow-wrapper">
+        <!-- अपनी इमेज यहाँ जोड़ें -->
+        <div class="slide"><img src="Slide Show Images/HP-Gas.jpg" alt="HP-Gas"></div>
+        <div class="slide"><img src="Slide Show Images/HPCL-Sectorial.jpg" alt="HPCL-Sectorial"></div>
+        <div class="slide"><img src="Slide Show Images/club-HP.jpg" alt="club-HP"></div>
+    </div>
+</div>
+        <div class="subtitle-container">
+            <p class="subtitle" id="subtitle-text">Diwali Special Lucky Draw</p>
+        </div>
+        <nav class="tab-nav">
+            <button class="tab-button active" data-tab="winner" id="tab-btn-winner">Result Page</button>
+            <button class="tab-button" data-tab="participants" id="tab-btn-participants">About Us</button>
+        </nav>
+        <div class="tab-content">
+            <div class="tab-panel active" data-tab="winner">
+                <button id="draw-button">Reveal the Winner</button>
+            </div>
+            <div class="tab-panel" data-tab="participants">
+                <div class="search-container">
+                    <h2 id="search-heading">Check Your Coupen Code</h2>
+                    <p class="search-subheading" id="search-subheading">Enter your Mobile Number or Coupon Code to find your entry.</p>
+                    <div class="search-form">
+                        <input type="text" id="search-input" placeholder="Enter Mobile or Coupon Code...">
+                        <button id="search-button">Search</button>
+                    </div>
+                    <div id="search-result-container"></div>
+                </div>
+                <hr class="section-divider">
+                <div class="about-section">
+                    <h2 id="about-heading">Our Commitment to Excellence</h2>
+                    <p id="about-p1">Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...</p>
+                    <p id="about-p2">This lucky draw is our way of saying thank you...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- ********** एकल रील स्लॉट मशीन संरचना ********** -->
+    <div class="winner-banner" id="winner-banner">
+        <!-- 🎰 केवल कूपन कोड रील (जैसा आपने वापस कर दिया था, लेकिन नया क्लास दें) -->
+        <div class="slot-machine-container single-reel-mode">
+            <div class="reel-box single-reel-box">
+                <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
+                <div class="reel-window" id="reel-window-coupon">
+                    <div class="reel-text" id="reel-coupon"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ********************************************** -->
+
+    <!-- ***** नया: Winner Popup Overlay ***** -->
+    <div class="winner-popup-overlay hidden" id="winner-popup-overlay">
+        <div class="winner-popup" id="winner-popup">
+            <h2 id="popup-heading"></h2>
+            
+            <div class="prize-image-container">
+                <!-- विजेता के पुरस्कार की इमेज यहाँ लोड होगी -->
+                <img src="" alt="Prize Image" id="prize-image">
+            </div>
+            
+            <div class="winner-details-popup">
+                <p><strong>Winner:</strong> <span id="popup-name"></span></p>
+                <p><strong>Coupon Code:</strong> <span id="popup-coupon"></span></p>
+                <p><strong>Outlet:</strong> <span id="popup-outlet"></span></p>
+                <p><strong>Mobile:</strong> <span id="popup-mobile"></span></p>
+            </div>
+            
+            <button id="save-next-button">Save & Ready for Next Round</button>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+        <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
+    </footer>
+    
+    <script src="script.js"></script>
+    <audio id="tick-sound" src="audio/tick.mp3" preload="auto"></audio>
+<audio id="static-sound" src="audio/static.mp3" preload="auto"></audio> <!-- <<<--- यह लाइन जोड़ें -->
+<audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>
+    <audio id="draw-sound" src="audio/draw-effect.mp3" preload="auto"></audio>
+    <audio id="winner-sound" src="audio/winner.mp3" preload="auto"></audio>
+</body>
+</html>
