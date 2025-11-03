@@ -356,21 +356,29 @@ async function saveWinnerData(winner) {
 
 // --- विजेता घोषणा और UI नियंत्रण ---
 function announceWinner(winner) {
-    const prizeDetail = getPrizeDetails(currentRound);
-    
-    // पॉपअप UI भरें
-    popupHeading.innerText = `Congratulations! ${winner.CustomerName} is the Winner!`;
-    prizeImage.src = prizeDetail.image;
-    popupName.innerText = winner.CustomerName;
-    popupCoupon.innerText = winner.CouponCode;
-    popupOutlet.innerText = winner.PumpName;
-    let mobileDisplay = winner.CustomerPhone.toString();
-    popupMobile.innerText = mobileDisplay.substring(0, 2) + '******' + mobileDisplay.substring(mobileDisplay.length - 2);
+    // --- यहाँ नई शर्त जोड़ें ---
+    if (userRole === 'admin') {
+        const prizeDetail = getPrizeDetails(currentRound);
+        
+        // पॉपअप UI भरें
+        popupHeading.innerText = `Congratulations! ${winner.CustomerName} is the Winner!`;
+        prizeImage.src = prizeDetail.image;
+        popupName.innerText = winner.CustomerName;
+        popupCoupon.innerText = winner.CouponCode;
+        popupOutlet.innerText = winner.PumpName;
+        let mobileDisplay = winner.CustomerPhone.toString();
+        popupMobile.innerText = mobileDisplay.substring(0, 2) + '******' + mobileDisplay.substring(mobileDisplay.length - 2);
 
-    // पॉपअप दिखाएँ
-    winnerPopupOverlay.classList.remove('hidden'); 
-    
-    // ऑडियो और इफ़ेक्ट
+        // पॉपअप सिर्फ एडमिन को दिखाएँ
+        winnerPopupOverlay.classList.remove('hidden'); 
+        
+        // सेव बटन को तैयार करें
+        saveNextButton.innerText = `Save Winner & Ready for Round ${currentRound + 1}`;
+        saveNextButton.disabled = false;
+    }
+    // --- शर्त यहाँ समाप्त होती है ---
+
+    // ऑडियो और कन्फ़ेटी सभी को सुनाई और दिखाई देंगे
     document.getElementById('winner-sound').play(); 
     document.getElementById('background-music').volume = 1.0; 
 
@@ -379,45 +387,43 @@ function announceWinner(winner) {
     }
     
     winnerBanner.classList.remove('zoomed-in');
-    
-    // बटन को सेव करने के लिए तैयार करें
-    saveNextButton.innerText = `Save Winner & Ready for Round ${currentRound + 1}`;
-    saveNextButton.disabled = false; // सुनिश्चित करें कि यह सक्षम है
 }
 
 
 // --- इवेंट लिसनर ---
-saveNextButton.addEventListener('click', async () => {
-    if (currentWinner) {
-        saveNextButton.disabled = true;
-        saveNextButton.innerText = 'Saving... Please Wait...';
-        
-        const isSaved = await saveWinnerData(currentWinner);
-        
-        if (isSaved) {
-            winnerPopupOverlay.classList.add('hidden');
+if (userRole === 'admin') {
+    saveNextButton.addEventListener('click', async () => {
+        if (currentWinner) {
+            saveNextButton.disabled = true;
+            saveNextButton.innerText = 'Saving... Please Wait...';
             
-            // अगले राउंड के लिए तैयारी करें
-            currentRound++;
-            currentWinner = null;
-            initializeReels(); 
+            const isSaved = await saveWinnerData(currentWinner);
+            
+            if (isSaved) {
+                winnerPopupOverlay.classList.add('hidden');
+                
+                // अगले राउंड के लिए तैयारी करें
+                currentRound++;
+                currentWinner = null;
+                initializeReels(); 
 
-            if (currentRound <= totalRounds) {
-                const nextPrize = getPrizeDetails(currentRound).prize;
-                subtitleText.innerText = `Ready for Round ${currentRound}/${totalRounds}: ${nextPrize}`;
-                drawButton.disabled = false;
+                if (currentRound <= totalRounds) {
+                    const nextPrize = getPrizeDetails(currentRound).prize;
+                    subtitleText.innerText = `Ready for Round ${currentRound}/${totalRounds}: ${nextPrize}`;
+                    drawButton.disabled = false; // <<<--- ड्रॉ बटन को यहाँ इनेबल करें
+                } else {
+                    subtitleText.innerText = `All ${totalRounds} Rounds Complete!`;
+                    drawButton.disabled = true;
+                }
+
             } else {
-                subtitleText.innerText = `All ${totalRounds} Rounds Complete!`;
-                drawButton.disabled = true;
+                alert("Error saving winner data. Please check console and try again.");
+                saveNextButton.disabled = false;
+                saveNextButton.innerText = `Save Winner & Ready for Round ${currentRound + 1}`;
             }
-
-        } else {
-            alert("Error saving winner data. Please check console and try again.");
-            saveNextButton.disabled = false;
-            saveNextButton.innerText = `Save Winner & Ready for Round ${currentRound + 1}`;
         }
-    }
-});
+    });
+}
 
 
 // --- इनीशियलाइज़ेशन ---
