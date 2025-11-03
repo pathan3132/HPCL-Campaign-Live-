@@ -1,5 +1,4 @@
 // --- START OF FILE script.js.txt ---
-window.onload = function() {
 
 // 1. Firebase कॉन्फ़िगरेशन पेस्ट करें (अपनी असली कीज़ यहाँ डालें)
 const firebaseConfig = {
@@ -476,5 +475,4 @@ drawStatusRef.on('value', (snapshot) => {
         }
     }
 });
-};
 // --- END OF FILE script.js.txt ---
