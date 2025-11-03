@@ -1,4 +1,22 @@
 // --- START OF FILE script.js.txt ---
+document.addEventListener('DOMContentLoaded', function() {
+
+// 1. Firebase कॉन्फ़िगरेशन पेस्ट करें (अपनी असली कीज़ यहाँ डालें)
+const firebaseConfig = {
+  apiKey: "AIzaSy...", // <<<--- यहाँ अपनी KEY डालें
+  authDomain: "your-project.firebaseapp.com", // <<<--- यहाँ अपनी KEY डालें
+  databaseURL: "https://your-project-default-rtdb.firebaseio.com", // <<<--- यहाँ अपनी KEY डालें
+  projectId: "your-project", // <<<--- यहाँ अपनी KEY डालें
+  storageBucket: "your-project.appspot.com", // <<<--- यहाँ अपनी KEY डालें
+  messagingSenderId: "1234567890", // <<<--- यहाँ अपनी KEY डालें
+  appId: "1:12345:web:abcdef" // <<<--- यहाँ अपनी KEY डालें
+};
+
+// 2. Firebase को इनिशियलाइज़ करें
+firebase.initializeApp(firebaseConfig);
+const database = firebase.database();
+const drawStatusRef = database.ref('draw/status'); // यह वह 'पता' है जिसे हम सुनेंगे
+
 
 
 // --- स्प्लैश स्क्रीन को छिपाने का लॉजिक ---
@@ -17,6 +35,13 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbz2tIumCHYpvaRyFXiceh_q
 // --- रील और UI एलिमेंट्स ---
 const subtitleText = document.getElementById('subtitle-text');
 const drawButton = document.getElementById('draw-button');
+const urlParams = new URLSearchParams(window.location.search);
+const userRole = urlParams.get('role');
+
+// अगर यूज़र एडमिन नहीं है, तो ड्रॉ बटन छिपा दें
+if (userRole !== 'admin') {
+    drawButton.style.display = 'none';
+}
 const langHi = document.getElementById('lang-hi');
 const langEn = document.getElementById('lang-en');
 const searchHeading = document.getElementById('search-heading');
@@ -397,7 +422,21 @@ saveNextButton.addEventListener('click', async () => {
 setLanguage('en');
 fetchData();
 initializeReels(); 
-drawButton.addEventListener('click', startDraw);
+function handleAdminClick() {
+    // Firebase को सिग्नल भेजें कि ड्रॉ शुरू करना है
+    drawStatusRef.set('started')
+        .then(() => {
+            console.log("ड्रॉ शुरू करने का सिग्नल भेजा गया!");
+        })
+        .catch(error => {
+            console.error("सिग्नल भेजने में विफल: ", error);
+        });
+}
+
+// एडमिन के लिए नया क्लिक इवेंट
+if (userRole === 'admin') {
+    drawButton.addEventListener('click', handleAdminClick);
+}
 langHi.addEventListener('click', (e) => { e.preventDefault(); setLanguage('hi'); });
 langEn.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
 searchButton.addEventListener('click', searchParticipant);
@@ -420,4 +459,22 @@ tabButtons.forEach(button => {
     });
 })
 
+// Firebase डेटाबेस में बदलावों को लगातार सुनें
+drawStatusRef.on('value', (snapshot) => {
+    const status = snapshot.val();
+    
+    // अगर एडमिन ने सिग्नल 'started' भेजा है, तो ड्रॉ शुरू करें!
+    if (status === 'started') {
+        console.log("सिग्नल मिला! ड्रॉ शुरू हो रहा है...");
+        startDraw(); // यह सभी दर्शकों के लिए ड्रॉ शुरू कर देगा
+        
+        // (वैकल्पिक) एडमिन के ब्राउज़र से स्टेटस को रीसेट करें ताकि दोबारा न चले
+        if (userRole === 'admin') {
+            setTimeout(() => {
+                drawStatusRef.set('finished'); 
+            }, 30000); // 30 सेकंड बाद रीसेट करें
+        }
+    }
+});
+});
 // --- END OF FILE script.js.txt ---
