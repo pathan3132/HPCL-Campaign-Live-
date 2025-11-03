@@ -149,11 +149,20 @@
     <footer class="site-footer">
         <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
     </footer>
-    
+
+    <!-- ***** नया और सही स्क्रिप्ट लोडिंग का तरीका ***** -->
+
+    <!-- 1. पहले Firebase की लाइब्रेरी लोड करें -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <!-- 2. अब अपनी स्क्रिप्ट लोड करें -->
     <script src="script.js"></script>
+    
+    <!-- ऑडियो टैग्स -->
     <audio id="tick-sound" src="audio/tick.mp3" preload="auto"></audio>
-<audio id="static-sound" src="audio/static.mp3" preload="auto"></audio> <!-- <<<--- यह लाइन जोड़ें -->
-<audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>
+    <audio id="static-sound" src="audio/static.mp3" preload="auto"></audio>
+    <audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>
     <audio id="draw-sound" src="audio/draw-effect.mp3" preload="auto"></audio>
     <audio id="winner-sound" src="audio/winner.mp3" preload="auto"></audio>
 </body>
