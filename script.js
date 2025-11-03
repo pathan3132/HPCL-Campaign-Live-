@@ -1,15 +1,16 @@
 // --- START OF FILE script.js.txt ---
 
 // 1. Firebase कॉन्फ़िगरेशन पेस्ट करें (अपनी असली कीज़ यहाँ डालें)
-const firebaseConfig = {
-  apiKey: "AIzaSy...", // <<<--- यहाँ अपनी KEY डालें
-  authDomain: "your-project.firebaseapp.com", // <<<--- यहाँ अपनी KEY डालें
-  databaseURL: "https://your-project-default-rtdb.firebaseio.com", // <<<--- यहाँ अपनी KEY डालें
-  projectId: "your-project", // <<<--- यहाँ अपनी KEY डालें
-  storageBucket: "your-project.appspot.com", // <<<--- यहाँ अपनी KEY डालें
-  messagingSenderId: "1234567890", // <<<--- यहाँ अपनी KEY डालें
-  appId: "1:12345:web:abcdef" // <<<--- यहाँ अपनी KEY डालें
-};
+ const firebaseConfig = {
+    apiKey: "AIzaSyCAKoW_qCM9gF9k_vFvLOOpDORsFAfOgOQ",
+    authDomain: "hpcl-campaign-live.firebaseapp.com",
+    databaseURL: "https://hpcl-campaign-live-default-rtdb.firebaseio.com",
+    projectId: "hpcl-campaign-live",
+    storageBucket: "hpcl-campaign-live.firebasestorage.app",
+    messagingSenderId: "843304288801",
+    appId: "1:843304288801:web:3130a50baad7efa427d960",
+    measurementId: "G-CDQDF0Z040"
+  };
 
 // 2. Firebase को इनिशियलाइज़ करें
 firebase.initializeApp(firebaseConfig);
