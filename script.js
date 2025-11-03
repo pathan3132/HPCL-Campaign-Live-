@@ -329,26 +329,28 @@ function beginReelSpin() {
 
 
 // --- विजेता डेटा को Google Sheet में सहेजने का कोड ---
+// --- विजेता डेटा को Firebase में सहेजने का नया कोड ---
 async function saveWinnerData(winner) {
     try {
         // विजेता के डेटा में राउंड और पुरस्कार जोड़ें
-        const winnerDataWithPrize = { ...winner, Round: currentRound, Prize: winner.prize };
-        const response = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(winnerDataWithPrize)
-        });
+        const winnerDataWithPrize = { 
+            ...winner, 
+            Round: currentRound, 
+            Prize: winner.prize,
+            Timestamp: new Date().toISOString() // सेव करने का समय भी जोड़ें
+        };
 
-        const result = await response.json();
-        if (result.status === 'success') {
-            return true;
-        } else {
-            console.error('ERROR: Could not save winner data to sheet:', result.message);
-            return false;
-        }
+        // Firebase में 'winners' नाम के एक नए सेक्शन के अंदर डेटा भेजें।
+        // हम विजेता के CouponCode को उसकी यूनिक ID के रूप में इस्तेमाल करेंगे।
+        const winnerRef = database.ref('winners/' + winner.CouponCode);
+        await winnerRef.set(winnerDataWithPrize);
+        
+        console.log('SUCCESS: Winner successfully saved to Firebase.');
+        return true; // सफल होने पर true लौटाएं
+
     } catch (error) {
-        console.error('NETWORK ERROR: Could not connect to Apps Script POST endpoint.', error);
-        return false;
+        console.error('FIREBASE ERROR: Could not save winner data.', error);
+        return false; // विफल होने पर false लौटाएं
     }
 }
 
