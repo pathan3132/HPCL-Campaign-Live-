@@ -35,7 +35,7 @@
                 <svg class="aspire-a" viewBox="0 0 100 120">
                     <path class="shape shape-outer" d="M0,120 L50,0 L100,120 L80,120 L50,45 L20,120 Z" />
                     <path class="shape shape-middle" d="M12,120 L50,20 L88,120 L72,120 L50,65 L28,120 Z" />
-                    <path class="shape shape-inner" d="M24,120 L50,40 L76,120 L64,120 L50,85 L36,120 Z" />
+                    <path class="shape class-inner" d="M24,120 L50,40 L76,120 L64,120 L50,85 L36,120 Z" />
                 </svg>
                 <div class="text-animation">
                     <span class="aspire-text">spire</span>
@@ -49,20 +49,12 @@
 
     <!-- बाकी का पेज कंटेंट -->
     <header class="site-header">
-        <!-- ***** यहाँ बदलाव किया गया है ***** -->
         <div class="header-logo-container">
-            <!-- अपना पहला लोगो (मौजूदा) -->
-            <img src="images/hpcl-logo.jpg" alt="HPCL Logo">
-            
-            <!-- यहाँ अपने images फोल्डर से और लोगो जोड़ें -->
-            <!-- <img src="images/logo2.png" alt="Logo 2"> -->
-              <img src="images/Club-hp.png" alt="CLUB HP">
-            <!-- <img src="images/logo3.png" alt="Logo 3"> -->
-              <img src="images/Petrol-logo.png" alt="Petrol Logo">
-            <!-- <img src="images/logo4.png" alt="Logo 4"> -->
-              <img src="images/Power Petrol.jpg" alt="Power Petrol">
+            <img src="images/hpcl-logo.png" alt="HPCL Logo">
+            <img src="images/Club-hp.png" alt="CLUB HP">
+            <img src="images/Petrol-logo.png" alt="Petrol Logo">
+            <img src="images/Power Petrol.jpg" alt="Power Petrol">
         </div>
-        <!-- ************************************ -->
 
         <div class="lang-switcher">
             <a href="#" id="lang-hi" class="active">हिंदी</a>
@@ -72,25 +64,71 @@
     </header>
     <main class="main-content">
 
-    <div class="slideshow-container" id="slideshow-container">
-    <div class="slideshow-wrapper" id="slideshow-wrapper">
-        <!-- अपनी इमेज यहाँ जोड़ें -->
-        <div class="slide"><img src="Slide Show Images/HP-Gas.jpg" alt="HP-Gas"></div>
-        <div class="slide"><img src="Slide Show Images/HPCL-Sectorial.jpg" alt="HPCL-Sectorial"></div>
-        <div class="slide"><img src="Slide Show Images/club-HP.jpg" alt="club-HP"></div>
-    </div>
-</div>
         <div class="subtitle-container">
             <p class="subtitle" id="subtitle-text">Diwali Special Lucky Draw</p>
         </div>
+
+        <div id="countdown-wrapper">
+            <div class="countdown-container" id="countdown-container">
+                <h2 id="countdown-heading">लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।</h2>
+                <div class="countdown-timer">
+                    <div><span id="days">00</span><span class="label">दिन</span></div>
+                    <div><span id="hours">00</span><span class="label">घंटे</span></div>
+                    <div><span id="minutes">00</span><span class="label">मिनट</span></div>
+                    <div><span id="seconds">00</span><span class="label">सेकंड</span></div>
+                </div>
+            </div>
+            <div class="draw-live-message hidden" id="draw-live-message">
+                <h2>ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें।</h2>
+            </div>
+        </div>
+
         <nav class="tab-nav">
             <button class="tab-button active" data-tab="winner" id="tab-btn-winner">Result Page</button>
             <button class="tab-button" data-tab="participants" id="tab-btn-participants">About Us</button>
         </nav>
+
         <div class="tab-content">
             <div class="tab-panel active" data-tab="winner">
-                <button id="draw-button">Reveal the Winner</button>
+                <div class="draw-controls">
+                    <button id="draw-button">Reveal the Winner</button>
+                    <button id="reset-button" style="display: none;">Reset Draw</button>
+                </div>
+                
+                <div class="winner-banner" id="winner-banner">
+                    <div class="slot-machine-container single-reel-mode">
+                        <div class="reel-box single-reel-box">
+                            <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
+                            <div class="reel-window" id="reel-window-coupon">
+                                <div class="reel-text" id="reel-coupon"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="section-divider">
+                <div class="winners-list-container">
+                    <h2 id="winners-list-heading">Lucky Draw Winners</h2>
+                    <div class="table-wrapper">
+                        <table class="winners-table">
+                            <thead>
+                                <tr>
+                                    <th id="th-round">Round</th>
+                                    <th id="th-prize">Prize</th>
+                                    <th id="th-name">Winner Name</th>
+                                    <th id="th-coupon">Coupon Code</th>
+                                    <th id="th-outlet">Outlet</th>
+                                    <th id="th-address">Outlet Address</th>
+                                    <th id="th-mobile">Mobile</th>
+                                </tr>
+                            </thead>
+                            <tbody id="winners-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
+            
             <div class="tab-panel" data-tab="participants">
                 <div class="search-container">
                     <h2 id="search-heading">Check Your Coupen Code</h2>
@@ -101,6 +139,15 @@
                     </div>
                     <div id="search-result-container"></div>
                 </div>
+
+                <div class="slideshow-container" id="slideshow-container">
+                    <div class="slideshow-wrapper" id="slideshow-wrapper">
+                        <div class="slide"><img src="Slide Show Images/HP-Gas.jpg" alt="HP-Gas"></div>
+                        <div class="slide"><img src="Slide Show Images/HPCL-Sectorial.jpg" alt="HPCL-Sectorial"></div>
+                        <div class="slide"><img src="Slide Show Images/club-HP.jpg" alt="club-HP"></div>
+                    </div>
+                </div>
+
                 <hr class="section-divider">
                 <div class="about-section">
                     <h2 id="about-heading">Our Commitment to Excellence</h2>
@@ -111,38 +158,38 @@
         </div>
     </main>
     
-    <!-- ********** एकल रील स्लॉट मशीन संरचना ********** -->
-    <div class="winner-banner" id="winner-banner">
-        <!-- 🎰 केवल कूपन कोड रील (जैसा आपने वापस कर दिया था, लेकिन नया क्लास दें) -->
-        <div class="slot-machine-container single-reel-mode">
-            <div class="reel-box single-reel-box">
-                <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
-                <div class="reel-window" id="reel-window-coupon">
-                    <div class="reel-text" id="reel-coupon"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- ********************************************** -->
-
-    <!-- ***** नया: Winner Popup Overlay ***** -->
     <div class="winner-popup-overlay hidden" id="winner-popup-overlay">
         <div class="winner-popup" id="winner-popup">
             <h2 id="popup-heading"></h2>
-            
             <div class="prize-image-container">
-                <!-- विजेता के पुरस्कार की इमेज यहाँ लोड होगी -->
                 <img src="" alt="Prize Image" id="prize-image">
             </div>
-            
             <div class="winner-details-popup">
                 <p><strong>Winner:</strong> <span id="popup-name"></span></p>
                 <p><strong>Coupon Code:</strong> <span id="popup-coupon"></span></p>
                 <p><strong>Outlet:</strong> <span id="popup-outlet"></span></p>
+                <!-- ===== START: एडमिन पॉप-अप में नई लाइन ===== -->
+                <p><strong>Address:</strong> <span id="popup-address"></span></p>
+                <!-- ===== END: एडमिन पॉप-अप में नई लाइन ===== -->
                 <p><strong>Mobile:</strong> <span id="popup-mobile"></span></p>
             </div>
-            
             <button id="save-next-button">Save & Ready for Next Round</button>
+        </div>
+    </div>
+
+    <div class="public-winner-card hidden" id="public-winner-card">
+        <h2 id="public-heading"></h2>
+        <div class="prize-image-container">
+            <img src="" alt="Prize Image" id="public-prize-image">
+        </div>
+        <div class="winner-details-popup">
+            <p><strong>Winner:</strong> <span id="public-name"></span></p>
+            <p><strong>Coupon Code:</strong> <span id="public-coupon"></span></p>
+            <p><strong>Outlet:</strong> <span id="public-outlet"></span></p>
+            <!-- ===== START: पब्लिक पॉप-अप में नई लाइन ===== -->
+            <p><strong>Address:</strong> <span id="public-address"></span></p>
+            <!-- ===== END: पब्लिक पॉप-अप में नई लाइन ===== -->
+            <p><strong>Mobile:</strong> <span id="public-mobile"></span></p>
         </div>
     </div>
 
@@ -150,16 +197,11 @@
         <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
     </footer>
 
-    <!-- ***** नया और सही स्क्रिप्ट लोडिंग का तरीका ***** -->
-
-    <!-- 1. पहले Firebase की लाइब्रेरी लोड करें -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
-    <!-- 2. अब अपनी स्क्रिप्ट लोड करें -->
     <script src="script.js"></script>
     
-    <!-- ऑडियो टैग्स -->
     <audio id="tick-sound" src="audio/tick.mp3" preload="auto"></audio>
     <audio id="static-sound" src="audio/static.mp3" preload="auto"></audio>
     <audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>

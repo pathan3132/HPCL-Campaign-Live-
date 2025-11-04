@@ -45,223 +45,278 @@ body {
     font-family: 'Poppins', sans-serif;
     color: #333;
     margin: 0;
-
-    /* --- बैकग्राउंड इमेज और ट्रांसपेरेंट लेयर --- */
     background-image: 
-        /* यह सफ़ेद रंग की 85% अपारदर्शी परत है */
         linear-gradient(rgba(255, 255, 255, 0.100), rgba(255, 255, 255, 0.100)),
-        /* यह आपकी इमेज है */
         url('background/HP Pump.jpg');
-
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
 }
-/* ***** हेडर स्टाइल में बदलाव ***** */
+/* हेडर स्टाइल */
 .site-header { 
     display: flex; 
     align-items: center; 
     justify-content: space-between; 
     padding: 15px 30px; 
-    background-color: #ffffff; /* बैकग्राउंड को सफ़ेद किया गया */
-    border: 3px solid #d9232d; /* लाल बॉर्डर जोड़ा गया */
+    background-color: #ffffff;
+    border: 3px solid #d9232d;
 }
 
-/* ***** लोगो कंटेनर के लिए नई स्टाइल ***** */
 .header-logo-container {
     display: flex;
     align-items: center;
-    gap: 25px; /* लोगो के बीच की जगह */
+    gap: 25px;
 }
 .header-logo-container img {
-    max-height: 50px; /* सभी लोगो की ऊंचाई एक जैसी रखने के लिए */
+    max-height: 50px;
     width: auto;
 }
-/* ************************************** */
 
-.header-left { display: flex; align-items: center; }
-.hpcl-logo { max-width: 70px; height: auto; margin-right: 20px; }
-.header-text { text-align: left; }
-.full-form { font-size: 1.1em; font-weight: 600; color: #003366; margin: 0; } /* टेक्स्ट का रंग बदला गया */
-.tagline { font-size: 0.9em; color: #555; margin: 4px 0 0 0; } /* टेक्स्ट का रंग बदला गया */
 .lang-switcher { display: flex; align-items: center; font-size: 0.9em; font-weight: 500; flex-shrink: 0; }
-.lang-switcher a { text-decoration: none; color: #555; padding: 5px 8px; transition: color 0.2s ease; } /* टेक्स्ट का रंग बदला गया */
+.lang-switcher a { text-decoration: none; color: #555; padding: 5px 8px; transition: color 0.2s ease; }
 .lang-switcher a:hover { color: #000; }
-.lang-switcher a.active { color: #d9232d; font-weight: 600; } /* एक्टिव लिंक का रंग बदला गया */
-.lang-switcher span { color: #ccc; margin: 0 5px; } /* लाइन का रंग बदला गया */
-/* ***** बदलाव समाप्त ***** */
+.lang-switcher a.active { color: #d9232d; font-weight: 600; }
+.lang-switcher span { color: #ccc; margin: 0 5px; }
 
-.subtitle-container { text-align: center; padding: 30px 20px 0 20px; }
-.subtitle { font-size: 1.6em; font-weight: 600; color: #333; margin: 0; }
+/* मुख्य कंटेंट */
 .main-content { padding: 30px 30px 40px 30px; max-width: 1200px; margin: 0 auto; text-align: center; }
-.tab-nav { display: flex; justify-content: center; border-bottom: 2px solid #e9ecef; margin-bottom: 30px; }
-.tab-button { font-family: 'Poppins', sans-serif; font-size: 1.1em; font-weight: 500; color: #888; background: none; border: none; padding: 15px 25px; cursor: pointer; position: relative; bottom: -2px; border-bottom: 2px solid transparent; transition: all 0.2s ease; white-space: nowrap; }
-.tab-button:hover { color: #333; }
-.tab-button.active { color: #003366; border-bottom: 2px solid #003366; }
+
+.subtitle-container {
+    background-color: rgba(10, 25, 47, 0.6);
+    padding: 15px 25px;
+    border-radius: 50px;
+    margin: 0 auto 25px auto;
+    max-width: 800px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+}
+
+.subtitle {
+    color: #FFFFFF;
+    font-size: 1.8em;
+    font-weight: 600;
+    margin: 0;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* ===== START: काउंटडाउन टाइमर स्टाइल ===== */
+#countdown-wrapper {
+    margin-bottom: 30px;
+}
+.countdown-container {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 25px;
+    border-radius: 15px;
+    max-width: 700px;
+    margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    border: 1px solid #ddd;
+}
+.countdown-container h2 {
+    font-size: 1.6em;
+    font-weight: 600;
+    color: #003366;
+    margin: 0 0 20px 0;
+}
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+}
+.countdown-timer div {
+    background-color: #003366;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    min-width: 90px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.countdown-timer span {
+    display: block;
+    font-weight: 700;
+    font-size: 2.5em;
+    line-height: 1;
+}
+.countdown-timer span.label {
+    font-size: 0.8em;
+    font-weight: 400;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+.draw-live-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 20px;
+    border-radius: 10px;
+    margin: 0 auto;
+    max-width: 700px;
+    border: 1px solid #c3e6cb;
+}
+.draw-live-message h2 {
+    margin: 0;
+    font-size: 1.4em;
+}
+.tab-button.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+/* ===== END: काउंटडाउन टाइमर स्टाइल ===== */
+
+
+/* --- Professional Navigation Bar Styles --- */
+.tab-nav {
+    display: flex;
+    justify-content: center;
+    background-color: #003366; /* HPCL का गहरा नीला रंग */
+    margin-bottom: 30px;
+    padding: 0;
+    border-bottom: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* हल्की सी परछाई */
+    border-radius: 5px; /* हल्के गोल किनारे */
+    overflow: hidden; /* ताकि borderRadius काम करे */
+}
+
+.tab-button {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em; /* थोड़ा छोटा फ़ॉन्ट */
+    font-weight: 500;
+    color: #ffffff; /* सफ़ेद टेक्स्ट */
+    background-color: transparent;
+    border: none;
+    padding: 18px 30px; /* बटन को थोड़ा बड़ा करने के लिए */
+    cursor: pointer;
+    border-bottom: none; /* नीचे का बॉर्डर हटाया गया */
+    transition: background-color 0.3s ease;
+    white-space: nowrap;
+}
+
+.tab-button:hover {
+    background-color: #004488; /* होवर पर थोड़ा हल्का नीला */
+    color: #ffffff;
+}
+
+.tab-button.active {
+    background-color: #d9232d; /* HPCL का लाल रंग */
+    color: #ffffff;
+    font-weight: 600; /* एक्टिव टैब को थोड़ा मोटा दिखाएँ */
+}
+
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: tabFadeIn 0.5s ease; }
 @keyframes tabFadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ===== START: बटन के लिए नया स्टाइल ===== */
+.draw-controls {
+    margin-bottom: 20px;
+}
 #draw-button { background-color: #d9232d; color: white; padding: 14px 45px; border: none; border-radius: 50px; font-size: 1.3em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(217, 35, 45, 0.3); }
 #draw-button:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(217, 35, 45, 0.4); }
+#reset-button { background-color: #003366; margin-left: 15px; color: white; padding: 14px 30px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: 500; cursor: pointer; }
+/* ===== END: बटन के लिए नया स्टाइल ===== */
 
+
+/* स्लाइड शो */
+.slideshow-container {
+    max-width: 1200px;
+    margin: 40px auto 40px auto;
+    padding: 0;
+}
+
+.slideshow-wrapper {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    height: auto;
+}
+
+.slide {
+    flex: 1;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 3px solid #FFD700;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* स्लॉट मशीन और विजेता बैनर */
 .winner-banner {
     width: 100%;
-    background-color: transparent; /* #002244 को transparent से बदलें */
-    padding: 40px 20px;
-    border-top: none; /* 5px solid #FFD700 को none से बदलें */
-    border-bottom: none; /* 5px solid #FFD700 को none से बदलें */
+    background-color: transparent;
+    padding: 20px 0; 
+    border-top: none;
+    border-bottom: none;
     text-align: center;
-    box-shadow: none; /* शैडो हटाया गया */
-    
-    /* ***** यहाँ नया कोड जोड़ा गया है ***** */
-    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* स्मूथ ज़ूम के लिए */
-    transform-origin: center center; /* केंद्र से ज़ूम करने के लिए */
+    box-shadow: none;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: center center;
 }
-.slot-machine-container {
-    display: flex;
-    justify-content: center;
-    gap: 20px; /* गैप को 10px से 20px करें */
-    max-width: 1400px; /* चौड़ाई को 1100px से 1400px करें */
-    margin: 0 auto 30px auto;
-}
-
 .slot-machine-container.single-reel-mode {
-    max-width: 650px; /* एक रील के लिए छोटी चौड़ाई */
-    gap: 0;
+    max-width: 650px; 
+    margin: 0 auto; 
 }
-
 .reel-box.single-reel-box {
-    width: 100%; /* उपलब्ध चौड़ाई का पूरा उपयोग करें */
-    padding: 30px; /* पैडिंग बढ़ाएँ */
-}
-
-.reel-box.single-reel-box .reel-title {
-    font-size: 1.5em; /* शीर्षक का साइज़ बढ़ाएँ */
-}
-
-/* reel-window और reel-item की ऊँचाई बढ़ाएँ ताकि यह बड़ा दिखे */
-.reel-box.single-reel-box .reel-window {
-    height: 120px; /* 100px से 120px करें */
-}
-
-.reel-box.single-reel-box .reel-item {
-    height: 120px; /* 100px से 120px करें */
-    line-height: 120px; /* 100px से 120px करें */
-    font-size: 2.2em; /* फ़ॉन्ट साइज़ 1.25em से 2.2em करें */
-}
-
-.reel-box.single-reel-box .reel-item.final-winner {
-    height: 120px;
-    font-size: 2.5em; /* फ़ॉन्ट साइज़ 1.5em से 2.5em करें */
-}
-
-.reel-box {
+    width: 100%; 
+    padding: 20px;
     background-color: #333; 
     border: 3px solid #FFD700; 
-    border-radius: 15px; /* बॉर्डर रेडियस को 10px से 15px करें */
-    padding: 20px; /* पैडिंग को 10px से 20px करें */
-    width: 25%; /* चौड़ाई को 23% से 25% करें */
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7); /* शैडो बढ़ाएँ */
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
 }
-
-.reel-title {
-    font-size: 1.1em; /* फ़ॉन्ट साइज़ बढ़ाएँ */
+.reel-box.single-reel-box .reel-title {
+    font-size: 1.3em;
     font-weight: 700;
     color: #FFD700; 
-    margin: 0 0 10px 0; /* मार्जिन बढ़ाएँ */
+    margin: 0 0 10px 0;
     text-transform: uppercase;
 }
-
-.reel-window {
-    height: 100px; /* रील की विंडो हाइट को 50px से 70px करें */
+.reel-box.single-reel-box .reel-window {
+    height: 100px;
     overflow: hidden; 
     position: relative;
     background-color: #000;
     border: 1px solid #FFD700;
-    border-radius: 8px; /* बॉर्डर रेडियस बढ़ाएँ */
-    /* सेंटरिंग लाइन के लिए शैडो */
-    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9); /* शैडो बढ़ाएँ */
+    border-radius: 8px;
+    box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.9);
 }
-
 .reel-text {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    /* यह रोलिंग के लिए आधार है */
     transform: translateY(0px); 
     display: flex;
     flex-direction: column;
     text-align: center;
-    /* टेक्स्ट ओवरफ़्लो को नियंत्रित करने के लिए जोड़ा गया */
-    white-space: normal; /* जोड़ा गया */
-    overflow-wrap: break-word; /* जोड़ा गया */
+    white-space: normal;
+    overflow-wrap: break-word;
 }
-
 .reel-item {
-    /* हर आइटम (कूपन/नाम/मोबाइल) की हाइट */
-    height: 100px; /* हाइट को 70px से 100px करें */
-    line-height: 100px; /* लाइन-हाइट को 70px से 100px करें */
-    font-size: 1.25em; /* फ़ॉन्ट साइज़ 1.25em रखें */
+    height: 100px;
+    line-height: 100px;
+    font-size: 2em;
     font-weight: 700;
-    color: #00FF00; /* नियॉन ग्रीन - रोलिंग टेक्स्ट का रंग */
+    color: #00FF00;
     padding: 0 5px; 
 }
-
-/* विजेता आइटम को हाइलाइट करने के लिए */
 .reel-item.final-winner {
-    color: #FFD700; /* गोल्डन कलर */
-    font-size: 1.5em; /* फ़ॉन्ट साइज़ 1.5em रखें */
-    line-height: 1.2; /* line-height को ठीक से केंद्र में रखने के लिए 1.2 पर सेट करें */
+    color: #FFD700;
+    font-size: 2.3em;
+    line-height: 1.2;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100px; /* ऊंचाई को 70px से 100px करें */
+    height: 100px;
 }
 
-/* --- विजेता का स्थायी प्रदर्शन --- */
-.final-winner-display {
-    max-width: 600px;
-    margin: 20px auto 0 auto;
-    padding: 25px;
-    background-color: #fff;
-    border-radius: 15px;
-    border: 5px solid #d9232d; 
-    box-shadow: 0 0 30px rgba(217, 35, 45, 0.8);
-    animation: fadeIn 1s ease-out;
-}
-
-.final-winner-display.hidden {
-    display: none;
-}
-
-#final-winner-heading {
-    font-size: 1.5em; /* 1.8em से 1.5em करें ताकि यह कट न जाए */
-    color: #d9232d;
-    margin-top: 0;
-}
-
-.winner-details-final p {
-    font-size: 1.2em;
-    color: #333;
-    margin: 8px 0;
-}
-
-.winner-details-final strong {
-    color: #003366;
-}
-
-.prize-message {
-    font-size: 1.3em;
-    font-style: italic;
-    color: #FFD700;
-    background-color: #003366;
-    padding: 5px;
-    border-radius: 5px;
-    margin-top: 15px;
-}
-/* ... (remaining original CSS styles) ... */
+/* सर्च और 'About Us' सेक्शन */
 .search-container { max-width: 600px; margin: 0 auto; padding: 20px 0; }
 #search-heading { font-size: 1.3em; font-weight: 600; margin: 0 0 10px 0; color: #003366; }
 .search-subheading { color: #555; margin-bottom: 25px; }
@@ -278,316 +333,275 @@ body {
 .result-message { text-align: center; padding: 20px; font-size: 1em; font-weight: 500; }
 .result-message.success { color: #155724; background-color: #d4edda; border-radius: 8px; }
 .result-message.error { color: #721c24; background-color: #f8d7da; border-radius: 8px; }
-.section-divider { border: none; height: 1px; background-color: #e9ecef; margin: 40px auto; max-width: 600px; }
+.section-divider { border: none; height: 1px; background-color: #e9ecef; margin: 40px auto; max-width: 800px; }
 .about-section { max-width: 700px; margin: 0 auto; text-align: center; padding: 20px 0; }
 .about-section h2 { font-size: 1.3em; font-weight: 600; margin: 0 0 15px 0; color: #003366; }
 .about-section p { font-size: 1em; line-height: 1.8; color: #555; margin: 0 0 15px 0; }
-.winner-animation-box { font-size: 2.2em; font-weight: 700; margin: 0 auto; max-width: 800px; }
-.winner-details { line-height: 1.5; }
-.winner-line { display: flex; align-items: center; justify-content: center; gap: 15px; font-size: 1.2em; font-weight: 600; color: #003366; }
-.winner-icon { font-size: 1em; line-height: 1; }
-.winner-name { font-size: 1.3em; color: #333; margin-top: 10px; }
-.winner-coupon { font-size: 0.9em; color: #888; margin-top: 10px; }
 .site-footer { text-align: center; padding: 30px; font-size: 0.9em; color: #888; border-top: 1px solid #e9ecef; margin-top: 40px; }
 .site-footer p { margin: 0; }
-@media (max-width: 768px) { .site-header { flex-direction: column; gap: 15px; } .header-text { order: -1; text-align: center; } }
-@media (max-width: 480px) { .tab-button { font-size: 1em; padding: 12px 15px; } .search-form { flex-direction: column; } }
-/* --- सिनेमैटिक काउंटडाउन स्टाइल --- */
 
-.countdown-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: #1a1a1a;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    opacity: 1;
-    overflow: hidden;
-    /* ***** यहाँ ट्रांज़िशन बदला गया है ***** */
-    transition: opacity 0.6s ease-in, transform 0.6s cubic-bezier(0.5, 0, 0.75, 0); /* नीचे जाने का स्मूथ एनिमेशन */
-}
-
-.countdown-overlay.hidden {
-    opacity: 0;
-    pointer-events: none;
-}
-
-.film-leader {
-    width: 90vmin; /* स्क्रीन के हिसाब से साइज़ */
-    height: 90vmin;
-    background-color: #b0b0b0; /* ग्रे फिल्म कलर */
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* फिल्म फ्लिकर एनिमेशन */
-    animation: filmFlicker 0.2s infinite alternate;
-}
-
-/* फिल्म ग्रेन इफ़ेक्ट */
-.film-leader::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC');
-    opacity: 0.1;
-    pointer-events: none;
-}
-
-.crosshair-h, .crosshair-v {
-    position: absolute;
-    background-color: rgba(0, 0, 0, 0.5);
-}
+/* सिनेमैटिक काउंटडाउन */
+.countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1a1a1a; display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; overflow: hidden; transition: opacity 0.6s ease-in, transform 0.6s cubic-bezier(0.5, 0, 0.75, 0); }
+.countdown-overlay.hidden { opacity: 0; pointer-events: none; }
+.film-leader { width: 90vmin; height: 90vmin; background-color: #b0b0b0; position: relative; display: flex; justify-content: center; align-items: center; animation: filmFlicker 0.2s infinite alternate; }
+.film-leader::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); opacity: 0.1; pointer-events: none; }
+.crosshair-h, .crosshair-v { position: absolute; background-color: rgba(0, 0, 0, 0.5); }
 .crosshair-h { width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
 .crosshair-v { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
+.circle-border { width: 90%; height: 90%; border-radius: 50%; border: 1.5vmin solid #111; box-shadow: 0 0 0 0.5vmin #111; position: absolute; }
+.countdown-number { font-family: 'Poppins', sans-serif; font-size: 40vmin; font-weight: 700; color: #111; z-index: 10; animation: numberAppear 1s forwards; }
+.rotating-wipe { width: 2px; height: 50%; background-color: #111; position: absolute; top: 0; left: 50%; transform-origin: bottom center; z-index: 5; }
+.rotating-wipe.animate { animation: rotateWipe 1s linear forwards; }
+@keyframes filmFlicker { from { opacity: 0.95; } to { opacity: 1; } }
+@keyframes numberAppear { from { opacity: 0.5; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
+@keyframes rotateWipe { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
+.film-burn-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); z-index: 20; display: none; }
+.film-burn-overlay.animate-burn { display: block; animation: filmBurnEffect 0.8s linear forwards; }
+@keyframes filmBurnEffect { 0% { opacity: 0; } 10% { opacity: 0.6; } 20% { opacity: 0.2; } 30% { opacity: 0.8; background-color: white; } 40% { opacity: 0.3; background-color: transparent; } 60% { opacity: 0.9; } 80% { opacity: 0.4; } 100% { opacity: 1; background-color: black; } }
+.winner-banner.zoomed-in { position: fixed; top: 50%; left: 50%; width: 90vw; transform: translate(-50%, -50%) scale(1.2); z-index: 9000; }
+.countdown-overlay.slide-down { transform: translateY(100%); opacity: 0; }
 
-.circle-border {
-    width: 90%;
-    height: 90%;
-    border-radius: 50%;
-    border: 1.5vmin solid #111;
-    box-shadow: 0 0 0 0.5vmin #111; /* डबल बॉर्डर इफ़ेक्ट */
-    position: absolute;
-}
+/* विजेता पॉपअप */
+.winner-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: opacity 0.3s ease-in-out; }
+.winner-popup-overlay.hidden { display: none; opacity: 0; }
+.winner-popup { background-color: #ffffff; padding: 40px; border-radius: 20px; max-width: 500px; text-align: center; border: 8px solid #d9232d; box-shadow: 0 0 50px rgba(217, 35, 45, 0.8); animation: zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+@keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#popup-heading { font-size: 2em; color: #003366; margin-top: 0; }
+.prize-image-container { padding: 10px; margin: 15px 0; border: 2px dashed #ccc; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+#winner-popup .prize-image-container { height: 180px; }
+#public-winner-card .prize-image-container { height: 150px; }
+#prize-image, #public-prize-image { max-width: 100%; max-height: 100%; object-fit: contain; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { transform: scale(0.95); } 70% { transform: scale(1.0); } 100% { transform: scale(0.95); } }
+.winner-details-popup { text-align: left; margin-top: 20px; font-size: 1.1em; }
+.winner-details-popup strong { color: #d9232d; min-width: 120px; display: inline-block; }
+#save-next-button { background-color: #003366; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; margin-top: 30px; transition: background-color 0.3s; }
+#save-next-button:hover { background-color: #002244; }
 
-.countdown-number {
-    font-family: 'Poppins', sans-serif;
-    font-size: 40vmin;
-    font-weight: 700;
-    color: #111;
-    z-index: 10;
-    animation: numberAppear 1s forwards;
-}
+/* पब्लिक विजेता कार्ड */
+.public-winner-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9500; background-color: #ffffff; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 8px solid #d9232d; box-shadow: 0 0 50px rgba(217, 35, 45, 0.8); animation: zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); transition: opacity 0.3s, visibility 0.3s; }
+.public-winner-card.hidden { display: none; opacity: 0; visibility: hidden; }
+#public-heading { font-size: 2em; color: #003366; margin-top: 0; }
 
-.rotating-wipe {
-    width: 2px;
-    height: 50%; /* सर्कल के केंद्र से किनारे तक */
-    background-color: #111;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform-origin: bottom center; /* नीचे से घूमेगा */
-    z-index: 5;
-}
+/* विजेता सूची टेबल */
+/* ===== यहाँ मार्जिन बदला गया है ===== */
+.winners-list-container { max-width: 1200px; margin: 50px auto 0 auto; padding: 20px 0; text-align: center; }
+#winners-list-heading { font-size: 1.5em; font-weight: 600; margin-bottom: 25px; color: #003366; }
+.table-wrapper { overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
+.winners-table { width: 100%; border-collapse: collapse; background-color: #ffffff; }
+.winners-table th, .winners-table td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
+.winners-table thead { background-color: #003366; color: #ffffff; }
+.winners-table th { font-weight: 600; font-size: 0.9em; text-transform: uppercase; }
+.winners-table tbody tr:nth-child(even) { background-color: #f8f9fa; }
+.winners-table tbody tr:hover { background-color: #e9ecef; }
+.winners-table td { font-size: 0.95em; color: #333; }
+.loading-message, .no-winners-message { padding: 40px; font-size: 1.1em; color: #555; }
 
-/* घूमने वाली लाइन का एनिमेशन */
-.rotating-wipe.animate {
-    animation: rotateWipe 1s linear forwards; /* <<<--- गति को 1s से 1.2s किया गया */
-}
+/* =================================================================== */
+/* ============== START: COMPLETE RESPONSIVE STYLES ============== */
+/* =================================================================== */
 
+/* --- 1. टैबलेट और छोटे डेस्कटॉप के लिए (992px तक) --- */
+@media (max-width: 992px) {
+    .main-content {
+        padding: 25px;
+    }
 
-/* की-फ्रेम्स */
-@keyframes filmFlicker {
-    from { opacity: 0.95; }
-    to { opacity: 1; }
-}
+    .tab-button {
+        padding: 16px 20px;
+        font-size: 0.95em;
+    }
 
-@keyframes numberAppear {
-    from { opacity: 0.5; transform: scale(1.1); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes rotateWipe {
-    from { transform: translateX(-50%) rotate(0deg); }
-    to { transform: translateX(-50%) rotate(360deg); }
-}
-
-/* --- फिल्म बर्न ट्रांज़िशन इफ़ेक्ट --- */
-.film-burn-overlay {
-    position: absolute;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); /* स्टैटिक नॉइज़ पैटर्न */
-    z-index: 20;
-    display: none; /* डिफ़ॉल्ट रूप से छिपा हुआ */
-}
-
-/* यह क्लास JavaScript से जोड़ी जाएगी */
-.film-burn-overlay.animate-burn {
-    display: block;
-    animation: filmBurnEffect 0.8s linear forwards;
-}
-
-@keyframes filmBurnEffect {
-    0% { opacity: 0; }
-    10% { opacity: 0.6; }
-    20% { opacity: 0.2; }
-    30% { opacity: 0.8; background-color: white; } /* सफ़ेद फ़्लैश */
-    40% { opacity: 0.3; background-color: transparent; }
-    60% { opacity: 0.9; }
-    80% { opacity: 0.4; }
-    100% { opacity: 1; background-color: black; } /* अंत में स्क्रीन काली हो जाएगी */
-}
-
-.winner-banner.zoomed-in {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 90vw; /* स्क्रीन की चौड़ाई का 90% */
-    transform: translate(-50%, -50%) scale(1.2); /* <<<--- ज़ूम को 1.8 से 1.2 किया गया */
-    z-index: 9000; /* यह बाकी कंटेंट के ऊपर रहेगा */
-}
-
-.countdown-overlay.slide-down {
-    transform: translateY(100%); /* स्क्रीन से पूरा नीचे ले जाएं */
-    opacity: 0;
-}
-
-/* --- तस्वीरों के ग्रिड के लिए नई स्टाइल --- */
-.slideshow-container {
-    max-width: 1200px;
-    margin: 0 auto 30px auto;
-    padding: 0; /* पैडिंग की ज़रूरत नहीं */
-}
-
-.slideshow-wrapper {
-    display: flex; /* मुख्य लेआउट के लिए फ्लेक्सबॉक्स */
-    gap: 20px; /* तस्वीरों के बीच में गैप */
-    width: 100%;
-    height: auto; /* ऊंचाई ऑटोमेटिक रखें */
-}
-
-.slide {
-    flex: 1; /* सभी तस्वीरों को बराबर जगह दें */
-    border-radius: 10px;
-    overflow: hidden; /* कोनों को गोल रखने के लिए */
-    border: 3px solid #FFD700; /* गोल्डन बॉर्डर */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-}
-
-.slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block; /* इमेज के नीचे का एक्स्ट्रा स्पेस हटाने के लिए */
-}
-
-/* --- मोबाइल स्क्रीन के लिए रेस्पॉन्सिव स्टाइल --- */
-@media (max-width: 768px) {
     .slideshow-wrapper {
-        flex-direction: column; /* तस्वीरों को एक के नीचे एक दिखाएँ */
+        gap: 15px;
+    }
+
+    .reel-box.single-reel-box {
+        padding: 25px;
+    }
+    
+    .countdown-timer div {
+        min-width: 80px;
+        padding: 12px;
+    }
+    .countdown-timer span {
+        font-size: 2.2em;
     }
 }
 
-/* --- Winner Popup Overlay --- */
-.winner-popup-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background-color: rgba(0, 0, 0, 0.9); /* गहरा काला ओवरले */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10000;
-    transition: opacity 0.3s ease-in-out;
+
+/* --- 2. बड़े मोबाइल और टैबलेट पोर्ट्रेट के लिए (768px तक) --- */
+@media (max-width: 768px) {
+    /* हेडर को एडजस्ट करें */
+    .site-header {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .header-logo-container {
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .header-logo-container img {
+        max-height: 40px;
+    }
+
+    /* मुख्य कंटेंट की पैडिंग कम करें */
+    .main-content {
+        padding: 20px 15px;
+    }
+
+    /* "Ready for Round" टेक्स्ट को एडजस्ट करें */
+    .subtitle-container {
+        margin: 0 15px 25px 15px;
+        padding: 12px 20px;
+        border-radius: 10px;
+    }
+    .subtitle {
+        font-size: 1.4em;
+    }
+
+    /* काउंटडाउन */
+    .countdown-container h2, .draw-live-message h2 {
+        font-size: 1.2em;
+    }
+    .countdown-timer {
+        gap: 10px;
+    }
+    .countdown-timer div {
+        min-width: 65px;
+        padding: 10px;
+    }
+    .countdown-timer span {
+        font-size: 1.8em;
+    }
+     .countdown-timer span.label {
+        font-size: 0.7em;
+    }
+
+
+    /* नेविगेशन बार को वर्टिकल करें */
+    .tab-nav {
+        flex-direction: column;
+        border-radius: 5px;
+        margin: 0 15px 25px 15px;
+    }
+    .tab-button {
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .tab-button:last-child {
+        border-bottom: none;
+    }
+
+    /* बटन का साइज़ एडजस्ट करें */
+    #draw-button {
+        font-size: 1.1em;
+        padding: 12px 35px;
+    }
+    #reset-button {
+        padding: 12px 25px;
+        font-size: 1em;
+    }
+
+    /* स्लाइड शो को वर्टिकल करें */
+    .slideshow-wrapper {
+        flex-direction: column;
+    }
+
+    /* स्लॉट मशीन को एडजस्ट करें */
+    .slot-machine-container.single-reel-mode {
+        margin: 20px auto;
+        padding: 0 10px;
+    }
+    .reel-box.single-reel-box .reel-window {
+        height: 80px;
+    }
+    .reel-box.single-reel-box .reel-item {
+        height: 80px;
+        line-height: 80px;
+        font-size: 1.8em;
+    }
+
+    /* "Check Coupon" फॉर्म को बेहतर बनाएँ */
+    .search-form {
+        flex-direction: column;
+    }
+
+    /* विजेता पॉपअप को एडजस्ट करें */
+    .winner-popup, .public-winner-card {
+        padding: 25px;
+        max-width: 90%;
+    }
+    #popup-heading, #public-heading {
+        font-size: 1.5em;
+    }
+    #winner-popup .prize-image-container,
+    #public-winner-card .prize-image-container {
+        height: 120px;
+    }
 }
 
-.winner-popup-overlay.hidden {
-    display: none;
-    opacity: 0;
+
+/* --- 3. छोटे मोबाइल फ़ोन के लिए (576px तक) --- */
+@media (max-width: 576px) {
+    body {
+        font-size: 14px; /* बेस फॉन्ट साइज़ को छोटा करें */
+    }
+
+    /* हेडर और लोगो */
+    .header-logo-container img {
+        max-height: 35px;
+    }
+
+    /* "Ready for Round" टेक्स्ट को और छोटा करें */
+    .subtitle {
+        font-size: 1.2em;
+    }
+    
+    /* काउंटडाउन */
+    .countdown-timer {
+        gap: 8px;
+    }
+    .countdown-timer div {
+        min-width: 0;
+        flex: 1;
+        padding: 8px;
+    }
+    .countdown-timer span {
+        font-size: 1.5em;
+    }
+
+
+    /* नेविगेशन बटन */
+    .tab-button {
+        padding: 15px;
+        font-size: 1em;
+    }
+    
+    .main-content {
+        padding: 15px 10px;
+    }
+
+    /* विजेता पॉपअप को और एडजस्ट करें */
+    .winner-popup, .public-winner-card {
+        padding: 20px;
+    }
+    .winner-details-popup {
+        font-size: 1em;
+    }
+    #save-next-button {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+    
+    /* स्लॉट मशीन का टेक्स्ट साइज़ */
+    .reel-box.single-reel-box .reel-item {
+        font-size: 1.5em;
+    }
 }
 
-.winner-popup {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 20px;
-    max-width: 500px;
-    text-align: center;
-    border: 8px solid #d9232d;
-    box-shadow: 0 0 50px rgba(217, 35, 45, 0.8);
-    animation: zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-}
-
-@keyframes zoomIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-}
-
-#popup-heading {
-    font-size: 2em;
-    color: #003366;
-    margin-top: 0;
-}
-
-.prize-image-container {
-    padding: 10px;
-    margin: 15px 0;
-    border: 2px dashed #ccc;
-    height: 150px; /* फिक्स्ड साइज़ */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#prize-image {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(0.95); }
-    70% { transform: scale(1.0); }
-    100% { transform: scale(0.95); }
-}
-
-.winner-details-popup {
-    text-align: left;
-    margin-top: 20px;
-    font-size: 1.1em;
-}
-
-.winner-details-popup strong {
-    color: #d9232d;
-    min-width: 120px;
-    display: inline-block;
-}
-
-#save-next-button {
-    background-color: #003366;
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 8px;
-    font-size: 1.1em;
-    cursor: pointer;
-    margin-top: 30px;
-    transition: background-color 0.3s;
-}
-
-#save-next-button:hover {
-    background-color: #002244;
-}
-
-/* --- सिंगल रील के लिए आवश्यक CSS (पुराने 4 रील की जगह) --- */
-.slot-machine-container.single-reel-mode {
-    max-width: 650px; 
-    margin: 40px auto; 
-}
-.reel-box.single-reel-box {
-    width: 100%; 
-    padding: 20px;
-}
-.reel-box.single-reel-box .reel-title {
-    font-size: 1.3em; 
-}
-.reel-box.single-reel-box .reel-window {
-    height: 100px;
-}
-.reel-box.single-reel-box .reel-item {
-    height: 100px;
-    line-height: 100px;
-    font-size: 2em; /* फ़ॉन्ट साइज़ बढ़ाएँ */
-}
-.reel-box.single-reel-box .reel-item.final-winner {
-    height: 100px;
-    font-size: 2.3em;
-}
-
-/* सुनिश्चित करें कि विजेता बैनर ज़ूम-इन होने पर रील ठीक से दिखती है */
-.winner-banner.zoomed-in {
-    padding: 40px 20px; /* पैडिंग को एडजस्ट करें */
-}
+/* ================================================================= */
+/* ============== END: COMPLETE RESPONSIVE STYLES ============== */
+/* ================================================================= */
