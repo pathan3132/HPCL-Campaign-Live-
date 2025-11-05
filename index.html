@@ -6,14 +6,15 @@
     <title>HPCL - Lucky Draw Event</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <!-- कन्फ़ेटी लाइब्रेरी -->
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
     <div class="countdown-overlay hidden" id="countdown-overlay">
     <div class="film-leader">
+         <img src="images/HP-Logo.png" alt="HPCL Logo" class="countdown-logo">
          <div class="film-burn-overlay" id="film-burn-overlay"></div>
         <!-- क्रॉसहेयर लाइन्स -->
         <div class="crosshair-h"></div>
@@ -31,17 +32,9 @@
         <div class="splash-content">
             <h1 class="splash-header" id="splash-header">A Lucky Draw Event presented by<br><strong>Hindustan Petroleum Corporation Limited</strong></h1>
             
-            <div class="logo-animation">
-                <svg class="aspire-a" viewBox="0 0 100 120">
-                    <path class="shape shape-outer" d="M0,120 L50,0 L100,120 L80,120 L50,45 L20,120 Z" />
-                    <path class="shape shape-middle" d="M12,120 L50,20 L88,120 L72,120 L50,65 L28,120 Z" />
-                    <path class="shape class-inner" d="M24,120 L50,40 L76,120 L64,120 L50,85 L36,120 Z" />
-                </svg>
-                <div class="text-animation">
-                    <span class="aspire-text">spire</span>
-                    <span class="subtext business-link">BUSINESS LINK</span>
-                </div>
-            </div>
+           <div class="logo-animation">
+    <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="aspire-logo-img">
+</div>
 
             <p class="splash-tagline" id="splash-tagline">Elevating Service, Inspiring Success.</p>
         </div>
@@ -49,18 +42,58 @@
 
     <!-- बाकी का पेज कंटेंट -->
     <header class="site-header">
-        <div class="header-logo-container">
-            <img src="images/hpcl-logo.png" alt="HPCL Logo">
-            <img src="images/Petrol-logo.png" alt="Petrol Logo">
-        </div>
-
+        <!-- START: यहाँ बदलाव किया गया है -->
+      <div class="header-logos-left">
+    <img src="images/hpcl-logo.png" alt="HPCL Logo">
+</div>
+<div class="header-logos-right">
+    <img src="images/Petrol-logo.png" alt="Club HP Logo">
+</div>
+        <!-- END: यहाँ बदलाव किया गया है -->
+    </header>
+    
+    <!-- भाषा बदलने वाला मोबाइल पर यहाँ दिखाई देगा -->
+    <div class="lang-switcher-mobile-container">
         <div class="lang-switcher">
             <a href="#" id="lang-hi" class="active">हिंदी</a>
             <span>|</span>
             <a href="#" id="lang-en">English</a>
         </div>
-    </header>
+    </div>
+
     <main class="main-content">
+
+          <!-- ===== START: प्राइज की जानकारी का सेक्शन ===== -->
+        <div class="prize-info-container">
+            <h2 id="prize-info-heading">Today's Prizes</h2>
+            <div class="prize-cards-wrapper">
+                
+                <div class="prize-card">
+                    <h4>Dinner Set</h4>
+                    <p class="winner-count">20</p>
+                    <p class="winner-label">Winners</p>
+                </div>
+
+                <div class="prize-card">
+                    <h4>LED TV</h4>
+                    <p class="winner-count">3</p>
+                    <p class="winner-label">Winners</p>
+                </div>
+
+                <div class="prize-card">
+                    <h4>Refrigerator</h4>
+                    <p class="winner-count">2</p>
+                    <p class="winner-label">Winners</p>
+                </div>
+
+                <div class="prize-card mega-prize-card">
+                    <h4>Motorcycle</h4>
+                    <p class="winner-count">1</p>
+                    <p class="winner-label">Mega Prize</p>
+                </div>
+
+            </div>
+        </div>
 
         <div class="subtitle-container">
             <p class="subtitle" id="subtitle-text">Diwali Special Lucky Draw</p>
@@ -166,9 +199,7 @@
                 <p><strong>Winner:</strong> <span id="popup-name"></span></p>
                 <p><strong>Coupon Code:</strong> <span id="popup-coupon"></span></p>
                 <p><strong>Outlet:</strong> <span id="popup-outlet"></span></p>
-                <!-- ===== START: एडमिन पॉप-अप में नई लाइन ===== -->
                 <p><strong>Address:</strong> <span id="popup-address"></span></p>
-                <!-- ===== END: एडमिन पॉप-अप में नई लाइन ===== -->
                 <p><strong>Mobile:</strong> <span id="popup-mobile"></span></p>
             </div>
             <button id="save-next-button">Save & Ready for Next Round</button>
@@ -184,12 +215,30 @@
             <p><strong>Winner:</strong> <span id="public-name"></span></p>
             <p><strong>Coupon Code:</strong> <span id="public-coupon"></span></p>
             <p><strong>Outlet:</strong> <span id="public-outlet"></span></p>
-            <!-- ===== START: पब्लिक पॉप-अप में नई लाइन ===== -->
             <p><strong>Address:</strong> <span id="public-address"></span></p>
-            <!-- ===== END: पब्लिक पॉप-अप में नई लाइन ===== -->
             <p><strong>Mobile:</strong> <span id="public-mobile"></span></p>
         </div>
     </div>
+    
+    <!-- ===== START: नया थैंक यू पॉप-अप HTML ===== -->
+    <div class="thank-you-popup-overlay hidden" id="thank-you-popup-overlay">
+        <div class="thank-you-popup">
+            <button class="close-popup-btn" id="close-thank-you-popup">&times;</button>
+            <div class="popup-logos">
+                <img src="images/hpcl-logo.png" alt="HPCL Logo">
+                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo">
+            </div>
+            <h2>Thank You for Participating!</h2>
+            <div class="company-info">
+                <p>यह लकी ड्रॉ इवेंट <strong>Hindustan Petroleum Corporation Limited (HPCL)</strong> द्वारा सफलतापूर्वक आयोजित किया गया। हम आपके भरोसे और भागीदारी के लिए आभारी हैं।</p>
+                <p>इवेंट मैनेजमेंट और डिजिटल सॉल्यूशंस <strong>Aspire Business Link</strong> द्वारा प्रदान किए गए, जो आपके व्यवसाय को नई ऊंचाइयों पर ले जाने के लिए प्रतिबद्ध हैं।</p>
+            </div>
+            <hr class="popup-divider">
+            <p>किसी भी प्रकार के डिजिटल इवेंट या आईटी समाधान के लिए, हमसे संपर्क करें।</p>
+            <a href="https://script.google.com/macros/s/AKfycbwDuOkP7Wj8IVqJ6bifujU87qzeJADF-Agq7cqP5tf_ztkUp_bE4a7ghfyf8plltBYe/exec" target="_blank" class="aspire-link">Connect with Aspire Business Link</a>
+        </div>
+    </div>
+    <!-- ===== END: नया थैंक यू पॉप-अप HTML ===== -->
 
     <footer class="site-footer">
         <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
@@ -205,5 +254,6 @@
     <audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>
     <audio id="draw-sound" src="audio/draw-effect.mp3" preload="auto"></audio>
     <audio id="winner-sound" src="audio/winner.mp3" preload="auto"></audio>
+    
 </body>
 </html>

@@ -1,43 +1,86 @@
-/* START OF FILE style.css.txt */
+/* START OF COMPLETE style.css.txt FILE */
+
+/* ===== START: यहाँ मुख्य फिक्स जोड़ा गया है ===== */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+/* ===== END: यहाँ मुख्य फिक्स जोड़ा गया है ===== */
+
 
 /* --- स्प्लैश स्क्रीन एनीमेशन --- */
-.splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffffff; display: flex; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out; }
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+    /* बैकग्राउंड इमेज */
+    background-image: url('Background/Servicce.png');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+/* इमेज के ऊपर हल्की सफेद परत जोड़ने के लिए */
+.splash-screen::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255, 255, 255, 0.7); /* आप 0.7 को बदलकर परत को हल्का या गहरा कर सकते हैं */
+    z-index: 1;
+}
+
+/* यह सुनिश्चित करता है कि कंटेंट परत के ऊपर रहे */
+.splash-content {
+    position: relative;
+    z-index: 2;
+}
 .splash-screen.hidden { opacity: 0; visibility: hidden; }
 .splash-content { display: flex; flex-direction: column; align-items: center; gap: 30px; }
-.splash-header { font-family: 'Poppins', sans-serif; font-size: 1.4em; font-weight: 400; color: #555; text-align: center; max-width: 600px; opacity: 0; line-height: 1.5; animation: fadeInText 1s ease-out 0.2s forwards; }
+.splash-header { font-family: 'Poppins', sans-serif; font-size: 1.4em; font-weight: 400; color: #555; text-align: center; max-width: 600px; opacity: 0; line-height: 1.5; animation: fadeInText 1s ease-out 0.2s forwards; padding: 0 15px; }
 .splash-header strong { display: block; font-size: 1.2em; font-weight: 600; color: #003366; }
-.logo-animation { display: flex; align-items: center; transform: scale(0.8); }
-.aspire-a { width: 150px; height: 150px; margin-right: -25px; }
 
-/* 'A' के ठोस आकार का नया और बेहतर एनीमेशन */
-.shape {
-    fill: #192a56;
+/* ===== START: लोगो के लिए नया और सरल कोड ===== */
+.logo-animation {
+    /* एनिमेशन के लिए शुरुआती स्टाइल */
     opacity: 0;
-    transform-origin: bottom center;
-    animation: unveilShape 1s cubic-bezier(0.77, 0, 0.175, 1) forwards;
+    transform: scale(0.7);
+    
+    /* नया एनिमेशन */
+    animation: finalLogoZoomIn 1.2s ease-out 0.5s forwards;
 }
-.shape-outer { animation-delay: 0.5s; }
-.shape-middle { animation-delay: 0.7s; }
-.shape-inner { animation-delay: 0.9s; }
 
-@keyframes unveilShape {
+.aspire-logo-img {
+    max-width: 350px; /* आप लोगो का साइज़ यहाँ से बदल सकते हैं */
+    height: auto;
+}
+
+/* लोगो की पूरी इमेज के लिए फाइनल एनिमेशन */
+@keyframes finalLogoZoomIn {
     from {
         opacity: 0;
-        transform: translateY(20px) scaleY(0.9);
+        transform: scale(0.7);
     }
     to {
         opacity: 1;
-        transform: translateY(0) scaleY(1);
+        transform: scale(1); /* इमेज को उसके असली साइज़ में लाएगा */
     }
 }
+/* ===== END: लोगो के लिए नया और सरल कोड ===== */
 
-/* टेक्स्ट का एनीमेशन */
-.text-animation { display: flex; flex-direction: column; align-items: flex-start; font-family: sans-serif; }
-.aspire-text { font-size: 100px; font-weight: bold; color: #192a56; opacity: 0; animation: fadeInText 0.8s ease-out 1.8s forwards; }
-.subtext { opacity: 0; color: #192a56; animation: fadeInText 0.8s ease-out forwards; }
-.business-link { font-size: 20px; font-weight: bold; letter-spacing: 2px; margin-top: -10px; animation-delay: 2.1s; }
 .splash-tagline { font-family: serif; font-style: italic; font-size: 1.3em; color: #555; opacity: 0; animation: fadeInText 1s ease-out 2.5s forwards; }
 
+/* यह एनिमेशन हेडर और टैगलाइन के लिए इस्तेमाल होता है */
 @keyframes fadeInText { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
 /* --- बाकी के सारे स्टाइल --- */
@@ -52,8 +95,9 @@ body {
     background-position: center center;
     background-repeat: no-repeat;
     background-attachment: fixed;
+    overflow-x: hidden;
 }
-/* हेडर स्टाइल */
+
 .site-header { 
     display: flex; 
     align-items: center; 
@@ -63,14 +107,21 @@ body {
     border: 3px solid #d9232d;
 }
 
-.header-logo-container {
+.header-logos-left, .header-logos-right {
     display: flex;
     align-items: center;
     gap: 25px;
 }
-.header-logo-container img {
+.header-logos-left img, .header-logos-right img {
     max-height: 50px;
     width: auto;
+}
+
+.lang-switcher-mobile-container {
+    display: none;
+    padding: 10px;
+    background-color: #f0f0f0;
+    text-align: center;
 }
 
 .lang-switcher { display: flex; align-items: center; font-size: 0.9em; font-weight: 500; flex-shrink: 0; }
@@ -79,45 +130,50 @@ body {
 .lang-switcher a.active { color: #d9232d; font-weight: 600; }
 .lang-switcher span { color: #ccc; margin: 0 5px; }
 
-/* मुख्य कंटेंट */
 .main-content { padding: 30px 30px 40px 30px; max-width: 1200px; margin: 0 auto; text-align: center; }
 
 .subtitle-container {
-    background-color: rgba(10, 25, 47, 0.6);
-    padding: 15px 25px;
-    border-radius: 50px;
+    background-color: #003366; /* HPCL का नीला रंग */
+    padding: 15px 40px;        /* पट्टी का साइज़ */
+    border-radius: 50px;       /* गोल किनारे */
     margin: 0 auto 25px auto;
     max-width: 800px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(5px);
+    border: 2px solid #FFD700; /* सुनहरी बॉर्डर */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* हल्की परछाई */
+    /* पुरानी प्रॉपर्टीज़ हटा दी गई हैं */
+    display: inline-block;     /* ताकि पट्टी सिर्फ टेक्स्ट के चारों ओर आए */
 }
 
 .subtitle {
+    font-family: 'Playfair Display', serif; /* नया फ़ॉन्ट */
     color: #FFFFFF;
-    font-size: 1.8em;
-    font-weight: 600;
+    font-size: 2em; /* थोड़ा बड़ा */
+    font-weight: 700; /* थोड़ा और मोटा */
     margin: 0;
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* बेहतर परछाई */
+    letter-spacing: 1px; /* अक्षरों के बीच थोड़ी जगह */
+    font-style: italic; /* इटैलिक स्टाइल */
 }
 
-/* ===== START: काउंटडाउन टाइमर स्टाइल ===== */
 #countdown-wrapper {
     margin-bottom: 30px;
 }
 .countdown-container {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: transparent;
     padding: 25px;
     border-radius: 15px;
     max-width: 700px;
     margin: 0 auto;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    border: 1px solid #ddd;
+    box-shadow: none;
+    border: none;
 }
 .countdown-container h2 {
     font-size: 1.6em;
     font-weight: 600;
-    color: #003366;
+    color: #FFFFFF; /* रंग सफ़ेद हो गया */
     margin: 0 0 20px 0;
+    /* लाल आउटलाइन और हल्की परछाई */
+    text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
 }
 .countdown-timer {
     display: flex;
@@ -132,6 +188,11 @@ body {
     border-radius: 10px;
     min-width: 90px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      /* ===== START: यहाँ आकर्षक बॉर्डर जोड़ा गया है ===== */
+    border: 3px solid #FFD700; /* सुनहरी बॉर्डर */
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* सुनहरी चमक */
+    transition: transform 0.3s ease; /* होवर इफ़ेक्ट के लिए */
+    /* ===== END: बॉर्डर का स्टाइल ===== */
 }
 .countdown-timer span {
     display: block;
@@ -146,78 +207,73 @@ body {
     text-transform: uppercase;
 }
 .draw-live-message {
-    background-color: #d4edda;
-    color: #155724;
+    background-color: transparent;
     padding: 20px;
     border-radius: 10px;
     margin: 0 auto;
     max-width: 700px;
-    border: 1px solid #c3e6cb;
+    border: none;
 }
 .draw-live-message h2 {
     margin: 0;
     font-size: 1.4em;
+    color: #FFFFFF; /* रंग सफ़ेद हो गया */
+    /* लाल आउटलाइन और हल्की परछाई */
+    text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
 }
 .tab-button.disabled {
     pointer-events: none;
     opacity: 0.5;
 }
-/* ===== END: काउंटडाउन टाइमर स्टाइल ===== */
 
-
-/* --- Professional Navigation Bar Styles --- */
 .tab-nav {
     display: flex;
     justify-content: center;
-    background-color: #003366; /* HPCL का गहरा नीला रंग */
+    background-color: #003366;
     margin-bottom: 30px;
     padding: 0;
     border-bottom: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* हल्की सी परछाई */
-    border-radius: 5px; /* हल्के गोल किनारे */
-    overflow: hidden; /* ताकि borderRadius काम करे */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .tab-button {
     font-family: 'Poppins', sans-serif;
-    font-size: 1em; /* थोड़ा छोटा फ़ॉन्ट */
+    font-size: 1em;
     font-weight: 500;
-    color: #ffffff; /* सफ़ेद टेक्स्ट */
+    color: #ffffff;
     background-color: transparent;
     border: none;
-    padding: 18px 30px; /* बटन को थोड़ा बड़ा करने के लिए */
+    padding: 18px 30px;
     cursor: pointer;
-    border-bottom: none; /* नीचे का बॉर्डर हटाया गया */
+    border-bottom: none;
     transition: background-color 0.3s ease;
     white-space: nowrap;
 }
 
 .tab-button:hover {
-    background-color: #004488; /* होवर पर थोड़ा हल्का नीला */
+    background-color: #004488;
     color: #ffffff;
 }
 
 .tab-button.active {
-    background-color: #d9232d; /* HPCL का लाल रंग */
+    background-color: #d9232d;
     color: #ffffff;
-    font-weight: 600; /* एक्टिव टैब को थोड़ा मोटा दिखाएँ */
+    font-weight: 600;
 }
 
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: tabFadeIn 0.5s ease; }
 @keyframes tabFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* ===== START: बटन के लिए नया स्टाइल ===== */
 .draw-controls {
     margin-bottom: 20px;
 }
 #draw-button { background-color: #d9232d; color: white; padding: 14px 45px; border: none; border-radius: 50px; font-size: 1.3em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(217, 35, 45, 0.3); }
 #draw-button:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(217, 35, 45, 0.4); }
 #reset-button { background-color: #003366; margin-left: 15px; color: white; padding: 14px 30px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: 500; cursor: pointer; }
-/* ===== END: बटन के लिए नया स्टाइल ===== */
 
-
-/* स्लाइड शो */
 .slideshow-container {
     max-width: 1200px;
     margin: 40px auto 40px auto;
@@ -246,7 +302,6 @@ body {
     display: block;
 }
 
-/* स्लॉट मशीन और विजेता बैनर */
 .winner-banner {
     width: 100%;
     background-color: transparent;
@@ -316,7 +371,6 @@ body {
     height: 100px;
 }
 
-/* सर्च और 'About Us' सेक्शन */
 .search-container { max-width: 600px; margin: 0 auto; padding: 20px 0; }
 #search-heading { font-size: 1.3em; font-weight: 600; margin: 0 0 10px 0; color: #003366; }
 .search-subheading { color: #555; margin-bottom: 25px; }
@@ -340,10 +394,22 @@ body {
 .site-footer { text-align: center; padding: 30px; font-size: 0.9em; color: #888; border-top: 1px solid #e9ecef; margin-top: 40px; }
 .site-footer p { margin: 0; }
 
-/* सिनेमैटिक काउंटडाउन */
 .countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1a1a1a; display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; overflow: hidden; transition: opacity 0.6s ease-in, transform 0.6s cubic-bezier(0.5, 0, 0.75, 0); }
 .countdown-overlay.hidden { opacity: 0; pointer-events: none; }
-.film-leader { width: 90vmin; height: 90vmin; background-color: #b0b0b0; position: relative; display: flex; justify-content: center; align-items: center; animation: filmFlicker 0.2s infinite alternate; }
+.film-leader {
+    /* --countdown-color JS से कंट्रोल होगा, यह डिफ़ॉल्ट रंग है */
+    --countdown-color: #d9232d; 
+    
+    width: 90vmin;
+    height: 90vmin;
+    background-color: #b0b0b0;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: filmFlicker 0.2s infinite alternate;
+    overflow: hidden; /* यह ज़रूरी है */
+}
 .film-leader::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); opacity: 0.1; pointer-events: none; }
 .crosshair-h, .crosshair-v { position: absolute; background-color: rgba(0, 0, 0, 0.5); }
 .crosshair-h { width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
@@ -351,7 +417,7 @@ body {
 .circle-border { width: 90%; height: 90%; border-radius: 50%; border: 1.5vmin solid #111; box-shadow: 0 0 0 0.5vmin #111; position: absolute; }
 .countdown-number { font-family: 'Poppins', sans-serif; font-size: 40vmin; font-weight: 700; color: #111; z-index: 10; animation: numberAppear 1s forwards; }
 .rotating-wipe { width: 2px; height: 50%; background-color: #111; position: absolute; top: 0; left: 50%; transform-origin: bottom center; z-index: 5; }
-.rotating-wipe.animate { animation: rotateWipe 1s linear forwards; }
+.rotating-wipe.animate { animation: rotateWipe 1.2s linear forwards; }
 @keyframes filmFlicker { from { opacity: 0.95; } to { opacity: 1; } }
 @keyframes numberAppear { from { opacity: 0.5; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
 @keyframes rotateWipe { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
@@ -361,7 +427,6 @@ body {
 .winner-banner.zoomed-in { position: fixed; top: 50%; left: 50%; width: 90vw; transform: translate(-50%, -50%) scale(1.2); z-index: 9000; }
 .countdown-overlay.slide-down { transform: translateY(100%); opacity: 0; }
 
-/* विजेता पॉपअप */
 .winner-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: opacity 0.3s ease-in-out; }
 .winner-popup-overlay.hidden { display: none; opacity: 0; }
 .winner-popup { background-color: #ffffff; padding: 40px; border-radius: 20px; max-width: 500px; text-align: center; border: 8px solid #d9232d; box-shadow: 0 0 50px rgba(217, 35, 45, 0.8); animation: zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
@@ -377,231 +442,272 @@ body {
 #save-next-button { background-color: #003366; color: white; padding: 12px 30px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; margin-top: 30px; transition: background-color 0.3s; }
 #save-next-button:hover { background-color: #002244; }
 
-/* पब्लिक विजेता कार्ड */
 .public-winner-card { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9500; background-color: #ffffff; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%; text-align: center; border: 8px solid #d9232d; box-shadow: 0 0 50px rgba(217, 35, 45, 0.8); animation: zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); transition: opacity 0.3s, visibility 0.3s; }
 .public-winner-card.hidden { display: none; opacity: 0; visibility: hidden; }
 #public-heading { font-size: 2em; color: #003366; margin-top: 0; }
 
-/* विजेता सूची टेबल */
-/* ===== यहाँ मार्जिन बदला गया है ===== */
 .winners-list-container { max-width: 1200px; margin: 50px auto 0 auto; padding: 20px 0; text-align: center; }
-#winners-list-heading { font-size: 1.5em; font-weight: 600; margin-bottom: 25px; color: #003366; }
-.table-wrapper { overflow-x: auto; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); }
+#winners-list-heading {
+    font-size: 1.8em; /* थोड़ा बड़ा फ़ॉन्ट */
+    font-weight: 600;
+    margin-bottom: 35px; /* नीचे थोड़ी और जगह */
+    color: #FFFFFF;
+    text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
+
+    /* --- यहाँ से नीली पट्टी के लिए स्टाइल जोड़ी गई है --- */
+    background-color: #003366; /* HPCL का नीला रंग */
+    padding: 15px 40px;        /* पट्टी का साइज़ (ऊपर-नीचे और दाएं-बाएं) */
+    border-radius: 50px;       /* पट्टी को गोल आकार देने के लिए */
+    display: inline-block;     /* ताकि पट्टी सिर्फ टेक्स्ट के चारों ओर आए */
+    border: 2px solid #FFD700; /* एक सुनहरी (Gold) बॉर्डर */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* हल्की 3D परछाई */
+}
+.table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px; /* थोड़े और गोल किनारे */
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* ज़्यादा गहरी परछाई */
+    border: 1px solid #003366; /* गहरी नीली बॉर्डर */
+}
 .winners-table { width: 100%; border-collapse: collapse; background-color: #ffffff; }
 .winners-table th, .winners-table td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
-.winners-table thead { background-color: #003366; color: #ffffff; }
-.winners-table th { font-weight: 600; font-size: 0.9em; text-transform: uppercase; }
-.winners-table tbody tr:nth-child(even) { background-color: #f8f9fa; }
-.winners-table tbody tr:hover { background-color: #e9ecef; }
-.winners-table td { font-size: 0.95em; color: #333; }
+.winners-table thead {
+    background-image: linear-gradient(45deg, #003366, #004488); /* ग्रेडिएंट बैकग्राउंड */
+    color: #ffffff;
+    border-bottom: 3px solid #FFD700; /* सुनहरी बॉर्डर */
+}
+.winners-table tbody tr {
+    transition: background-color 0.3s ease, transform 0.2s ease; /* स्मूथ इफ़ेक्ट के लिए */
+    border-bottom: 1px solid #e0e0e0; /* पंक्तियों के बीच हल्की लाइन */
+}
+
+.winners-table tbody tr:last-child {
+    border-bottom: none; /* आखिरी लाइन हटा दें */
+}
+
+.winners-table tbody tr:hover {
+    background-color: #d9eaff; /* होवर पर हल्का नीला रंग */
+    transform: scale(1.015); /* होवर पर हल्का सा ज़ूम इफ़ेक्ट */
+}
+.winners-table td:nth-child(2), /* Prize कॉलम */
+.winners-table td:nth-child(3) { /* Winner Name कॉलम */
+    font-weight: 600; /* थोड़ा और बोल्ड */
+    color: #003366;
+    font-size: 1.05em; /* थोड़ा सा बड़ा फ़ॉन्ट */
+    text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
+}
+
+.winners-table td:nth-child(3)::before {
+    content: '🏆 '; /* ट्रॉफी का इमोजी */
+    margin-right: 8px; /* आइकन और नाम के बीच जगह */
+    font-size: 0.9em;  /* आइकन का साइज़ */
+}
+
+.winners-table tbody tr:nth-child(even) {
+    background-color: #fffbeb; /* हल्का सुनहरा "विनिंग" बैकग्राउंड */
+}
 .loading-message, .no-winners-message { padding: 40px; font-size: 1.1em; color: #555; }
 
-/* =================================================================== */
-/* ============== START: COMPLETE RESPONSIVE STYLES ============== */
-/* =================================================================== */
-
-/* --- 1. टैबलेट और छोटे डेस्कटॉप के लिए (992px तक) --- */
 @media (max-width: 992px) {
-    .main-content {
-        padding: 25px;
-    }
-
-    .tab-button {
-        padding: 16px 20px;
-        font-size: 0.95em;
-    }
-
-    .slideshow-wrapper {
-        gap: 15px;
-    }
-
-    .reel-box.single-reel-box {
-        padding: 25px;
-    }
-    
-    .countdown-timer div {
-        min-width: 80px;
-        padding: 12px;
-    }
-    .countdown-timer span {
-        font-size: 2.2em;
-    }
+    .main-content { padding: 25px; }
+    .tab-button { padding: 16px 20px; font-size: 0.95em; }
+    .slideshow-wrapper { gap: 15px; }
+    .reel-box.single-reel-box { padding: 25px; }
+    .countdown-timer div { min-width: 80px; padding: 12px; }
+    .countdown-timer span { font-size: 2.2em; }
 }
 
-
-/* --- 2. बड़े मोबाइल और टैबलेट पोर्ट्रेट के लिए (768px तक) --- */
 @media (max-width: 768px) {
-    /* हेडर को एडजस्ट करें */
-    .site-header {
-        flex-direction: column;
-        gap: 15px;
-        padding: 15px;
-    }
-
-    .header-logo-container {
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .header-logo-container img {
-        max-height: 40px;
-    }
-
-    /* मुख्य कंटेंट की पैडिंग कम करें */
-    .main-content {
-        padding: 20px 15px;
-    }
-
-    /* "Ready for Round" टेक्स्ट को एडजस्ट करें */
-    .subtitle-container {
-        margin: 0 15px 25px 15px;
-        padding: 12px 20px;
-        border-radius: 10px;
-    }
-    .subtitle {
-        font-size: 1.4em;
-    }
-
-    /* काउंटडाउन */
-    .countdown-container h2, .draw-live-message h2 {
-        font-size: 1.2em;
-    }
-    .countdown-timer {
-        gap: 10px;
-    }
-    .countdown-timer div {
-        min-width: 65px;
-        padding: 10px;
-    }
-    .countdown-timer span {
-        font-size: 1.8em;
-    }
-     .countdown-timer span.label {
-        font-size: 0.7em;
-    }
-
-
-    /* नेविगेशन बार को वर्टिकल करें */
-    .tab-nav {
-        flex-direction: column;
-        border-radius: 5px;
-        margin: 0 15px 25px 15px;
-    }
-    .tab-button {
-        text-align: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    .tab-button:last-child {
-        border-bottom: none;
-    }
-
-    /* बटन का साइज़ एडजस्ट करें */
-    #draw-button {
-        font-size: 1.1em;
-        padding: 12px 35px;
-    }
-    #reset-button {
-        padding: 12px 25px;
-        font-size: 1em;
-    }
-
-    /* स्लाइड शो को वर्टिकल करें */
-    .slideshow-wrapper {
-        flex-direction: column;
-    }
-
-    /* स्लॉट मशीन को एडजस्ट करें */
-    .slot-machine-container.single-reel-mode {
-        margin: 20px auto;
-        padding: 0 10px;
-    }
-    .reel-box.single-reel-box .reel-window {
-        height: 80px;
-    }
-    .reel-box.single-reel-box .reel-item {
-        height: 80px;
-        line-height: 80px;
-        font-size: 1.8em;
-    }
-
-    /* "Check Coupon" फॉर्म को बेहतर बनाएँ */
-    .search-form {
-        flex-direction: column;
-    }
-
-    /* विजेता पॉपअप को एडजस्ट करें */
-    .winner-popup, .public-winner-card {
-        padding: 25px;
-        max-width: 90%;
-    }
-    #popup-heading, #public-heading {
-        font-size: 1.5em;
-    }
-    #winner-popup .prize-image-container,
-    #public-winner-card .prize-image-container {
-        height: 120px;
-    }
+   .site-header { flex-direction: row; gap: 10px; padding: 10px 15px; }
+    .site-header .lang-switcher { display: none; }
+    .lang-switcher-mobile-container { display: block; }
+     .lang-switcher-mobile-container .lang-switcher{ justify-content: center; }
+   .header-logos-left, .header-logos-right { gap: 15px; flex-wrap: wrap; }
+    .header-logos-left img, .header-logos-right img { max-height: 40px; }
+    .main-content { padding: 20px; }
+    .subtitle-container { margin-left: 0; margin-right: 0; margin-bottom: 25px; padding: 12px 20px; }
+    .subtitle { font-size: 1.4em; }
+    .countdown-container { padding: 20px; }
+    .countdown-container h2, .draw-live-message h2 { font-size: 1.2em; }
+    .countdown-timer { gap: 10px; }
+    .countdown-timer div { min-width: 65px; padding: 10px; }
+    .countdown-timer span { font-size: 1.8em; }
+     .countdown-timer span.label { font-size: 0.7em; }
+    .tab-nav { flex-direction: column; border-radius: 5px; margin-left: 0; margin-right: 0; margin-bottom: 25px; }
+    .tab-button { text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .tab-button:last-child { border-bottom: none; }
+    #draw-button { font-size: 1.1em; padding: 12px 35px; }
+    #reset-button { padding: 12px 25px; font-size: 1em; }
+    .slideshow-wrapper { flex-direction: column; }
+    .slot-machine-container.single-reel-mode { margin: 20px auto; padding: 0; }
+    .reel-box.single-reel-box .reel-window { height: 80px; }
+    .reel-box.single-reel-box .reel-item { height: 80px; line-height: 80px; font-size: 1.8em; }
+    .search-form { flex-direction: column; }
+    .winner-popup, .public-winner-card { padding: 25px; width: 90%; max-width: 90%; }
+    #popup-heading, #public-heading { font-size: 1.5em; }
+    #winner-popup .prize-image-container, #public-winner-card .prize-image-container { height: 120px; }
 }
 
-
-/* --- 3. छोटे मोबाइल फ़ोन के लिए (576px तक) --- */
 @media (max-width: 576px) {
-    body {
-        font-size: 14px; /* बेस फॉन्ट साइज़ को छोटा करें */
-    }
-
-    /* हेडर और लोगो */
-    .header-logo-container img {
-        max-height: 35px;
-    }
-
-    /* "Ready for Round" टेक्स्ट को और छोटा करें */
-    .subtitle {
-        font-size: 1.2em;
-    }
-    
-    /* काउंटडाउन */
-    .countdown-timer {
-        gap: 8px;
-    }
-    .countdown-timer div {
-        min-width: 0;
-        flex: 1;
-        padding: 8px;
-    }
-    .countdown-timer span {
-        font-size: 1.5em;
-    }
-
-
-    /* नेविगेशन बटन */
-    .tab-button {
-        padding: 15px;
-        font-size: 1em;
-    }
-    
-    .main-content {
-        padding: 15px 10px;
-    }
-
-    /* विजेता पॉपअप को और एडजस्ट करें */
-    .winner-popup, .public-winner-card {
-        padding: 20px;
-    }
-    .winner-details-popup {
-        font-size: 1em;
-    }
-    #save-next-button {
-        font-size: 1em;
-        padding: 10px 20px;
-    }
-    
-    /* स्लॉट मशीन का टेक्स्ट साइज़ */
-    .reel-box.single-reel-box .reel-item {
-        font-size: 1.5em;
-    }
+    body { font-size: 14px; }
+    .header-logos-left img, .header-logos-right img { max-height: 35px; }
+    .subtitle { font-size: 1.2em; }
+    .countdown-timer { gap: 8px; }
+    .countdown-timer div { min-width: 0; flex: 1; padding: 8px; }
+    .countdown-timer span { font-size: 1.5em; }
+    .tab-button { padding: 15px; font-size: 1em; }
+    .main-content { padding: 15px; }
+    .winner-popup, .public-winner-card { padding: 20px; }
+    .winner-details-popup { font-size: 1em; }
+    #save-next-button { font-size: 1em; padding: 10px 20px; }
+    .reel-box.single-reel-box .reel-item { font-size: 1.5em; }
 }
 
-/* ================================================================= */
-/* ============== END: COMPLETE RESPONSIVE STYLES ============== */
-/* ================================================================= */
+.prize-label { display: inline-block; padding: 3px 10px; margin-left: 8px; border-radius: 12px; font-size: 0.8em; font-weight: 700; color: white; vertical-align: middle; }
+.prize-label.mega-prize { background-image: linear-gradient(45deg, #d9232d, #ff5733, #d9232d); text-transform: uppercase; box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); animation: pulse-glow 1.5s infinite; }
+.prize-label.high-tier { background-color: #003366; }
+.prize-label.mid-tier { background-color: #1e8449; }
+@keyframes pulse-glow { 0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 120, 90, 1); } 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); } }
+
+.prize-info-container { text-align: center; margin: 0 auto 40px auto; max-width: 1000px; }
+#prize-info-heading { font-size: 1.8em; font-weight: 600; margin-bottom: 30px; color: #FFFFFF; text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5); }
+.prize-cards-wrapper { display: flex; justify-content: center; align-items: stretch; gap: 10px; flex-wrap: wrap; }
+.prize-card { background-color: rgba(0, 51, 102, 0.7); border: 2px solid #FFD700; border-radius: 15px; padding: 5px; width: 92px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.prize-card:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3); }
+.prize-card h4 { font-family: 'Playfair Display', serif; font-size: 0.9em; color: #FFD700; margin: 0 0 10px 0; font-weight: 700; }
+.prize-card .winner-count { font-size: 1em; font-weight: 700; color: #FFFFFF; margin: 0; line-height: 1; }
+.prize-card .winner-label { font-size: 1em; color: #e0e0e0; margin: 5px 0 0 0; }
+.prize-card.mega-prize-card { background-color: rgba(217, 35, 45, 0.7); border-color: #ffffff; }
+
+.rotating-wipe { z-index: 5; }
+.countdown-logo { position: absolute; width: 50%; height: auto; top: 20%; left: 50%; transform: translate(-50%, -50%); opacity: 0.90; z-index: 2; }
+
+
+/* ===== START: थैंक यू पॉप-अप के लिए नया स्टाइल ===== */
+.thank-you-popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 25, 51, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 11000;
+    backdrop-filter: blur(5px);
+    opacity: 1;
+    transition: opacity 0.4s ease;
+}
+
+.thank-you-popup-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    display: none; /* इसे जोड़ने से यह पूरी तरह से गायब हो जाएगा */
+}
+
+.thank-you-popup {
+    background: linear-gradient(145deg, #ffffff, #f0f5ff);
+    padding: 40px;
+    border-radius: 20px;
+    max-width: 650px;
+    width: 90%;
+    text-align: center;
+    border: 5px solid #003366;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    animation: zoomIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+}
+
+.close-popup-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 24px;
+    line-height: 35px;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+.close-popup-btn:hover {
+    background-color: #d9232d;
+    color: #ffffff;
+    transform: rotate(90deg);
+}
+
+.popup-logos {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-bottom: 25px;
+}
+
+.popup-logos img {
+    max-height: 60px;
+    width: auto;
+}
+
+.thank-you-popup h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2em;
+    color: #003366;
+    margin: 0 0 20px 0;
+}
+
+.company-info {
+    font-size: 1.05em;
+    line-height: 1.7;
+    color: #444;
+    margin: 15px 0;
+}
+
+.company-info strong {
+    color: #d9232d;
+}
+
+.popup-divider {
+    border: none;
+    height: 1px;
+    background-color: #ccc;
+    margin: 30px auto;
+}
+
+.aspire-link {
+    display: inline-block;
+    background-color: #d9232d;
+    color: #ffffff;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1em;
+    margin-top: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aspire-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(217, 35, 45, 0.4);
+}
+
+@media (max-width: 768px) {
+    .thank-you-popup {
+        padding: 30px;
+    }
+    .thank-you-popup h2 {
+        font-size: 1.8em;
+    }
+    .popup-logos {
+        gap: 20px;
+    }
+    .popup-logos img {
+        max-height: 50px;
+    }
+}
+/* ===== END: नया स्टाइल यहाँ समाप्त होता है ===== */
