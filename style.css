@@ -50,22 +50,37 @@
 .splash-header { font-family: 'Poppins', sans-serif; font-size: 1.4em; font-weight: 400; color: #555; text-align: center; max-width: 600px; opacity: 0; line-height: 1.5; animation: fadeInText 1s ease-out 0.2s forwards; padding: 0 15px; }
 .splash-header strong { display: block; font-size: 1.2em; font-weight: 600; color: #003366; }
 
-/* ===== START: लोगो के लिए नया और सरल कोड ===== */
+/* ===== START: दोनों लोगो के लिए सरल एनिमेशन कोड ===== */
 .logo-animation {
-    /* एनिमेशन के लिए शुरुआती स्टाइल */
+    /* एनीमेशन के लिए शुरुआती स्टाइल */
     opacity: 0;
     transform: scale(0.7);
     
     /* नया एनिमेशन */
     animation: finalLogoZoomIn 1.2s ease-out 0.5s forwards;
+
+    /* दोनों लोगो को अगल-बगल रखने के लिए */
+    display: flex;
+    align-items: center; /* vertically align */
+    gap: 20px; /* दोनों के बीच जगह */
 }
 
-.aspire-logo-img {
-    max-width: 350px; /* आप लोगो का साइज़ यहाँ से बदल सकते हैं */
+/* दोनों लोगो के लिए कॉमन स्टाइल */
+.logo-img {
     height: auto;
 }
 
-/* लोगो की पूरी इमेज के लिए फाइनल एनिमेशन */
+/* HP लोगो का साइज़ */
+.hp-logo-splash {
+    max-width: 90px;
+}
+
+/* Aspire लोगो का साइज़ */
+.aspire-logo-splash {
+    max-width: 150px; 
+}
+
+/* लोगो की पूरी इमेज के लिए फाइनल एनिमेशन (यह पहले जैसा ही है) */
 @keyframes finalLogoZoomIn {
     from {
         opacity: 0;
@@ -77,7 +92,6 @@
     }
 }
 /* ===== END: लोगो के लिए नया और सरल कोड ===== */
-
 .splash-tagline { font-family: serif; font-style: italic; font-size: 1.3em; color: #555; opacity: 0; animation: fadeInText 1s ease-out 2.5s forwards; }
 
 /* यह एनिमेशन हेडर और टैगलाइन के लिए इस्तेमाल होता है */
@@ -400,16 +414,17 @@ body {
     /* --countdown-color JS से कंट्रोल होगा, यह डिफ़ॉल्ट रंग है */
     --countdown-color: #d9232d; 
     
-    width: 90vmin;
+     width: 90vmin;
     height: 90vmin;
     background-color: #b0b0b0;
-    position: relative;
+    position: relative; /* <-- यह लाइन जोड़ें */
     display: flex;
     justify-content: center;
     align-items: center;
     animation: filmFlicker 0.2s infinite alternate;
     overflow: hidden; /* यह ज़रूरी है */
 }
+
 .film-leader::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); opacity: 0.1; pointer-events: none; }
 .crosshair-h, .crosshair-v { position: absolute; background-color: rgba(0, 0, 0, 0.5); }
 .crosshair-h { width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
@@ -697,6 +712,22 @@ body {
 }
 
 @media (max-width: 768px) {
+
+    .prize-card { 
+    flex: 1 1 calc(33.33% - 10px); /* 3 कार्ड एक लाइन में */
+    max-width: 120px;
+    padding: 10px 5px; /* अंदर की पैडिंग बढ़ाएँ */
+}
+.prize-card.mega-prize-card { /* मेगा प्राइज को थोड़ी ज़्यादा जगह दें */
+    flex: 1 1 100%; 
+    max-width: 250px;
+}
+.prize-card h4 { 
+    font-size: 1em; 
+}
+.prize-card .winner-count { 
+    font-size: 1.5em; 
+}
     .thank-you-popup {
         padding: 30px;
     }
@@ -711,3 +742,136 @@ body {
     }
 }
 /* ===== END: नया स्टाइल यहाँ समाप्त होता है ===== */
+
+/* ===== START: घूमने वाली सुई के पीछे रंग भरने वाला नया एनीमेशन ===== */
+
+/* 1. हम एक कस्टम CSS वैरिएबल '--progress-angle' बना रहे हैं। 
+   @property ब्राउज़र को बताता है कि यह एक 'angle' है, ताकि इसे स्मूथली एनिमेट किया जा सके। */
+@property --progress-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg; /* शुरुआती मान 0 डिग्री है */
+}
+
+/* 2. एक कीफ्रेम एनीमेशन जो हमारे वैरिएबल को 0 से 360 डिग्री तक बदलेगा। */
+@keyframes fill-circle-progress {
+  to {
+    --progress-angle: 360deg;
+  }
+}
+
+/* 3. हम .film-leader (ग्रे सर्कल) के ऊपर एक रंगीन परत बनाएंगे। */
+.film-leader::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* इसे ग्रे बैकग्राउंड के ऊपर लेकिन नंबर और सुई के नीचे रखें */
+  
+  /* यह conic-gradient असली जादू करता है।
+     - यह '--progress-angle' तक लाल रंग भरता है।
+     - उसके बाद का हिस्सा पारदर्शी (transparent) रखता है, जिससे नीचे का ग्रे रंग दिखाई देता है। */
+  background: conic-gradient(
+        var(--countdown-fill-color, #d9232d) var(--progress-angle), 
+    transparent var(--progress-angle)
+);
+  /* गोलाकार बनाने के लिए */
+  border-radius: 50%; 
+
+  /* शुरुआत में कोई एनीमेशन नहीं */
+  animation: none;
+}
+
+/* 4. जब सुई (.rotating-wipe) में .animate क्लास जुड़ती है,
+   तो हम अपनी रंगीन परत पर एनीमेशन शुरू कर देंगे। */
+.film-leader:has(.rotating-wipe.animate)::before {
+  /* एनीमेशन को सुई के घूमने की गति (1.2s) के साथ चलाएं */
+  animation: fill-circle-progress 1.2s linear forwards;
+}
+
+/* यह सुनिश्चित करता है कि सुई और क्रॉसहेयर लाइन्स रंग के ऊपर दिखाई दें */
+.rotating-wipe, .crosshair-h, .crosshair-v, .circle-border, .countdown-number, .countdown-logo {
+    z-index: 5;
+}
+
+/* ===== END: नया एनीमेशन कोड ===== */
+
+/* 1. मुख्य कंटेनर की पोजीशन और स्टाइल */
+#admin-dashboard {
+    position: fixed; /* ताकि यह स्क्रॉल करने पर भी अपनी जगह पर बना रहे */
+    top: 85px;       /* ऊपर से दूरी (हेडर के ठीक नीचे) */
+    right: 20px;     /* दाहिने से दूरी */
+    z-index: 1000;   /* यह सुनिश्चित करता है कि यह बाकी सब चीजों के ऊपर रहे */
+    
+    background-color: rgba(0, 51, 102, 0.9); /* HP का गहरा नीला, थोड़ा पारदर्शी */
+    color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    border: 1px solid #FFD700; /* सुनहरी बॉर्डर */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(5px); /* बैकग्राउंड को धुंधला बनाता है (आधुनिक लुक) */
+    
+    display: flex; /* आइकन और टेक्स्ट को एक लाइन में रखने के लिए */
+    align-items: center; /* वर्टिकली सेंटर में रखने के लिए */
+    gap: 8px; /* आइकन और टेक्स्ट के बीच जगह */
+    
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+/* 2. आइकन (आंख) का स्टाइल */
+.viewer-icon {
+    width: 20px;
+    height: 20px;
+    fill: #FFFFFF; /* <<<--- बस इस लाइन को बदलें */
+}
+
+/* 3. संख्या (काउंट) का स्टाइल */
+#viewer-count {
+    font-weight: 700;
+    font-size: 1.1em;
+    background-color: #ffffff;
+    color: #003366;
+    padding: 2px 8px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+/* ===== END: नया स्टाइल ===== */
+
+#mute-toggle-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10001; /* यह हर चीज़ के ऊपर रहेगा */
+    
+    width: 45px;
+    height: 45px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 50%; /* इसे गोल बनाता है */
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    
+    /* आइकन को सेंटर में रखने के लिए */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+#mute-toggle-button:hover {
+    transform: scale(1.1);
+}
+
+/* दोनों SVG आइकन के लिए कॉमन स्टाइल */
+#mute-toggle-button svg {
+    width: 24px;
+    height: 24px;
+    fill: #333;
+}
+
+/* छिपाने के लिए हेल्पर क्लास */
+.hidden {
+    display: none;
+}

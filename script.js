@@ -19,6 +19,20 @@ const gameStateRef = database.ref('drawState');
 
 const API_URL = 'https://script.google.com/macros/s/AKfycbz2tIumCHYpvaRyFXiceh_qd4R-d45Dj9wV-27IQ5QzFjd1Kx5KFLY7u8MzMpqbEVbIMg/exec';
 
+// हर राउंड के लिए रंगों की सूची
+const countdownColors = [
+    '#d9232d', // 1. गहरा लाल
+    '#003366', // 2. HP नीला
+    '#1e8449', // 3. हरा
+    '#FFD700', // 4. सुनहरा
+    '#8E44AD', // 5. बैंगनी
+    '#FF5733', // 6. नारंगी
+    '#3498DB', // 7. हल्का नीला
+    '#E67E22', // 8. गहरा नारंगी
+    '#2ECC71', // 9. हल्का हरा
+    '#F1C40F'  // 10. पीला
+];
+
 // --- बाकी के सारे वेरिएबल्स ---
 const subtitleText = document.getElementById('subtitle-text');
 const drawButton = document.getElementById('draw-button');
@@ -80,6 +94,7 @@ let allParticipants = [];
 let currentWinner = null;
 let localState = {};
 let celebrationIntervalId = null;
+let isMuted = true; // शुरू में म्यूट रखें
 
 const ITEM_HEIGHT = 100;
 const REEL_LENGTH = 1000;
@@ -97,7 +112,7 @@ function getPrizeDetails(round) {
     return prizeConfig.find(config => round >= config.range[0] && round <= config.range[1]);
 }
 
-// आतिशबाजी के फंक्शन पहले जैसे ही रहेंगे...
+// आतिशबाजी के फंक्शन
 function startContinuousCelebration() {
   if (celebrationIntervalId) return;
   if (typeof confetti !== 'function') { console.error("Confetti library not loaded."); return; }
@@ -117,8 +132,20 @@ function stopCelebration() {
   }
 }
 
-// बाकी के फंक्शन जैसे translations, setLanguage, startCountdown, fetchData, searchParticipant, fetchAndDisplayWinners पहले जैसे ही रहेंगे...
-const translations = { hi: { subtitle: "दिवाली स्पेशल लकी ड्रा", button: "विजेता चुनें!", winner_title: "विजेता", tab_winner: "परिणाम पेज", tab_participants: "हमारे बारे में", search_heading: "अपनी एंट्री जांचें", search_subheading: "अपनी एंट्री खोजने के लिए अपना मोबाइल नंबर या कूपन कोड दर्ज करें।", search_placeholder: "मोबाइल या कूपन कोड दर्ज करें...", search_button: "खोजें", searching: "खोज रहे हैं...", entry_found: "बधाई हो! आपकी एंट्री मिल गई है।", no_entry: "इस विवरण के साथ कोई एंट्री नहीं मिली।", empty_input: "कृपया खोजने के लिए कुछ दर्ज करें।", about_heading: "उत्कृष्टता के प्रति हमारी प्रतिबद्धता", about_p1: "हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (एचपीसीएल) भारत की अग्रणी तेल और गैस कंपनियों में से एक है...", about_p2: "यह लकी ड्रा एचपीसीएल को चुनने के लिए आपका धन्यवाद कहने का हमारा तरीका है...", winners_list_heading: "लकी ड्रा विजेता", th_round: "राउंड", th_prize: "पुरस्कार", th_name: "विजेता का नाम", th_coupon: "कूपन कोड", th_outlet: "आउटलेट", th_address: "आउटलेट का पता", th_mobile: "मोबाइल", countdown_heading: "लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।", countdown_days: "दिन", countdown_hours: "घंटे", countdown_minutes: "मिनट", countdown_seconds: "सेकंड", draw_live_message: "ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें。", prize_info_heading: "आज के पुरस्कार" }, en: { subtitle: "Diwali Special Lucky Draw", button: "Reveal the Winner", winner_title: "Winner", tab_winner: "Result Page", tab_participants: "About Us", search_heading: "Check Your Coupen Code", search_subheading: "Enter your Mobile Number or Coupon Code to find your entry.", search_placeholder: "Enter Mobile or Coupon Code...", search_button: "Search", searching: "Searching...", entry_found: "Congratulations! Your entry has been found.", no_entry: "No entry found with these details.", empty_input: "Please enter something to search.", about_heading: "Our Commitment to Excellence", about_p1: "Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...", about_p2: "This lucky draw is our way of saying thank you for choosing HPCL...", winners_list_heading: "Lucky Draw Winners", th_round: "Round", th_prize: "Prize", th_name: "Winner Name", th_coupon: "Coupon Code", th_outlet: "Outlet", th_address: "Outlet Address", th_mobile: "Mobile", countdown_heading: "The lucky draw is about to begin, please stay on this page.", countdown_days: "Days", countdown_hours: "Hours", countdown_minutes: "Minutes", countdown_seconds: "Seconds", draw_live_message: "The draw has started! Stay on the Result Page to try your luck.", prize_info_heading: "Today's Prizes" } };
+// नया मास्टर प्ले साउंड फंक्शन
+function playSound(soundElement, options = {}) {
+    if (!isMuted && soundElement) {
+        soundElement.currentTime = 0;
+        soundElement.volume = options.volume || 1.0;
+        if (options.loop) {
+            soundElement.loop = true;
+        }
+        soundElement.play();
+    }
+}
+
+// भाषा और अन्य UI फंक्शन
+const translations = { hi: { subtitle: "दिवाली स्पेशल लकी ड्रा", button: "विजेता चुनें!", winner_title: "विजेता", tab_winner: "परिणाम पेज", tab_participants: "हमारे बारे में", search_heading: "अपनी एंट्री जांचें", search_subheading: "अपनी एंट्री खोजने के लिए अपना मोबाइल नंबर या कूपन कोड दर्ज करें।", search_placeholder: "मोबाइल या कूपन कोड दर्ज करें...", search_button: "खोजें", searching: "खोज रहे हैं...", entry_found: "बधाई हो! आपकी एंट्री मिल गई है।", no_entry: "इस विवरण के साथ कोई एंट्री नहीं मिली।", empty_input: "कृपया खोजने के लिए कुछ दर्ज करें।", about_heading: "उत्कृष्टता के प्रति हमारी प्रतिबद्धता", about_p1: "हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (एचपीसीएल) भारत की अग्रणी तेल और गैस कंपनियों में से एक है...", about_p2: "यह लकी ड्रा एचपीसीएल को चुनने के लिए आपका धन्यवाद कहने का हमारा तरीका है...", winners_list_heading: "लकी ड्रा विजेता", th_round: "राउंड", th_prize: "पुरस्कार", th_name: "विजेता का नाम", th_coupon: "कूपन कोड", th_outlet: "आउटलेट", th_address: "आउटलेट का पता", th_mobile: "मोबाइल", countdown_heading: "लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।", countdown_days: "दिन", countdown_hours: "घंटे", countdown_minutes: "मिनट", countdown_seconds: "सेकंड", draw_live_message: "ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें。", prize_info_heading: "आज के पुरस्कार" }, en: { subtitle: "Diwali Special Lucky Draw", button: "Reveal the Winner", winner_title: "Winner", tab_winner: "Result Page", tab_participants: "About Us", search_heading: "Check Your Coupen Code", search_subheading: "Enter your Mobile Number or Coupon Code to find your entry.", search_placeholder: "Enter Mobile or Coupon Code...", search_button: "Search", searching: "Searching...", entry_found: "Congratulations! Your entry has been found.", no_entry: "No entry found with these details.", empty_input: "Please enter something to search.", about_heading: "Our Commitment to Excellence", about_p1: "Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...", about_p2: "This lucky draw is our way of saying thank you for choosing HPCL...", winners_list_heading: "Lucky Draw Winners", th_round: "Round", th_prize: "Prize", th_name: "Winner Name", th_coupon: "Coupon Code", th_outlet: "Outlet", th_address: "Outlet Address", th_mobile: "Mobile", countdown_heading: "The lucky draw is about to begin, please stay on this page.", countdown_days: "Days", countdown_hours: "Hours", "countdown_minutes": "Minutes", countdown_seconds: "Seconds", draw_live_message: "The draw has started! Stay on the Result Page to try your luck.", prize_info_heading: "Today's Prizes" } };
 let currentLang = 'en';
 function setLanguage(lang) { currentLang = lang; const t = translations[lang]; subtitleText.innerText = t.subtitle; drawButton.innerText = t.button; document.getElementById('tab-btn-winner').innerText = t.tab_winner; document.getElementById('tab-btn-participants').innerText = t.tab_participants; searchHeading.innerText = t.search_heading; searchSubheading.innerText = t.search_subheading; searchInput.placeholder = t.search_placeholder; searchButton.innerText = t.search_button; document.getElementById('about-heading').innerText = t.about_heading; document.getElementById('about-p1').innerText = t.about_p1; document.getElementById('about-p2').innerText = t.about_p2; document.getElementById('winners-list-heading').innerText = t.winners_list_heading; document.getElementById('th-round').innerText = t.th_round; document.getElementById('th-prize').innerText = t.th_prize; document.getElementById('th-name').innerText = t.th_name; document.getElementById('th-coupon').innerText = t.th_coupon; document.getElementById('th-outlet').innerText = t.th_outlet; document.getElementById('th-address').innerText = t.th_address; document.getElementById('th-mobile').innerText = t.th_mobile; document.getElementById('countdown-heading').innerText = t.countdown_heading; document.querySelector('#days + .label').innerText = t.countdown_days; document.querySelector('#hours + .label').innerText = t.countdown_hours; document.querySelector('#minutes + .label').innerText = t.countdown_minutes; document.querySelector('#seconds + .label').innerText = t.countdown_seconds; document.querySelector('#draw-live-message h2').innerText = t.draw_live_message; document.getElementById('prize-info-heading').innerText = t.prize_info_heading; langHi.classList.toggle('active', lang === 'hi'); langEn.classList.toggle('active', lang === 'en'); }
 function startCountdown() { const countdownInterval = setInterval(() => { const now = new Date().getTime(); const distance = countdownTargetDate - now; if (distance < 0) { clearInterval(countdownInterval); countdownContainer.classList.add('hidden'); drawLiveMessage.classList.remove('hidden'); if (userRole !== 'admin') { tabBtnParticipants.classList.add('disabled'); tabBtnWinner.click(); } return; } const days = Math.floor(distance / (1000 * 60 * 60 * 24)); const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); const seconds = Math.floor((distance % (1000 * 60)) / 1000); daysEl.innerText = String(days).padStart(2, '0'); hoursEl.innerText = String(hours).padStart(2, '0'); minutesEl.innerText = String(minutes).padStart(2, '0'); secondsEl.innerText = String(seconds).padStart(2, '0'); }, 1000); }
@@ -130,7 +157,10 @@ function syncUIWithState(state) {
     if (!state || allParticipants.length === 0) return;
     localState = state;
 
-    if (state.status !== 'finished') stopCelebration();
+    if (state.status !== 'finished') {
+        stopCelebration();
+        // Sounds are now controlled by the mute button, no need to stop them here.
+    }
     
     winnerPopupOverlay.classList.add('hidden');
     publicWinnerCard.classList.add('hidden'); 
@@ -190,7 +220,7 @@ function syncUIWithState(state) {
             }
         }
     }
-    // अगर ड्रॉ समाप्त हो गया है तो पॉप-अप दिखाएं
+
     if (state.status === 'ended') {
         showThankYouPopup();
         if (userRole === 'admin') drawButton.disabled = true;
@@ -198,10 +228,59 @@ function syncUIWithState(state) {
     }
 }
 
-// बाकी के फंक्शन जैसे handleAdminClick, runCountdown, beginReelSpin, announceWinner पहले जैसे ही रहेंगे...
 function handleAdminClick() { drawButton.disabled = true; const pastWinners = allParticipants.filter(p => p.isWinner); const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName)); const eligibleParticipants = allParticipants.filter(p => { return !p.isWinner && !winningOutletNames.has(p.PumpName); }); if (eligibleParticipants.length === 0) { alert("ड्रॉ के लिए कोई योग्य प्रतिभागी या आउटलेट नहीं बचा है!"); drawButton.disabled = false; return; } const winner = eligibleParticipants[Math.floor(Math.random() * eligibleParticipants.length)]; gameStateRef.set({ status: 'countdown', round: localState.round, winnerCoupon: winner.CouponCode, countdownValue: 10 }).then(() => { let count = 10; const countdownInterval = setInterval(() => { count--; if (count >= 0) { gameStateRef.update({ countdownValue: count }); } else { gameStateRef.update({ status: 'spinning' }); clearInterval(countdownInterval); } }, 1200); }); }
-function runCountdown(currentNumber) { const countdownNumberEl = document.getElementById('countdown-number'); const rotatingWipe = document.getElementById('rotating-wipe'); const filmLeader = document.querySelector('.film-leader'); rotatingWipe.classList.remove('animate'); filmLeader.classList.remove('animate-fill'); const colors = ['#d9232d', '#003366', '#FFD700', '#1e8449', '#8E44AD', '#FF5733']; const randomColor = colors[Math.floor(Math.random() * colors.length)]; filmLeader.style.setProperty('--countdown-color', randomColor); countdownNumberEl.innerText = currentNumber > 0 ? currentNumber : 'GO!'; countdownNumberEl.style.fontSize = currentNumber > 0 ? '40vmin' : '30vmin'; setTimeout(() => { rotatingWipe.classList.add('animate'); filmLeader.classList.add('animate-fill'); }, 20); if (tickSound) { tickSound.currentTime = 0; tickSound.play(); } }
-function beginReelSpin(winnerCoupon) { if (reelCoupon.classList.contains('spinning')) return; reelCoupon.classList.add('spinning'); const pastWinners = allParticipants.filter(p => p.isWinner); const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName)); const eligibleParticipantsForReel = allParticipants.filter(p => { return !p.isWinner && !winningOutletNames.has(p.PumpName); }); document.getElementById('draw-sound').play(); let reel = startContinuousReel(reelCoupon, eligibleParticipantsForReel, 'CouponCode', 10); setTimeout(() => { stopReel(reel, winnerCoupon, 5); setTimeout(() => { document.getElementById('draw-sound').pause(); if (userRole === 'admin') { gameStateRef.update({ status: 'finished' }); } }, 5500); }, 5000); }
+
+function runCountdown(currentNumber) {
+    const filmLeader = document.querySelector('.film-leader');
+    if (localState && localState.round > 0) {
+        const colorIndex = (localState.round - 1) % countdownColors.length;
+        const selectedColor = countdownColors[colorIndex];
+        filmLeader.style.setProperty('--countdown-fill-color', selectedColor);
+    } else {
+        filmLeader.style.setProperty('--countdown-fill-color', '#d9232d');
+    }
+
+    const countdownNumberEl = document.getElementById('countdown-number');
+    const rotatingWipe = document.getElementById('rotating-wipe');
+    rotatingWipe.classList.remove('animate');
+    countdownNumberEl.innerText = currentNumber > 0 ? currentNumber : 'GO!';
+    countdownNumberEl.style.fontSize = currentNumber > 0 ? '40vmin' : '30vmin';
+    setTimeout(() => { rotatingWipe.classList.add('animate'); }, 20);
+    playSound(tickSound);
+}
+
+// Original reel functions, as requested
+function beginReelSpin(winnerCoupon) { 
+    if (reelCoupon.classList.contains('spinning')) return; 
+    reelCoupon.classList.add('spinning'); 
+    const pastWinners = allParticipants.filter(p => p.isWinner); 
+    const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName)); 
+    const eligibleParticipantsForReel = allParticipants.filter(p => { 
+        return !p.isWinner && !winningOutletNames.has(p.PumpName); 
+    }); 
+    playSound(document.getElementById('draw-sound')); 
+    let reel = startContinuousReel(reelCoupon, eligibleParticipantsForReel, 'CouponCode', 10); 
+    
+    // ======== यहाँ वह कोड है जिसे ठीक किया गया है (Line 248 से शुरू) ========
+    setTimeout(() => { 
+        stopReel(reel, winnerCoupon, 5); 
+        // Draw sound को deceleration शुरू होते ही पॉज करें
+        document.getElementById('draw-sound').pause(); 
+
+        // 5 सेकंड इंतजार करें (Reel Deceleration Time), ताकि Reel पूरी तरह रुक जाए और winner-sound बज जाए
+        setTimeout(() => {
+            if (userRole === 'admin') {
+                // अब Firebase स्टेट को 'finished' करें
+                gameStateRef.update({ status: 'finished' }); 
+            }
+        }, 5000); // Deceleration Time (5s)
+    }, 5000); // Initial Spin Time (5s)
+    // ======================================================================
+}
+
+function stopReel(reelObject, finalValue, stopTimeInSeconds) { const { reelElement, FINAL_ITEMS_COUNT } = reelObject; const TARGET_POS_IN_FINAL_CHUNK = 49; const TOTAL_ITEMS_IN_REEL = reelElement.querySelectorAll('.reel-item').length; const FINAL_POS_INDEX = TOTAL_ITEMS_IN_REEL - FINAL_ITEMS_COUNT + TARGET_POS_IN_FINAL_CHUNK; let items = reelElement.querySelectorAll('.reel-item'); if (items.length > FINAL_POS_INDEX) { items[FINAL_POS_INDEX].textContent = finalValue; items[FINAL_POS_INDEX].classList.add('final-winner'); } const finalScrollPosition = FINAL_POS_INDEX * ITEM_HEIGHT; setTimeout(() => { reelElement.style.transition = `transform ${stopTimeInSeconds}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`; reelElement.style.transform = `translateY(-${finalScrollPosition}px)`; setTimeout(() => { reelElement.parentElement.parentElement.style.border = '3px solid #d9232d'; playSound(document.getElementById('winner-sound')); }, stopTimeInSeconds * 1000); }, 100); }
+function startContinuousReel(reelElement, participantsArray, key, speed) { const FINAL_ITEMS_COUNT = 100; let entriesHtml = ''; for (let loop = 0; loop < 5; loop++) { for (let i = 0; i < FINAL_ITEMS_COUNT; i++) { if (participantsArray.length === 0) continue; const randomIndex = Math.floor(Math.random() * participantsArray.length); const participant = participantsArray[randomIndex]; let displayValue = participant[key] || 'N/A'; entriesHtml += `<div class="reel-item">${displayValue}</div>`; } } reelElement.innerHTML = entriesHtml; const rollDistance = reelElement.scrollHeight; reelElement.style.transition = 'none'; reelElement.style.transform = `translateY(0px)`; setTimeout(() => { reelElement.style.transition = `transform ${speed}s linear`; reelElement.style.transform = `translateY(-${rollDistance - (ITEM_HEIGHT * FINAL_ITEMS_COUNT)}px)`; }, 100); return { reelElement, FINAL_ITEMS_COUNT }; }
+
 function announceWinner(winner, round) { if (userRole !== 'admin') return; currentWinner = winner; const prizeDetail = getPrizeDetails(round); popupHeading.innerText = `Winner of Round ${round}: ${prizeDetail.prize}!`; prizeImage.src = prizeDetail.image; popupName.innerText = winner.CustomerName; popupCoupon.innerText = winner.CouponCode; popupOutlet.innerText = winner.PumpName; popupAddress.innerText = winner.OutletAddress || 'N/A'; let mobileDisplay = String(winner.CustomerPhone); popupMobile.innerText = mobileDisplay.substring(0, 2) + '******' + mobileDisplay.substring(mobileDisplay.length - 2); winnerPopupOverlay.classList.remove('hidden'); startContinuousCelebration(); saveNextButton.disabled = false; saveNextButton.innerText = `Save & Ready for Round ${round + 1}`; }
 
 async function handleSaveClick() {
@@ -220,21 +299,15 @@ async function handleSaveClick() {
     if (isSaved) {
         fetchAndDisplayWinners();
 
-        // ===== START: यहाँ मुख्य बदलाव किया गया है =====
         if (localState.round >= totalRounds) {
-            // यह अंतिम राउंड था
             console.log("All rounds complete. Showing thank you popup.");
-            showThankYouPopup(); // पॉप-अप दिखाएं
-            
-            // Firebase में एक अंतिम स्थिति सेट करें ताकि सभी क्लाइंट्स को पता चल जाए
+            showThankYouPopup();
             gameStateRef.set({
                 status: 'ended',
                 round: localState.round,
                 winnerCoupon: null
             });
-            
         } else {
-            // यदि यह अंतिम राउंड नहीं है, तो अगले राउंड के लिए आगे बढ़ें
             gameStateRef.set({
                 status: 'waiting',
                 round: localState.round + 1,
@@ -242,8 +315,6 @@ async function handleSaveClick() {
                 countdownValue: null
             });
         }
-        // ===== END: मुख्य बदलाव =====
-
     } else {
         alert("Error saving data! Please try again.");
         saveNextButton.disabled = false;
@@ -253,26 +324,74 @@ async function handleSaveClick() {
 
 async function handleResetClick() { if (!confirm("Are you sure you want to reset the draw to the last safe point?")) return; console.log("Resetting draw state..."); stopCelebration(); const winnersRef = database.ref('winners'); const snapshot = await winnersRef.get(); let lastCompletedRound = 0; if (snapshot.exists()) { const winnersData = snapshot.val(); const rounds = Object.values(winnersData).map(winner => winner.Round); if (rounds.length > 0) { lastCompletedRound = Math.max(...rounds); } } const nextRound = lastCompletedRound + 1; console.log(`Resetting to start of round ${nextRound}.`); gameStateRef.set({ status: 'waiting', round: nextRound, winnerCoupon: null, countdownValue: null }); }
 
-async function initializeApp() { 
+async function initializeApp() {
     const splashScreen = document.getElementById('splash-screen');
-    setTimeout(() => { if (splashScreen) { splashScreen.classList.add('hidden'); } }, 6000);
-    startFloatingAnimation(); 
+    setTimeout(() => {
+        if (splashScreen) {
+            splashScreen.classList.add('hidden');
+        }
+    }, 6000);
+
+    const muteToggleButton = document.getElementById('mute-toggle-button');
+    const iconUnmuted = document.getElementById('icon-unmuted');
+    const iconMuted = document.getElementById('icon-muted');
+    const backgroundMusic = document.getElementById('background-music');
+
+    iconUnmuted.classList.add('hidden');
+    iconMuted.classList.remove('hidden');
+
+    muteToggleButton.addEventListener('click', () => {
+        isMuted = !isMuted;
+        iconUnmuted.classList.toggle('hidden', isMuted);
+        iconMuted.classList.toggle('hidden', !isMuted);
+        if (isMuted) {
+            backgroundMusic.pause();
+        } else {
+            playSound(backgroundMusic, { loop: true, volume: 0.2 });
+        }
+    });
+
+    startFloatingAnimation();
     startCountdown();
     await fetchData();
-    fetchAndDisplayWinners(); 
+    fetchAndDisplayWinners();
+    
     gameStateRef.on('value', (snapshot) => {
         const state = snapshot.val();
         if (state) { syncUIWithState(state); }
     });
+    
     const snapshot = await gameStateRef.get();
     if (snapshot.exists()) {
         syncUIWithState(snapshot.val());
     } else if (userRole === 'admin') {
         handleResetClick();
     }
+
+    const onlineUsersRef = database.ref('onlineUsers');
+    const connectedRef = database.ref('.info/connected');
+    connectedRef.on('value', (snapshot) => {
+        if (snapshot.val() === true) {
+            const userConnection = onlineUsersRef.push();
+            userConnection.onDisconnect().remove();
+            userConnection.set(true);
+        }
+    });
+    if (userRole === 'admin') {
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const viewerCountEl = document.getElementById('viewer-count');
+        if (adminDashboard) {
+            adminDashboard.style.display = 'flex';
+        }
+        onlineUsersRef.on('value', (snapshot) => {
+            const count = snapshot.numChildren();
+            if (viewerCountEl) {
+                viewerCountEl.innerText = count;
+            }
+        });
+    }
 }
 
-// ===== START: थैंक यू पॉप-अप के लिए नए फंक्शन =====
 function showThankYouPopup() {
     if (thankYouPopupOverlay) {
         thankYouPopupOverlay.classList.remove('hidden');
@@ -284,12 +403,9 @@ function hideThankYouPopup() {
         thankYouPopupOverlay.classList.add('hidden');
     }
 }
-// ===== END: थैंक यू पॉप-अप के लिए नए फंक्शन =====
 
-// बाकी के सभी फंक्शन्स पहले जैसे ही रहेंगे
 function initializeReels() { const defaultText = '<div class="reel-item">READY TO DRAW</div>'; reelCoupon.innerHTML = defaultText; reelCoupon.style.transform = 'translateY(0px)'; document.querySelectorAll('.reel-box').forEach(box => { box.style.border = '3px solid #FFD700'; }); reelCoupon.classList.remove('spinning'); }
-function startContinuousReel(reelElement, participantsArray, key, speed) { const FINAL_ITEMS_COUNT = 100; let entriesHtml = ''; for (let loop = 0; loop < 5; loop++) { for (let i = 0; i < FINAL_ITEMS_COUNT; i++) { if (participantsArray.length === 0) continue; const randomIndex = Math.floor(Math.random() * participantsArray.length); const participant = participantsArray[randomIndex]; let displayValue = participant[key] || 'N/A'; entriesHtml += `<div class="reel-item">${displayValue}</div>`; } } reelElement.innerHTML = entriesHtml; const rollDistance = reelElement.scrollHeight; reelElement.style.transition = 'none'; reelElement.style.transform = `translateY(0px)`; setTimeout(() => { reelElement.style.transition = `transform ${speed}s linear`; reelElement.style.transform = `translateY(-${rollDistance - (ITEM_HEIGHT * FINAL_ITEMS_COUNT)}px)`; }, 100); return { reelElement, FINAL_ITEMS_COUNT }; }
-function stopReel(reelObject, finalValue, stopTimeInSeconds) { const { reelElement, FINAL_ITEMS_COUNT } = reelObject; const TARGET_POS_IN_FINAL_CHUNK = 49; const TOTAL_ITEMS_IN_REEL = reelElement.querySelectorAll('.reel-item').length; const FINAL_POS_INDEX = TOTAL_ITEMS_IN_REEL - FINAL_ITEMS_COUNT + TARGET_POS_IN_FINAL_CHUNK; let items = reelElement.querySelectorAll('.reel-item'); if (items.length > FINAL_POS_INDEX) { items[FINAL_POS_INDEX].textContent = finalValue; items[FINAL_POS_INDEX].classList.add('final-winner'); } const finalScrollPosition = FINAL_POS_INDEX * ITEM_HEIGHT; setTimeout(() => { reelElement.style.transition = `transform ${stopTimeInSeconds}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`; reelElement.style.transform = `translateY(-${finalScrollPosition}px)`; setTimeout(() => { reelElement.parentElement.parentElement.style.border = '3px solid #d9232d'; document.getElementById('winner-sound').play(); }, stopTimeInSeconds * 1000); }, 100); }
+
 async function saveWinnerData(winner, round) { try { const prizeDetail = getPrizeDetails(round); const winnerDataWithPrize = { ...winner, Round: round, Prize: prizeDetail.prize, Timestamp: new Date().toISOString() }; const winnerRef = database.ref('winners/' + winner.CouponCode); await winnerRef.set(winnerDataWithPrize); console.log('SUCCESS: Winner saved to Firebase.'); try { console.log("Attempting to save winner to Google Sheet..."); await fetch(API_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(winnerDataWithPrize) }); console.log('SUCCESS: Winner data sent to Google Sheet.'); } catch (sheetError) { console.error('GOOGLE SHEET ERROR:', sheetError); } return true; } catch (error) { console.error('FIREBASE ERROR:', error); return false; } }
 
 // Event Listeners
@@ -300,11 +416,9 @@ if (userRole === 'admin') {
     resetButton.addEventListener('click', handleResetClick);
 }
 
-// ===== START: नए पॉप-अप के लिए इवेंट लिस्नर =====
 if (closeThankYouPopupButton) {
     closeThankYouPopupButton.addEventListener('click', hideThankYouPopup);
 }
-// ===== END: नए पॉप-अप के लिए इवेंट लिस्नर =====
 
 langHi.addEventListener('click', (e) => { e.preventDefault(); setLanguage('hi'); });
 langEn.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
