@@ -1,76 +1,71 @@
+<!-- --- START: इस पूरी फ़ाइल को कॉपी करके अपनी पुरानी फ़ाइल से बदलें --- -->
 <!DOCTYPE html>
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HPCL - Lucky Draw Event</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <!-- कन्फ़ेटी लाइब्रेरी -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-      <button id="mute-toggle-button" title="Toggle Sound">
-        <!-- साउंड ऑन का आइकन -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="icon-unmuted">
-            <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-        </svg>
-        <!-- साउंड ऑफ का आइकन -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" id="icon-muted" class="hidden">
-            <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-        </svg>
-    </button>
-    <div class="countdown-overlay hidden" id="countdown-overlay">
-    <div class="film-leader">
-         <img src="images/HP-Logo.png" alt="HPCL Logo" class="countdown-logo">
-         <div class="film-burn-overlay" id="film-burn-overlay"></div>
-        <!-- क्रॉसहेयर लाइन्स -->
-        <div class="crosshair-h"></div>
-        <div class="crosshair-v"></div>
-        <!-- घूमने वाली लाइन -->
-        <div class="rotating-wipe" id="rotating-wipe"></div>
-        <!-- डबल सर्कल बॉर्डर -->
-        <div class="circle-border"></div>
-        <!-- काउंटडाउन नंबर -->
-        <span class="countdown-number" id="countdown-number"></span>
-    </div>
-</div>
-    <!-- 1. स्प्लैश स्क्रीन एनीमेशन -->
-      <div class="splash-screen" id="splash-screen">
-        <div class="splash-content">
-            <h1 class="splash-header" id="splash-header">A Lucky Draw Event presented by<br><strong>Hindustan Petroleum Corporation Limited</strong></h1>
-            
-           <!-- ===== START: यहाँ बदलाव किया गया है ===== -->
-           <div class="logo-animation">
-                <!-- HP का लोगो -->
-                <img src="Flotingimages/HP-Logo.png" alt="HPCL Logo" class="logo-img hp-logo-splash">
-                
-                <!-- Aspire का लोगो -->
-                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="logo-img aspire-logo-splash">
-           </div>
-           <!-- ===== END: यहाँ बदलाव किया गया है ===== -->
 
-            <p class="splash-tagline" id="splash-tagline">Elevating Service, Inspiring Success.</p>
-
-             <button id="enter-button" style="display: none;">Click to Enter Event</button>
+    <div id="top-right-controls">
+        <div id="admin-dashboard" style="display: none;">
+            <div id="total-viewers">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="viewer-icon">
+                    <path d="M12,4.5C7,4.5,2.73,7.61,1,12c1.73,4.39,6,7.5,11,7.5s9.27-3.11,11-7.5C21.27,7.61,17,4.5,12,4.5z M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5S14.76,17,12,17z M12,9c-1.66,0-3,1.34-3,3s1.34,3,3,3,3-1.34,3-3S13.66,9,12,9z"/>
+                </svg>
+                <span id="viewer-count">0</span>
+            </div>
+            <div id="viewer-breakdown"></div>
+        </div>
+        <div class="mute-button" id="mute-button" title="Toggle Sound">
+            <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            </svg>
+            <svg id="mute-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+            </svg>
+             <span class="mute-status-label">Sound: <span id="mute-status-text">ON</span></span>
         </div>
     </div>
 
-    <!-- बाकी का पेज कंटेंट -->
+    <div class="countdown-overlay hidden" id="countdown-overlay">
+        <div class="film-leader">
+            <img src="images/HP-Logo.png" alt="HPCL Logo" class="countdown-logo">
+            <div class="crosshair-h"></div>
+            <div class="crosshair-v"></div>
+            <div class="rotating-wipe" id="rotating-wipe"></div>
+            <div class="circle-border"></div>
+            <span class="countdown-number" id="countdown-number"></span>
+        </div>
+    </div>
+
+    <div class="splash-screen" id="splash-screen">
+        <div class="splash-content">
+            <h1 class="splash-header" id="splash-header">A Lucky Draw Event presented by<br><strong>Hindustan Petroleum Corporation Limited</strong></h1>
+            <div class="logo-animation">
+                <img src="images/HP-Logoforanimation.png" alt="HPCL Logo" class="logo-img hp-logo-splash">
+                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="logo-img aspire-logo-splash">
+            </div>
+            <p class="splash-tagline" id="splash-tagline">Elevating Service, Inspiring Success.</p>
+            <button id="enter-button">Click to Enter Event</button>
+        </div>
+    </div>
+
     <header class="site-header">
-        <!-- START: यहाँ बदलाव किया गया है -->
-      <div class="header-logos-left">
-    <img src="images/hpcl-logo.png" alt="HPCL Logo">
-</div>
-<div class="header-logos-right">
-    <img src="images/Petrol-logo.png" alt="Club HP Logo">
-</div>
-        <!-- END: यहाँ बदलाव किया गया है -->
+        <div class="header-logos-left">
+            <img src="images/hpcl-logo.png" alt="HPCL Logo">
+        </div>
+        <div class="header-logos-right">
+            <img src="images/Petrol-logo.png" alt="Club HP Logo">
+        </div>
     </header>
     
-    <!-- भाषा बदलने वाला मोबाइल पर यहाँ दिखाई देगा -->
     <div class="lang-switcher-mobile-container">
         <div class="lang-switcher">
             <a href="#" id="lang-hi" class="active">हिंदी</a>
@@ -80,44 +75,29 @@
     </div>
 
     <main class="main-content">
-          <div id="admin-dashboard" style="display: none;">
-        <!-- यह आंख का आइकन है -->
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="viewer-icon">
-            <path d="M12,4.5C7,4.5,2.73,7.61,1,12c1.73,4.39,6,7.5,11,7.5s9.27-3.11,11-7.5C21.27,7.61,17,4.5,12,4.5z M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5S14.76,17,12,17z M12,9c-1.66,0-3,1.34-3,3s1.34,3,3,3,3-1.34,3-3S13.66,9,12,9z"/>
-        </svg>
-        <span class="viewer-text">Live:</span>
-        <span id="viewer-count">0</span>
-    </div>
-
-          <!-- ===== START: प्राइज की जानकारी का सेक्शन ===== -->
         <div class="prize-info-container">
             <h2 id="prize-info-heading">Today's Prizes</h2>
             <div class="prize-cards-wrapper">
-                
                 <div class="prize-card">
                     <h4>Dinner Set</h4>
                     <p class="winner-count">20</p>
                     <p class="winner-label">Winners</p>
                 </div>
-
                 <div class="prize-card">
                     <h4>LED TV</h4>
                     <p class="winner-count">3</p>
                     <p class="winner-label">Winners</p>
                 </div>
-
                 <div class="prize-card">
                     <h4>Refrigerator</h4>
                     <p class="winner-count">2</p>
                     <p class="winner-label">Winners</p>
                 </div>
-
                 <div class="prize-card mega-prize-card">
                     <h4>Motorcycle</h4>
                     <p class="winner-count">1</p>
                     <p class="winner-label">Mega Prize</p>
                 </div>
-
             </div>
         </div>
 
@@ -148,7 +128,7 @@
         <div class="tab-content">
             <div class="tab-panel active" data-tab="winner">
                 <div class="draw-controls">
-                    <button id="draw-button">Reveal the Winner</button>
+                    <button id="draw-button" style="display: none;">Reveal the Winner</button>
                     <button id="reset-button" style="display: none;">Reset Draw</button>
                 </div>
                 
@@ -161,6 +141,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                
+                <div class="search-container">
+                    <h2 id="search-heading">Check Your Coupon Code</h2>
+                    <p class="search-subheading" id="search-subheading">Enter your Mobile Number or Coupon Code to find your entry.</p>
+                    <div class="search-form">
+                        <input type="text" id="search-input" placeholder="Enter Mobile or Coupon Code...">
+                        <button id="search-button">Search</button>
+                    </div>
+                    <div id="search-result-container"></div>
                 </div>
 
                 <hr class="section-divider">
@@ -179,33 +169,13 @@
                                     <th id="th-mobile">Mobile</th>
                                 </tr>
                             </thead>
-                            <tbody id="winners-table-body">
-                            </tbody>
+                            <tbody id="winners-table-body"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
             
             <div class="tab-panel" data-tab="participants">
-                <div class="search-container">
-                    <h2 id="search-heading">Check Your Coupen Code</h2>
-                    <p class="search-subheading" id="search-subheading">Enter your Mobile Number or Coupon Code to find your entry.</p>
-                    <div class="search-form">
-                        <input type="text" id="search-input" placeholder="Enter Mobile or Coupon Code...">
-                        <button id="search-button">Search</button>
-                    </div>
-                    <div id="search-result-container"></div>
-                </div>
-
-                <div class="slideshow-container" id="slideshow-container">
-                    <div class="slideshow-wrapper" id="slideshow-wrapper">
-                        <div class="slide"><img src="Slide Show Images/HP-Gas.jpg" alt="HP-Gas"></div>
-                        <div class="slide"><img src="Slide Show Images/HPCL-Sectorial.jpg" alt="HPCL-Sectorial"></div>
-                        <div class="slide"><img src="Slide Show Images/club-HP.jpg" alt="club-HP"></div>
-                    </div>
-                </div>
-
-                <hr class="section-divider">
                 <div class="about-section">
                     <h2 id="about-heading">Our Commitment to Excellence</h2>
                     <p id="about-p1">Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...</p>
@@ -246,7 +216,6 @@
         </div>
     </div>
     
-    <!-- ===== START: नया थैंक यू पॉप-अप HTML ===== -->
     <div class="thank-you-popup-overlay hidden" id="thank-you-popup-overlay">
         <div class="thank-you-popup">
             <button class="close-popup-btn" id="close-thank-you-popup">&times;</button>
@@ -261,25 +230,24 @@
             </div>
             <hr class="popup-divider">
             <p>किसी भी प्रकार के डिजिटल इवेंट या आईटी समाधान के लिए, हमसे संपर्क करें।</p>
-            <a href="https://script.google.com/macros/s/AKfycbwDuOkP7Wj8IVqJ6bifujU87qzeJADF-Agq7cqP5tf_ztkUp_bE4a7ghfyf8plltBYe/exec" target="_blank" class="aspire-link">Connect with Aspire Business Link</a>
+           <a href="https://aspirebusinesslink.com/index.html" target="_blank" class="aspire-link">Connect with Aspire Business Link</a>
         </div>
     </div>
-    <!-- ===== END: नया थैंक यू पॉप-अप HTML ===== -->
 
     <footer class="site-footer">
         <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
     </footer>
 
+    <audio id="sound-countdown" src="sounds/countdown.mp3" preload="auto"></audio>
+    <audio id="sound-reveal" src="sounds/reveal-button.mp3" preload="auto"></audio>
+    <audio id="sound-spin" src="sounds/slot-machine.mp3" preload="auto" loop></audio>
+    <audio id="sound-winner" src="sounds/winner-popup.mp3" preload="auto"></audio>
+    <audio id="sound-celebrate" src="sounds/fire-effect.mp3" preload="auto" loop></audio>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-
     <script src="script.js"></script>
-    
-    <audio id="tick-sound" src="audio/tick.mp3" preload="auto"></audio>
-    <audio id="static-sound" src="audio/static.mp3" preload="auto"></audio>
-    <audio id="background-music" src="audio/background.mp3" loop preload="auto"></audio>
-    <audio id="draw-sound" src="audio/draw-effect.mp3" preload="auto"></audio>
-    <audio id="winner-sound" src="audio/winner.mp3" preload="auto"></audio>
     
 </body>
 </html>
+<!-- --- END: यहाँ तक कॉपी करें --- -->

@@ -1,11 +1,8 @@
-/* START OF COMPLETE style.css.txt FILE */
+/* ===== START: इस पूरी फ़ाइल को कॉपी करके अपनी पुरानी फ़ाइल से बदलें ===== */
 
-/* ===== START: यहाँ मुख्य फिक्स जोड़ा गया है ===== */
 *, *::before, *::after {
     box-sizing: border-box;
 }
-/* ===== END: यहाँ मुख्य फिक्स जोड़ा गया है ===== */
-
 
 /* --- स्प्लैश स्क्रीन एनीमेशन --- */
 .splash-screen {
@@ -14,21 +11,16 @@
     left: 0;
     width: 100%;
     height: 100%;
-    
-    /* बैकग्राउंड इमेज */
     background-image: url('Background/Servicce.png');
     background-size: cover;
     background-position: center center;
     background-repeat: no-repeat;
-
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
     transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
 }
-
-/* इमेज के ऊपर हल्की सफेद परत जोड़ने के लिए */
 .splash-screen::before {
     content: '';
     position: absolute;
@@ -36,65 +28,36 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.7); /* आप 0.7 को बदलकर परत को हल्का या गहरा कर सकते हैं */
+    background-color: rgba(255, 255, 255, 0.7);
     z-index: 1;
 }
-
-/* यह सुनिश्चित करता है कि कंटेंट परत के ऊपर रहे */
 .splash-content {
     position: relative;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
 }
 .splash-screen.hidden { opacity: 0; visibility: hidden; }
-.splash-content { display: flex; flex-direction: column; align-items: center; gap: 30px; }
 .splash-header { font-family: 'Poppins', sans-serif; font-size: 1.4em; font-weight: 400; color: #555; text-align: center; max-width: 600px; opacity: 0; line-height: 1.5; animation: fadeInText 1s ease-out 0.2s forwards; padding: 0 15px; }
 .splash-header strong { display: block; font-size: 1.2em; font-weight: 600; color: #003366; }
-
-/* ===== START: दोनों लोगो के लिए सरल एनिमेशन कोड ===== */
 .logo-animation {
-    /* एनीमेशन के लिए शुरुआती स्टाइल */
     opacity: 0;
     transform: scale(0.7);
-    
-    /* नया एनिमेशन */
     animation: finalLogoZoomIn 1.2s ease-out 0.5s forwards;
-
-    /* दोनों लोगो को अगल-बगल रखने के लिए */
     display: flex;
-    align-items: center; /* vertically align */
-    gap: 20px; /* दोनों के बीच जगह */
+    align-items: center;
+    gap: 20px;
 }
-
-/* दोनों लोगो के लिए कॉमन स्टाइल */
-.logo-img {
-    height: auto;
-}
-
-/* HP लोगो का साइज़ */
-.hp-logo-splash {
-    max-width: 90px;
-}
-
-/* Aspire लोगो का साइज़ */
-.aspire-logo-splash {
-    max-width: 150px; 
-}
-
-/* लोगो की पूरी इमेज के लिए फाइनल एनिमेशन (यह पहले जैसा ही है) */
+.logo-img { height: auto; }
+.hp-logo-splash { max-width: 90px; }
+.aspire-logo-splash { max-width: 150px; }
 @keyframes finalLogoZoomIn {
-    from {
-        opacity: 0;
-        transform: scale(0.7);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1); /* इमेज को उसके असली साइज़ में लाएगा */
-    }
+    from { opacity: 0; transform: scale(0.7); }
+    to { opacity: 1; transform: scale(1); }
 }
-/* ===== END: लोगो के लिए नया और सरल कोड ===== */
 .splash-tagline { font-family: serif; font-style: italic; font-size: 1.3em; color: #555; opacity: 0; animation: fadeInText 1s ease-out 2.5s forwards; }
-
-/* यह एनिमेशन हेडर और टैगलाइन के लिए इस्तेमाल होता है */
 @keyframes fadeInText { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
 /* --- बाकी के सारे स्टाइल --- */
@@ -120,7 +83,6 @@ body {
     background-color: #ffffff;
     border: 3px solid #d9232d;
 }
-
 .header-logos-left, .header-logos-right {
     display: flex;
     align-items: center;
@@ -130,14 +92,12 @@ body {
     max-height: 50px;
     width: auto;
 }
-
 .lang-switcher-mobile-container {
     display: none;
     padding: 10px;
     background-color: #f0f0f0;
     text-align: center;
 }
-
 .lang-switcher { display: flex; align-items: center; font-size: 0.9em; font-weight: 500; flex-shrink: 0; }
 .lang-switcher a { text-decoration: none; color: #555; padding: 5px 8px; transition: color 0.2s ease; }
 .lang-switcher a:hover { color: #000; }
@@ -147,31 +107,27 @@ body {
 .main-content { padding: 30px 30px 40px 30px; max-width: 1200px; margin: 0 auto; text-align: center; }
 
 .subtitle-container {
-    background-color: #003366; /* HPCL का नीला रंग */
-    padding: 15px 40px;        /* पट्टी का साइज़ */
-    border-radius: 50px;       /* गोल किनारे */
+    background-color: #003366;
+    padding: 15px 40px;
+    border-radius: 50px;
     margin: 0 auto 25px auto;
     max-width: 800px;
-    border: 2px solid #FFD700; /* सुनहरी बॉर्डर */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* हल्की परछाई */
-    /* पुरानी प्रॉपर्टीज़ हटा दी गई हैं */
-    display: inline-block;     /* ताकि पट्टी सिर्फ टेक्स्ट के चारों ओर आए */
+    border: 2px solid #FFD700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    display: inline-block;
 }
-
 .subtitle {
-    font-family: 'Playfair Display', serif; /* नया फ़ॉन्ट */
+    font-family: 'Playfair Display', serif;
     color: #FFFFFF;
-    font-size: 2em; /* थोड़ा बड़ा */
-    font-weight: 700; /* थोड़ा और मोटा */
+    font-size: 2em;
+    font-weight: 700;
     margin: 0;
-    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7); /* बेहतर परछाई */
-    letter-spacing: 1px; /* अक्षरों के बीच थोड़ी जगह */
-    font-style: italic; /* इटैलिक स्टाइल */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+    letter-spacing: 1px;
+    font-style: italic;
 }
 
-#countdown-wrapper {
-    margin-bottom: 30px;
-}
+#countdown-wrapper { margin-bottom: 30px; }
 .countdown-container {
     background-color: transparent;
     padding: 25px;
@@ -184,9 +140,8 @@ body {
 .countdown-container h2 {
     font-size: 1.6em;
     font-weight: 600;
-    color: #FFFFFF; /* रंग सफ़ेद हो गया */
+    color: #FFFFFF;
     margin: 0 0 20px 0;
-    /* लाल आउटलाइन और हल्की परछाई */
     text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
 }
 .countdown-timer {
@@ -202,11 +157,9 @@ body {
     border-radius: 10px;
     min-width: 90px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      /* ===== START: यहाँ आकर्षक बॉर्डर जोड़ा गया है ===== */
-    border: 3px solid #FFD700; /* सुनहरी बॉर्डर */
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6); /* सुनहरी चमक */
-    transition: transform 0.3s ease; /* होवर इफ़ेक्ट के लिए */
-    /* ===== END: बॉर्डर का स्टाइल ===== */
+    border: 3px solid #FFD700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+    transition: transform 0.3s ease;
 }
 .countdown-timer span {
     display: block;
@@ -231,15 +184,10 @@ body {
 .draw-live-message h2 {
     margin: 0;
     font-size: 1.4em;
-    color: #FFFFFF; /* रंग सफ़ेद हो गया */
-    /* लाल आउटलाइन और हल्की परछाई */
+    color: #FFFFFF;
     text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
 }
-.tab-button.disabled {
-    pointer-events: none;
-    opacity: 0.5;
-}
-
+.tab-button.disabled { pointer-events: none; opacity: 0.5; }
 .tab-nav {
     display: flex;
     justify-content: center;
@@ -251,7 +199,6 @@ body {
     border-radius: 5px;
     overflow: hidden;
 }
-
 .tab-button {
     font-family: 'Poppins', sans-serif;
     font-size: 1em;
@@ -265,70 +212,31 @@ body {
     transition: background-color 0.3s ease;
     white-space: nowrap;
 }
-
-.tab-button:hover {
-    background-color: #004488;
-    color: #ffffff;
-}
-
-.tab-button.active {
-    background-color: #d9232d;
-    color: #ffffff;
-    font-weight: 600;
-}
-
+.tab-button:hover { background-color: #004488; color: #ffffff; }
+.tab-button.active { background-color: #d9232d; color: #ffffff; font-weight: 600; }
 .tab-panel { display: none; }
 .tab-panel.active { display: block; animation: tabFadeIn 0.5s ease; }
 @keyframes tabFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.draw-controls {
-    margin-bottom: 20px;
-}
+.draw-controls { margin-bottom: 20px; }
 #draw-button { background-color: #d9232d; color: white; padding: 14px 45px; border: none; border-radius: 50px; font-size: 1.3em; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(217, 35, 45, 0.3); }
 #draw-button:hover { transform: translateY(-3px); box-shadow: 0 7px 20px rgba(217, 35, 45, 0.4); }
 #reset-button { background-color: #003366; margin-left: 15px; color: white; padding: 14px 30px; border: none; border-radius: 50px; font-size: 1.1em; font-weight: 500; cursor: pointer; }
-
-.slideshow-container {
-    max-width: 1200px;
-    margin: 40px auto 40px auto;
-    padding: 0;
-}
-
-.slideshow-wrapper {
-    display: flex;
-    gap: 20px;
-    width: 100%;
-    height: auto;
-}
-
-.slide {
-    flex: 1;
-    border-radius: 10px;
-    overflow: hidden;
-    border: 3px solid #FFD700;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
-}
-
-.slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
 
 .winner-banner {
     width: 100%;
     background-color: transparent;
     padding: 20px 0; 
-    border-top: none;
-    border-bottom: none;
     text-align: center;
     box-shadow: none;
     transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     transform-origin: center center;
+    display: flex;
+    justify-content: center;
 }
 .slot-machine-container.single-reel-mode {
-    max-width: 650px; 
+    width: 100%;
+    max-width: 700px;
     margin: 0 auto; 
 }
 .reel-box.single-reel-box {
@@ -347,7 +255,7 @@ body {
     text-transform: uppercase;
 }
 .reel-box.single-reel-box .reel-window {
-    height: 100px;
+    height: 120px;
     overflow: hidden; 
     position: relative;
     background-color: #000;
@@ -366,14 +274,20 @@ body {
     text-align: center;
     white-space: normal;
     overflow-wrap: break-word;
+    will-change: transform; 
 }
 .reel-item {
-    height: 100px;
-    line-height: 100px;
-    font-size: 2em;
+    height: 120px;
+    line-height: 120px;
+    font-size: 2.5em;
     font-weight: 700;
     color: #00FF00;
-    padding: 0 5px; 
+    padding: 0 10px; 
+    white-space: nowrap; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; 
 }
 .reel-item.final-winner {
     color: #FFD700;
@@ -386,8 +300,26 @@ body {
 }
 
 .search-container { max-width: 600px; margin: 0 auto; padding: 20px 0; }
-#search-heading { font-size: 1.3em; font-weight: 600; margin: 0 0 10px 0; color: #003366; }
-.search-subheading { color: #555; margin-bottom: 25px; }
+#search-heading, #about-heading {
+    font-size: 1.3em;
+    font-weight: 600;
+    margin: 0 0 10px 0;
+    color: #FFFFFF;
+    text-shadow: 
+        -1px -1px 0 #003366, 1px -1px 0 #003366, -1px 1px 0 #003366, 1px 1px 0 #003366,
+        -2px -2px 0 #d9232d, 2px -2px 0 #d9232d, -2px 2px 0 #d9232d, 2px 2px 0 #d9232d,
+         4px  4px 5px rgba(0,0,0,0.6);
+}
+.search-subheading, .about-section p {
+    margin-bottom: 25px;
+    font-size: 1em;
+    line-height: 1.8;
+    color: #FFFFFF;
+    text-shadow: 
+        -1px -1px 0 #003366, 1px -1px 0 #003366, -1px 1px 0 #003366, 1px 1px 0 #003366,
+        -2px -2px 0 #d9232d, 2px -2px 0 #d9232d, -2px 2px 0 #d9232d, 2px 2px 0 #d9232d,
+         3px  3px 5px rgba(0,0,0,0.7);
+}
 .search-form { display: flex; gap: 10px; margin-bottom: 30px; }
 #search-input { flex-grow: 1; padding: 12px 15px; font-family: 'Poppins', sans-serif; font-size: 1em; border: 1px solid #ccc; border-radius: 8px; transition: border-color 0.2s, box-shadow 0.2s; }
 #search-input:focus { outline: none; border-color: #003366; box-shadow: 0 0 0 3px rgba(0, 51, 102, 0.1); }
@@ -402,44 +334,45 @@ body {
 .result-message.success { color: #155724; background-color: #d4edda; border-radius: 8px; }
 .result-message.error { color: #721c24; background-color: #f8d7da; border-radius: 8px; }
 .section-divider { border: none; height: 1px; background-color: #e9ecef; margin: 40px auto; max-width: 800px; }
-.about-section { max-width: 700px; margin: 0 auto; text-align: center; padding: 20px 0; }
-.about-section h2 { font-size: 1.3em; font-weight: 600; margin: 0 0 15px 0; color: #003366; }
-.about-section p { font-size: 1em; line-height: 1.8; color: #555; margin: 0 0 15px 0; }
+
 .site-footer { text-align: center; padding: 30px; font-size: 0.9em; color: #888; border-top: 1px solid #e9ecef; margin-top: 40px; }
 .site-footer p { margin: 0; }
 
 .countdown-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #1a1a1a; display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 1; overflow: hidden; transition: opacity 0.6s ease-in, transform 0.6s cubic-bezier(0.5, 0, 0.75, 0); }
 .countdown-overlay.hidden { opacity: 0; pointer-events: none; }
 .film-leader {
-    /* --countdown-color JS से कंट्रोल होगा, यह डिफ़ॉल्ट रंग है */
     --countdown-color: #d9232d; 
-    
-     width: 90vmin;
+    width: 90vmin;
     height: 90vmin;
     background-color: #b0b0b0;
-    position: relative; /* <-- यह लाइन जोड़ें */
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     animation: filmFlicker 0.2s infinite alternate;
-    overflow: hidden; /* यह ज़रूरी है */
+    overflow: hidden;
 }
-
-.film-leader::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); opacity: 0.1; pointer-events: none; }
+.film-leader::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; }
 .crosshair-h, .crosshair-v { position: absolute; background-color: rgba(0, 0, 0, 0.5); }
 .crosshair-h { width: 100%; height: 2px; top: 50%; transform: translateY(-50%); }
 .crosshair-v { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
 .circle-border { width: 90%; height: 90%; border-radius: 50%; border: 1.5vmin solid #111; box-shadow: 0 0 0 0.5vmin #111; position: absolute; }
 .countdown-number { font-family: 'Poppins', sans-serif; font-size: 40vmin; font-weight: 700; color: #111; z-index: 10; animation: numberAppear 1s forwards; }
 .rotating-wipe { width: 2px; height: 50%; background-color: #111; position: absolute; top: 0; left: 50%; transform-origin: bottom center; z-index: 5; }
-.rotating-wipe.animate { animation: rotateWipe 1.2s linear forwards; }
+.rotating-wipe.animate { animation: rotateWipe 1.0s linear forwards; }
 @keyframes filmFlicker { from { opacity: 0.95; } to { opacity: 1; } }
 @keyframes numberAppear { from { opacity: 0.5; transform: scale(1.1); } to { opacity: 1; transform: scale(1); } }
 @keyframes rotateWipe { from { transform: translateX(-50%) rotate(0deg); } to { transform: translateX(-50%) rotate(360deg); } }
-.film-burn-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAANElEQVR42u3OQQEAAAACIL/n/1i5s0gIAAAAAAAAAAAAAAAAAAAAAACeGy4YAAE03sZ3AAAAAElFTkSuQmCC'); z-index: 20; display: none; }
-.film-burn-overlay.animate-burn { display: block; animation: filmBurnEffect 0.8s linear forwards; }
-@keyframes filmBurnEffect { 0% { opacity: 0; } 10% { opacity: 0.6; } 20% { opacity: 0.2; } 30% { opacity: 0.8; background-color: white; } 40% { opacity: 0.3; background-color: transparent; } 60% { opacity: 0.9; } 80% { opacity: 0.4; } 100% { opacity: 1; background-color: black; } }
-.winner-banner.zoomed-in { position: fixed; top: 50%; left: 50%; width: 90vw; transform: translate(-50%, -50%) scale(1.2); z-index: 9000; }
+
+.winner-banner.zoomed-in {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 95vw;
+    max-width: 650px;
+    transform: translate(-50%, -50%);
+    z-index: 9000;
+}
 .countdown-overlay.slide-down { transform: translateY(100%); opacity: 0; }
 
 .winner-popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.9); display: flex; justify-content: center; align-items: center; z-index: 10000; transition: opacity 0.3s ease-in-out; }
@@ -463,141 +396,105 @@ body {
 
 .winners-list-container { max-width: 1200px; margin: 50px auto 0 auto; padding: 20px 0; text-align: center; }
 #winners-list-heading {
-    font-size: 1.8em; /* थोड़ा बड़ा फ़ॉन्ट */
+    font-size: 1.8em;
     font-weight: 600;
-    margin-bottom: 35px; /* नीचे थोड़ी और जगह */
+    margin-bottom: 35px;
     color: #FFFFFF;
     text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5);
-
-    /* --- यहाँ से नीली पट्टी के लिए स्टाइल जोड़ी गई है --- */
-    background-color: #003366; /* HPCL का नीला रंग */
-    padding: 15px 40px;        /* पट्टी का साइज़ (ऊपर-नीचे और दाएं-बाएं) */
-    border-radius: 50px;       /* पट्टी को गोल आकार देने के लिए */
-    display: inline-block;     /* ताकि पट्टी सिर्फ टेक्स्ट के चारों ओर आए */
-    border: 2px solid #FFD700; /* एक सुनहरी (Gold) बॉर्डर */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* हल्की 3D परछाई */
+    background-color: #003366;
+    padding: 15px 40px;
+    border-radius: 50px;
+    display: inline-block;
+    border: 2px solid #FFD700;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 .table-wrapper {
     overflow-x: auto;
-    border-radius: 12px; /* थोड़े और गोल किनारे */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15); /* ज़्यादा गहरी परछाई */
-    border: 1px solid #003366; /* गहरी नीली बॉर्डर */
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #003366;
 }
 .winners-table { width: 100%; border-collapse: collapse; background-color: #ffffff; }
 .winners-table th, .winners-table td { padding: 15px 12px; text-align: left; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
 .winners-table thead {
-    background-image: linear-gradient(45deg, #003366, #004488); /* ग्रेडिएंट बैकग्राउंड */
+    background-image: linear-gradient(45deg, #003366, #004488);
     color: #ffffff;
-    border-bottom: 3px solid #FFD700; /* सुनहरी बॉर्डर */
+    border-bottom: 3px solid #FFD700;
 }
 .winners-table tbody tr {
-    transition: background-color 0.3s ease, transform 0.2s ease; /* स्मूथ इफ़ेक्ट के लिए */
-    border-bottom: 1px solid #e0e0e0; /* पंक्तियों के बीच हल्की लाइन */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    border-bottom: 1px solid #e0e0e0;
 }
-
-.winners-table tbody tr:last-child {
-    border-bottom: none; /* आखिरी लाइन हटा दें */
-}
-
-.winners-table tbody tr:hover {
-    background-color: #d9eaff; /* होवर पर हल्का नीला रंग */
-    transform: scale(1.015); /* होवर पर हल्का सा ज़ूम इफ़ेक्ट */
-}
-.winners-table td:nth-child(2), /* Prize कॉलम */
-.winners-table td:nth-child(3) { /* Winner Name कॉलम */
-    font-weight: 600; /* थोड़ा और बोल्ड */
+.winners-table tbody tr:last-child { border-bottom: none; }
+.winners-table tbody tr:hover { background-color: #d9eaff; transform: scale(1.015); }
+.winners-table td:nth-child(2),
+.winners-table td:nth-child(3) {
+    font-weight: 600;
     color: #003366;
-    font-size: 1.05em; /* थोड़ा सा बड़ा फ़ॉन्ट */
+    font-size: 1.05em;
     text-shadow: 0 0 6px rgba(255, 215, 0, 0.7);
 }
-
 .winners-table td:nth-child(3)::before {
-    content: '🏆 '; /* ट्रॉफी का इमोजी */
-    margin-right: 8px; /* आइकन और नाम के बीच जगह */
-    font-size: 0.9em;  /* आइकन का साइज़ */
+    content: '🏆 ';
+    margin-right: 8px;
+    font-size: 0.9em;
 }
-
-.winners-table tbody tr:nth-child(even) {
-    background-color: #fffbeb; /* हल्का सुनहरा "विनिंग" बैकग्राउंड */
-}
+.winners-table tbody tr:nth-child(even) { background-color: #fffbeb; }
 .loading-message, .no-winners-message { padding: 40px; font-size: 1.1em; color: #555; }
-
-@media (max-width: 992px) {
-    .main-content { padding: 25px; }
-    .tab-button { padding: 16px 20px; font-size: 0.95em; }
-    .slideshow-wrapper { gap: 15px; }
-    .reel-box.single-reel-box { padding: 25px; }
-    .countdown-timer div { min-width: 80px; padding: 12px; }
-    .countdown-timer span { font-size: 2.2em; }
-}
-
-@media (max-width: 768px) {
-   .site-header { flex-direction: row; gap: 10px; padding: 10px 15px; }
-    .site-header .lang-switcher { display: none; }
-    .lang-switcher-mobile-container { display: block; }
-     .lang-switcher-mobile-container .lang-switcher{ justify-content: center; }
-   .header-logos-left, .header-logos-right { gap: 15px; flex-wrap: wrap; }
-    .header-logos-left img, .header-logos-right img { max-height: 40px; }
-    .main-content { padding: 20px; }
-    .subtitle-container { margin-left: 0; margin-right: 0; margin-bottom: 25px; padding: 12px 20px; }
-    .subtitle { font-size: 1.4em; }
-    .countdown-container { padding: 20px; }
-    .countdown-container h2, .draw-live-message h2 { font-size: 1.2em; }
-    .countdown-timer { gap: 10px; }
-    .countdown-timer div { min-width: 65px; padding: 10px; }
-    .countdown-timer span { font-size: 1.8em; }
-     .countdown-timer span.label { font-size: 0.7em; }
-    .tab-nav { flex-direction: column; border-radius: 5px; margin-left: 0; margin-right: 0; margin-bottom: 25px; }
-    .tab-button { text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
-    .tab-button:last-child { border-bottom: none; }
-    #draw-button { font-size: 1.1em; padding: 12px 35px; }
-    #reset-button { padding: 12px 25px; font-size: 1em; }
-    .slideshow-wrapper { flex-direction: column; }
-    .slot-machine-container.single-reel-mode { margin: 20px auto; padding: 0; }
-    .reel-box.single-reel-box .reel-window { height: 80px; }
-    .reel-box.single-reel-box .reel-item { height: 80px; line-height: 80px; font-size: 1.8em; }
-    .search-form { flex-direction: column; }
-    .winner-popup, .public-winner-card { padding: 25px; width: 90%; max-width: 90%; }
-    #popup-heading, #public-heading { font-size: 1.5em; }
-    #winner-popup .prize-image-container, #public-winner-card .prize-image-container { height: 120px; }
-}
-
-@media (max-width: 576px) {
-    body { font-size: 14px; }
-    .header-logos-left img, .header-logos-right img { max-height: 35px; }
-    .subtitle { font-size: 1.2em; }
-    .countdown-timer { gap: 8px; }
-    .countdown-timer div { min-width: 0; flex: 1; padding: 8px; }
-    .countdown-timer span { font-size: 1.5em; }
-    .tab-button { padding: 15px; font-size: 1em; }
-    .main-content { padding: 15px; }
-    .winner-popup, .public-winner-card { padding: 20px; }
-    .winner-details-popup { font-size: 1em; }
-    #save-next-button { font-size: 1em; padding: 10px 20px; }
-    .reel-box.single-reel-box .reel-item { font-size: 1.5em; }
-}
 
 .prize-label { display: inline-block; padding: 3px 10px; margin-left: 8px; border-radius: 12px; font-size: 0.8em; font-weight: 700; color: white; vertical-align: middle; }
 .prize-label.mega-prize { background-image: linear-gradient(45deg, #d9232d, #ff5733, #d9232d); text-transform: uppercase; box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); animation: pulse-glow 1.5s infinite; }
 .prize-label.high-tier { background-color: #003366; }
 .prize-label.mid-tier { background-color: #1e8449; }
+.prize-label.mid-tier {
+    background-color: #1e8449;
+}
+
+/* ===== START: यह नया कोड यहाँ जोड़ें ===== */
+.prize-label.regular-tier {
+    background-color: #6c757d; /* एक सुंदर, न्यूट्रल ग्रे रंग */
+}
 @keyframes pulse-glow { 0% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); } 50% { transform: scale(1.05); box-shadow: 0 0 15px rgba(255, 120, 90, 1); } 100% { transform: scale(1); box-shadow: 0 0 10px rgba(255, 87, 51, 0.7); } }
 
 .prize-info-container { text-align: center; margin: 0 auto 40px auto; max-width: 1000px; }
 #prize-info-heading { font-size: 1.8em; font-weight: 600; margin-bottom: 30px; color: #FFFFFF; text-shadow: -1px -1px 0 #d9232d, 1px -1px 0 #d9232d, -1px 1px 0 #d9232d, 1px 1px 0 #d9232d, 3px 3px 5px rgba(0,0,0,0.5); }
 .prize-cards-wrapper { display: flex; justify-content: center; align-items: stretch; gap: 10px; flex-wrap: wrap; }
-.prize-card { background-color: rgba(0, 51, 102, 0.7); border: 2px solid #FFD700; border-radius: 15px; padding: 5px; width: 92px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); backdrop-filter: blur(8px); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+.prize-card {
+    background-color: rgba(0, 51, 102, 0.7);
+    border: 2px solid #FFD700;
+    border-radius: 15px;
+    padding: 5px;
+    width: 80px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    backdrop-filter: blur(8px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 .prize-card:hover { transform: translateY(-10px); box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3); }
-.prize-card h4 { font-family: 'Playfair Display', serif; font-size: 0.9em; color: #FFD700; margin: 0 0 10px 0; font-weight: 700; }
-.prize-card .winner-count { font-size: 1em; font-weight: 700; color: #FFFFFF; margin: 0; line-height: 1; }
-.prize-card .winner-label { font-size: 1em; color: #e0e0e0; margin: 5px 0 0 0; }
-.prize-card.mega-prize-card { background-color: rgba(217, 35, 45, 0.7); border-color: #ffffff; }
-
-.rotating-wipe { z-index: 5; }
+.prize-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.8em;
+    color: #FFD700;
+    margin: 0 0 8px 0;
+    font-weight: 700;
+}
+.prize-card .winner-count {
+    font-size: 0.9em;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin: 0;
+    line-height: 1;
+}
+.prize-card .winner-label {
+    font-size: 0.9em;
+    color: #e0e0e0;
+    margin: 4px 0 0 0;
+}
+.prize-card.mega-prize-card {
+    background-color: rgba(217, 35, 45, 0.7);
+    border-color: #ffffff;
+}
 .countdown-logo { position: absolute; width: 50%; height: auto; top: 20%; left: 50%; transform: translate(-50%, -50%); opacity: 0.90; z-index: 2; }
 
-
-/* ===== START: थैंक यू पॉप-अप के लिए नया स्टाइल ===== */
 .thank-you-popup-overlay {
     position: fixed;
     top: 0;
@@ -613,13 +510,11 @@ body {
     opacity: 1;
     transition: opacity 0.4s ease;
 }
-
 .thank-you-popup-overlay.hidden {
     opacity: 0;
     pointer-events: none;
-    display: none; /* इसे जोड़ने से यह पूरी तरह से गायब हो जाएगा */
+    display: none;
 }
-
 .thank-you-popup {
     background: linear-gradient(145deg, #ffffff, #f0f5ff);
     padding: 40px;
@@ -632,7 +527,6 @@ body {
     position: relative;
     animation: zoomIn 0.6s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
 }
-
 .close-popup-btn {
     position: absolute;
     top: 15px;
@@ -648,51 +542,18 @@ body {
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
 }
-
-.close-popup-btn:hover {
-    background-color: #d9232d;
-    color: #ffffff;
-    transform: rotate(90deg);
-}
-
-.popup-logos {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 40px;
-    margin-bottom: 25px;
-}
-
-.popup-logos img {
-    max-height: 60px;
-    width: auto;
-}
-
+.close-popup-btn:hover { background-color: #d9232d; color: #ffffff; transform: rotate(90deg); }
+.popup-logos { display: flex; justify-content: center; align-items: center; gap: 40px; margin-bottom: 25px; }
+.popup-logos img { max-height: 60px; width: auto; }
 .thank-you-popup h2 {
     font-family: 'Playfair Display', serif;
     font-size: 2.2em;
     color: #003366;
     margin: 0 0 20px 0;
 }
-
-.company-info {
-    font-size: 1.05em;
-    line-height: 1.7;
-    color: #444;
-    margin: 15px 0;
-}
-
-.company-info strong {
-    color: #d9232d;
-}
-
-.popup-divider {
-    border: none;
-    height: 1px;
-    background-color: #ccc;
-    margin: 30px auto;
-}
-
+.company-info { font-size: 1.05em; line-height: 1.7; color: #444; margin: 15px 0; }
+.company-info strong { color: #d9232d; }
+.popup-divider { border: none; height: 1px; background-color: #ccc; margin: 30px auto; }
 .aspire-link {
     display: inline-block;
     background-color: #d9232d;
@@ -705,128 +566,64 @@ body {
     margin-top: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+.aspire-link:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(217, 35, 45, 0.4); }
 
-.aspire-link:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(217, 35, 45, 0.4);
-}
-
-@media (max-width: 768px) {
-
-    .prize-card { 
-    flex: 1 1 calc(33.33% - 10px); /* 3 कार्ड एक लाइन में */
-    max-width: 120px;
-    padding: 10px 5px; /* अंदर की पैडिंग बढ़ाएँ */
-}
-.prize-card.mega-prize-card { /* मेगा प्राइज को थोड़ी ज़्यादा जगह दें */
-    flex: 1 1 100%; 
-    max-width: 250px;
-}
-.prize-card h4 { 
-    font-size: 1em; 
-}
-.prize-card .winner-count { 
-    font-size: 1.5em; 
-}
-    .thank-you-popup {
-        padding: 30px;
-    }
-    .thank-you-popup h2 {
-        font-size: 1.8em;
-    }
-    .popup-logos {
-        gap: 20px;
-    }
-    .popup-logos img {
-        max-height: 50px;
-    }
-}
-/* ===== END: नया स्टाइल यहाँ समाप्त होता है ===== */
-
-/* ===== START: घूमने वाली सुई के पीछे रंग भरने वाला नया एनीमेशन ===== */
-
-/* 1. हम एक कस्टम CSS वैरिएबल '--progress-angle' बना रहे हैं। 
-   @property ब्राउज़र को बताता है कि यह एक 'angle' है, ताकि इसे स्मूथली एनिमेट किया जा सके। */
 @property --progress-angle {
   syntax: '<angle>';
   inherits: false;
-  initial-value: 0deg; /* शुरुआती मान 0 डिग्री है */
+  initial-value: 0deg;
 }
-
-/* 2. एक कीफ्रेम एनीमेशन जो हमारे वैरिएबल को 0 से 360 डिग्री तक बदलेगा। */
-@keyframes fill-circle-progress {
-  to {
-    --progress-angle: 360deg;
-  }
-}
-
-/* 3. हम .film-leader (ग्रे सर्कल) के ऊपर एक रंगीन परत बनाएंगे। */
+@keyframes fill-circle-progress { to { --progress-angle: 360deg; } }
 .film-leader::before {
   content: "";
   position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 1; /* इसे ग्रे बैकग्राउंड के ऊपर लेकिन नंबर और सुई के नीचे रखें */
-  
-  /* यह conic-gradient असली जादू करता है।
-     - यह '--progress-angle' तक लाल रंग भरता है।
-     - उसके बाद का हिस्सा पारदर्शी (transparent) रखता है, जिससे नीचे का ग्रे रंग दिखाई देता है। */
+  z-index: 1;
   background: conic-gradient(
         var(--countdown-fill-color, #d9232d) var(--progress-angle), 
     transparent var(--progress-angle)
-);
-  /* गोलाकार बनाने के लिए */
+  );
   border-radius: 50%; 
-
-  /* शुरुआत में कोई एनीमेशन नहीं */
   animation: none;
 }
-
-/* 4. जब सुई (.rotating-wipe) में .animate क्लास जुड़ती है,
-   तो हम अपनी रंगीन परत पर एनीमेशन शुरू कर देंगे। */
 .film-leader:has(.rotating-wipe.animate)::before {
-  /* एनीमेशन को सुई के घूमने की गति (1.2s) के साथ चलाएं */
-  animation: fill-circle-progress 1.2s linear forwards;
+  animation: fill-circle-progress 1.0s linear forwards;
 }
+.rotating-wipe, .crosshair-h, .crosshair-v, .circle-border, .countdown-number, .countdown-logo { z-index: 5; }
 
-/* यह सुनिश्चित करता है कि सुई और क्रॉसहेयर लाइन्स रंग के ऊपर दिखाई दें */
-.rotating-wipe, .crosshair-h, .crosshair-v, .circle-border, .countdown-number, .countdown-logo {
-    z-index: 5;
+#top-right-controls {
+    position: fixed;
+    top: 85px;
+    right: 20px;
+    z-index: 1001;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-
-/* ===== END: नया एनीमेशन कोड ===== */
-
-/* 1. मुख्य कंटेनर की पोजीशन और स्टाइल */
 #admin-dashboard {
-    position: fixed; /* ताकि यह स्क्रॉल करने पर भी अपनी जगह पर बना रहे */
-    top: 85px;       /* ऊपर से दूरी (हेडर के ठीक नीचे) */
-    right: 20px;     /* दाहिने से दूरी */
-    z-index: 1000;   /* यह सुनिश्चित करता है कि यह बाकी सब चीजों के ऊपर रहे */
-    
-    background-color: rgba(0, 51, 102, 0.9); /* HP का गहरा नीला, थोड़ा पारदर्शी */
+    position: relative;
+    background-color: rgba(0, 51, 102, 0.9);
     color: #ffffff;
     padding: 8px 15px;
     border-radius: 20px;
-    border: 1px solid #FFD700; /* सुनहरी बॉर्डर */
+    border: 1px solid #FFD700;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-    backdrop-filter: blur(5px); /* बैकग्राउंड को धुंधला बनाता है (आधुनिक लुक) */
-    
-    display: flex; /* आइकन और टेक्स्ट को एक लाइन में रखने के लिए */
-    align-items: center; /* वर्टिकली सेंटर में रखने के लिए */
-    gap: 8px; /* आइकन और टेक्स्ट के बीच जगह */
-    
+    backdrop-filter: blur(5px);
     font-size: 0.9em;
     font-weight: 500;
+    cursor: pointer;
 }
-
-/* 2. आइकन (आंख) का स्टाइल */
+#total-viewers {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
 .viewer-icon {
     width: 20px;
     height: 20px;
-    fill: #FFFFFF; /* <<<--- बस इस लाइन को बदलें */
+    fill: #FFFFFF;
 }
-
-/* 3. संख्या (काउंट) का स्टाइल */
 #viewer-count {
     font-weight: 700;
     font-size: 1.1em;
@@ -837,41 +634,141 @@ body {
     min-width: 20px;
     text-align: center;
 }
-/* ===== END: नया स्टाइल ===== */
+#viewer-breakdown {
+    display: none;
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background-color: #ffffff;
+    border: 1px solid #003366;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    min-width: 200px;
+}
+#admin-dashboard:hover #viewer-breakdown { display: block; }
+#viewer-breakdown ul { list-style: none; margin: 0; padding: 0; color: #333; }
+#viewer-breakdown li { display: flex; justify-content: space-between; padding: 6px 4px; font-size: 0.9em; border-bottom: 1px solid #f0f0f0; }
+#viewer-breakdown li:last-child { border-bottom: none; }
+#viewer-breakdown .area-name { font-weight: 500; text-transform: capitalize; }
+#viewer-breakdown .area-count { font-weight: 700; background-color: #eef; padding: 2px 8px; border-radius: 10px; color: #003366; }
 
-#mute-toggle-button {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10001; /* यह हर चीज़ के ऊपर रहेगा */
-    
-    width: 45px;
-    height: 45px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border: 1px solid #ccc;
-    border-radius: 50%; /* इसे गोल बनाता है */
-    cursor: pointer;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    
-    /* आइकन को सेंटर में रखने के लिए */
+.hidden { display: none; }
+
+.mute-button {
+    position: relative;
+    width: auto; /* <<<--- चौड़ाई को auto किया */
+    height: 42px;
+    background-color: #003366;
+    border: 2px solid #FFD700;
+    border-radius: 25px; /* <<<--- गोल कोनों के लिए */
     display: flex;
-    justify-content: center;
     align-items: center;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transition: transform 0.2s ease;
+    padding: 0 10px 0 5px; /* <<<--- पैडिंग जोड़ी */
+    gap: 8px; /* <<<--- आइकन और टेक्स्ट के बीच जगह */
 }
 
-#mute-toggle-button:hover {
-    transform: scale(1.1);
+.mute-status-label {
+    color: #ffffff;
+    font-size: 0.9em;
+    font-weight: 500;
+    white-space: nowrap; /* यह सुनिश्चित करता है कि टेक्स्ट एक लाइन में रहे */
 }
 
-/* दोनों SVG आइकन के लिए कॉमन स्टाइल */
-#mute-toggle-button svg {
+.mute-button:hover { transform: scale(1.1); }
+.mute-button svg {
     width: 24px;
     height: 24px;
-    fill: #333;
+    fill: #ffffff;
+}
+.mute-button svg.hidden { display: none; }
+
+/* ===== MEDIA QUERIES ===== */
+@media (min-width: 1200px) {
+    .reel-item { font-size: 2em; }
+}
+@media (min-width: 992px) {
+    .reel-item { font-size: 2em; }
+}
+@media (max-width: 992px) {
+    .main-content { padding: 25px; }
+    .tab-button { padding: 16px 20px; font-size: 0.95em; }
+    .slideshow-wrapper { gap: 15px; }
+    .reel-box.single-reel-box { padding: 25px; }
+    .countdown-timer div { min-width: 80px; padding: 12px; }
+    .countdown-timer span { font-size: 2.2em; }
+    .reel-item { font-size: 3.8em; }
 }
 
-/* छिपाने के लिए हेल्पर क्लास */
-.hidden {
-    display: none;
+@media (max-width: 768px) {
+    .site-header { flex-direction: row; gap: 10px; padding: 10px 15px; }
+    .site-header .lang-switcher { display: none; }
+    .lang-switcher-mobile-container { display: block; }
+    .lang-switcher-mobile-container .lang-switcher{ justify-content: center; }
+    .header-logos-left, .header-logos-right { gap: 15px; flex-wrap: wrap; }
+    .header-logos-left img, .header-logos-right img { max-height: 40px; }
+    .main-content { padding: 20px; }
+    .subtitle-container { margin-left: 0; margin-right: 0; margin-bottom: 25px; padding: 12px 20px; }
+    .subtitle { font-size: 1.4em; }
+    .countdown-container { padding: 20px; }
+    .countdown-container h2, .draw-live-message h2 { font-size: 1.2em; }
+    .countdown-timer { gap: 10px; }
+    .countdown-timer div { min-width: 65px; padding: 10px; }
+    .countdown-timer span { font-size: 1.8em; }
+    .countdown-timer span.label { font-size: 0.7em; }
+    .tab-nav { flex-direction: column; border-radius: 5px; margin-left: 0; margin-right: 0; margin-bottom: 25px; }
+    .tab-button { text-align: center; border-bottom: 1px solid rgba(255, 255, 255, 0.2); }
+    .tab-button:last-child { border-bottom: none; }
+    #draw-button { font-size: 1.1em; padding: 12px 35px; }
+    #reset-button { padding: 12px 25px; font-size: 1em; }
+    .slideshow-wrapper { flex-direction: column; }
+    .slot-machine-container.single-reel-mode { margin: 20px auto; padding: 0; }
+    .search-form { flex-direction: column; }
+    #search-button { padding-top: 12px; padding-bottom: 12px; }
+    .winner-popup, .public-winner-card { padding: 25px; width: 90%; max-width: 90%; }
+    #popup-heading, #public-heading { font-size: 1.5em; }
+    #winner-popup .prize-image-container, #public-winner-card .prize-image-container { height: 120px; }
+    #save-next-button { font-size: 1em; padding: 10px 20px; }
+    .thank-you-popup { padding: 30px; }
+    .thank-you-popup h2 { font-size: 1.8em; }
+    .popup-logos { gap: 20px; }
+    .popup-logos img { max-height: 50px; }
+    
+    .reel-box.single-reel-box .reel-window {
+        height: 100px;
+    }
+    .reel-item,
+    .reel-box.single-reel-box .reel-item {
+        height: 100px;
+        line-height: 100px;
+        font-size: 1.8em;
+    }
+}
+
+@media (max-width: 576px) {
+    body { font-size: 14px; }
+    .header-logos-left img, .header-logos-right img { max-height: 35px; }
+    .subtitle { font-size: 1.2em; }
+    .countdown-timer { gap: 8px; }
+    .countdown-timer div { min-width: 0; flex: 1; padding: 8px; }
+    .countdown-timer span { font-size: 1.5em; }
+    .tab-button { padding: 15px; font-size: 1em; }
+    .main-content { padding: 15px; }
+    .winner-popup, .public-winner-card { padding: 20px; }
+    .winner-details-popup { font-size: 1em; }
+    #save-next-button { font-size: 1em; padding: 10px 20px; }
+    
+    .prize-card {
+        flex: 1 1 calc(33.33% - 10px);
+        max-width: 100px;
+        padding: 8px 5px;
+    }
+    .prize-card.mega-prize-card {
+        flex: 1 1 100%;
+        max-width: 220px;
+    }
 }
