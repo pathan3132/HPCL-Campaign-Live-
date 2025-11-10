@@ -1,7 +1,7 @@
-// --- START: इस पूरी फ़ाइल को कॉपी करके अपनी पुरानी फ़ाइल से बदलें ---
+// --- START: इस पूरे कोड को अपनी script.js फाइल में पेस्ट करें ---
 
-// 1. Firebase कॉन्फ़िगरेशन
- const firebaseConfig = {
+// 1. Firebase कॉन्फ़िगरेशन (यह आपकी अपनी कॉन्फ़िगरेशन होनी चाहिए)
+const firebaseConfig = {
     apiKey: "AIzaSyCAKoW_qCM9gF9k_vFvLOOpDORsFAfOgOQ",
     authDomain: "hpcl-campaign-live.firebaseapp.com",
     databaseURL: "https://hpcl-campaign-live-default-rtdb.firebaseio.com",
@@ -10,9 +10,22 @@
     messagingSenderId: "843304288801",
     appId: "1:843304288801:web:3130a50baad7efa427d960",
     measurementId: "G-CDQDF0Z040"
-  };
+};
 
+// Firebase को शुरू करें
 firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+
+// 2. सुरक्षा गेटकीपर: यह बिना लॉगिन के एडमिन को पेज पर आने से रोकेगा
+auth.onAuthStateChanged(user => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const userRole = urlParams.get('role');
+    if (userRole === 'admin' && !user) {
+        console.log("Admin access denied. Redirecting to login page.");
+        window.location.href = 'admin_login.html';
+    }
+});
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxS4ReuKp0Evds7Ttj-tHQ0AhaEGuXZih1UnnKgtvXz9oN7bvF1uNqCezNpyKmnYZsQsA/exec';
 
@@ -23,17 +36,20 @@ const salesArea = urlParams.get('area');
 
 if (!salesArea) {
     document.body.innerHTML = `<h1 style="color: white; text-align:center; margin-top: 50px;">Sales Area Not Specified. Please add '?area=your_area_name' to the URL.</h1>`;
-    throw new Error("Sales Area not specified in URL."); 
+    throw new Error("Sales Area not specified in URL.");
 }
 
-const database = firebase.database();
-const baseRef = database.ref(salesArea); 
+const baseRef = database.ref(salesArea);
 const gameStateRef = baseRef.child('drawState');
 const winnersRef = baseRef.child('winners');
 const participantsRef = baseRef.child('participants');
-const onlineUsersRef = baseRef.child('onlineUsers'); 
+const onlineUsersRef = baseRef.child('onlineUsers');
 
-// --- START: साउंड वेरिएबल्स ---
+// 3. डीबगिंग कोड: यह कंसोल में बताएगा कि कोड डेटा कहाँ ढूंढ रहा है
+console.log("Searching for data in area:", salesArea);
+console.log("Full database path being checked:", participantsRef.toString());
+
+// --- साउंड वेरिएबल्स ---
 let isMuted = false;
 let areSoundsPrimed = false;
 const countdownSound = document.getElementById('sound-countdown');
@@ -45,13 +61,8 @@ const allSounds = [countdownSound, revealSound, spinSound, winnerSound, celebrat
 const muteButton = document.getElementById('mute-button');
 const muteIcon = document.getElementById('mute-icon');
 const unmuteIcon = document.getElementById('unmute-icon');
-// --- END: साउंड वेरिएबल्स ---
 
-// हर राउंड के लिए रंगों की सूची
-const countdownColors = ['#FFADAD', '#A0C4FF', '#9BF6FF', '#CAFFBF', '#FDFFB6', '#FFD6A5', '#BDB2FF', '#FFC6FF', '#FFFFFC', '#84D2F6'];
-const COUNTDOWN_SECONDS = 10; // <<<--- काउंटडाउन का समय यहाँ से बदलें
-
-// अन्य वेरिएबल्स
+// --- DOM एलिमेंट्स और अन्य वेरिएबल्स ---
 const subtitleText = document.getElementById('subtitle-text');
 const drawButton = document.getElementById('draw-button');
 const thankYouPopupOverlay = document.getElementById('thank-you-popup-overlay');
@@ -107,13 +118,16 @@ const prizeConfig = [
     { range: [24, 25], prize: "Refrigerator", image: "Prizeimages/prize_fridge.png" },
     { range: [26, 26], prize: "Motorcycle (Mega Prize)", image: "Prizeimages/prize_bike.png" }
 ];
+const countdownColors = ['#FFADAD', '#A0C4FF', '#9BF6FF', '#CAFFBF', '#FDFFB6', '#FFD6A5', '#BDB2FF', '#FFC6FF', '#FFFFFC', '#84D2F6'];
+const COUNTDOWN_SECONDS = 10;
+
+// --- यहाँ से सारे फंक्शन्स शुरू होते हैं ---
 
 function getPrizeDetails(round) {
     if (round > totalRounds) return null;
     return prizeConfig.find(config => round >= config.range[0] && round <= config.range[1]);
 }
 
-// --- START: साउंड कंट्रोल फंक्शन्स ---
 function primeSounds() {
     if (areSoundsPrimed) return;
     areSoundsPrimed = true;
@@ -148,8 +162,6 @@ function stopAllSounds() {
 
 if (muteButton) {
     const muteStatusText = document.getElementById('mute-status-text');
-
-    // शुरुआती स्थिति सेट करने के लिए एक फंक्शन
     function updateMuteStatus() {
         if (isMuted) {
             muteStatusText.textContent = 'OFF';
@@ -163,11 +175,9 @@ if (muteButton) {
             unmuteIcon.classList.remove('hidden');
         }
     }
-
     muteButton.addEventListener('click', () => {
         isMuted = !isMuted;
-        updateMuteStatus(); // स्टेटस अपडेट करें
-        
+        updateMuteStatus();
         if (!isMuted && !areSoundsPrimed) {
             primeSounds();
         }
@@ -175,11 +185,8 @@ if (muteButton) {
             stopAllSounds();
         }
     });
-
-    // पेज लोड होते ही शुरुआती स्थिति सेट करें
     updateMuteStatus();
 }
-// --- END: साउंड कंट्रोल फंक्शन्स ---
 
 function startContinuousCelebration() {
     if (celebrationIntervalId) return;
@@ -203,78 +210,8 @@ function stopCelebration() {
 }
 
 const translations = {
-    hi: {
-        subtitle: "दिवाली स्पेशल लकी ड्रा",
-        button: "विजेता चुनें!",
-        winner_title: "विजेता",
-        tab_winner: "परिणाम पेज",
-        tab_participants: "हमारे बारे में",
-        search_heading: "अपनी एंट्री जांचें",
-        search_subheading: "अपनी एंट्री खोजने के लिए अपना मोबाइल नंबर या कूपन कोड दर्ज करें।",
-        search_placeholder: "मोबाइल या कूपन कोड दर्ज करें...",
-        search_button: "खोजें",
-        searching: "खोज रहे हैं...",
-        entry_found: "बधाई हो! आपकी एंट्री मिल गई है।",
-        no_entry: "इस विवरण के साथ कोई एंट्री नहीं मिली।",
-        empty_input: "कृपया खोजने के लिए कुछ दर्ज करें।",
-        about_heading: "उत्कृष्टता के प्रति हमारी प्रतिबद्धता",
-        about_p1: "हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (एचपीसीएल) भारत की अग्रणी तेल और गैस कंपनियों में से एक है...",
-        about_p2: "यह लकी ड्रा एचपीसीएल को चुनने के लिए आपका धन्यवाद कहने का हमारा तरीका है...",
-        winners_list_heading: "लकी ड्रा विजेता",
-        th_round: "राउंड",
-        th_prize: "पुरस्कार",
-        th_name: "विजेता का नाम",
-        th_coupon: "कूपन कोड",
-        th_outlet: "आउटलेट",
-        th_address: "आउटलेट का पता",
-        th_mobile: "मोबाइल",
-        countdown_heading: "लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।",
-        countdown_days: "दिन",
-        countdown_hours: "घंटे",
-        countdown_minutes: "मिनट",
-        countdown_seconds: "सेकंड",
-        draw_live_message: "ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें।",
-        prize_info_heading: "आज के पुरस्कार",
-        draw_completed: "लकी ड्रॉ सफलतापूर्वक संपन्न हुआ। सभी विजेताओं को हार्दिक बधाई!",
-         reel_title_waiting: "विजेता यहाँ देखें", // <<<--- नई लाइन
-        reel_title_spinning: "कूपन कोड" // <<<--- नई लाइन
-    },
-    en: {
-        subtitle: "Diwali Special Lucky Draw",
-        button: "Reveal the Winner",
-        winner_title: "Winner",
-        tab_winner: "Result Page",
-        tab_participants: "About Us",
-        search_heading: "Check Your Coupon Code",
-        search_subheading: "Enter your Mobile Number or Coupon Code to find your entry.",
-        search_placeholder: "Enter Mobile or Coupon Code...",
-        search_button: "Search",
-        searching: "Searching...",
-        entry_found: "Congratulations! Your entry has been found.",
-        no_entry: "No entry found with these details.",
-        empty_input: "Please enter something to search.",
-        about_heading: "Our Commitment to Excellence",
-        about_p1: "Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...",
-        about_p2: "This lucky draw is our way of saying thank you for choosing HPCL...",
-        winners_list_heading: "Lucky Draw Winners",
-        th_round: "Round",
-        th_prize: "Prize",
-        th_name: "Winner Name",
-        th_coupon: "Coupon Code",
-        th_outlet: "Outlet",
-        th_address: "Outlet Address",
-        th_mobile: "Mobile",
-        countdown_heading: "The lucky draw is about to begin, please stay on this page.",
-        countdown_days: "Days",
-        countdown_hours: "Hours",
-        countdown_minutes: "Minutes",
-        countdown_seconds: "Seconds",
-        draw_live_message: "The draw has started! Stay on the Result Page to try your luck.",
-        prize_info_heading: "Today's Prizes",
-        draw_completed: "The lucky draw has concluded successfully. Congratulations to all the winners!",
-           reel_title_waiting: "WINNER REVEALS HERE", // <<<--- नई लाइन
-        reel_title_spinning: "COUPON CODE" // <<<--- नई लाइन
-    }
+    hi: { subtitle: "दिवाली स्पेशल लकी ड्रा", button: "विजेता चुनें!", winner_title: "विजेता", tab_winner: "परिणाम पेज", tab_participants: "हमारे बारे में", search_heading: "अपनी एंट्री जांचें", search_subheading: "अपनी एंट्री खोजने के लिए अपना मोबाइल नंबर या कूपन कोड दर्ज करें।", search_placeholder: "मोबाइल या कूपन कोड दर्ज करें...", search_button: "खोजें", searching: "खोज रहे हैं...", entry_found: "बधाई हो! आपकी एंट्री मिल गई है।", no_entry: "इस विवरण के साथ कोई एंट्री नहीं मिली।", empty_input: "कृपया खोजने के लिए कुछ दर्ज करें।", about_heading: "उत्कृष्टता के प्रति हमारी प्रतिबद्धता", about_p1: "हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (एचपीसीएल) भारत की अग्रणी तेल और गैस कंपनियों में से एक है...", about_p2: "यह लकी ड्रा एचपीसीएल को चुनने के लिए आपका धन्यवाद कहने का हमारा तरीका है...", winners_list_heading: "लकी ड्रा विजेता", th_round: "राउंड", th_prize: "पुरस्कार", th_name: "विजेता का नाम", th_coupon: "कूपन कोड", th_outlet: "आउटलेट", th_address: "आउटलेट का पता", th_mobile: "मोबाइल", countdown_heading: "लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।", countdown_days: "दिन", countdown_hours: "घंटे", countdown_minutes: "मिनट", countdown_seconds: "सेकंड", draw_live_message: "ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें।", prize_info_heading: "आज के पुरस्कार", draw_completed: "लकी ड्रॉ सफलतापूर्वक संपन्न हुआ। सभी विजेताओं को हार्दिक बधाई!", reel_title_waiting: "विजेता यहाँ देखें", reel_title_spinning: "कूपन कोड" },
+    en: { subtitle: "Diwali Special Lucky Draw", button: "Reveal the Winner", winner_title: "Winner", tab_winner: "Result Page", tab_participants: "About Us", search_heading: "Check Your Coupon Code", search_subheading: "Enter your Mobile Number or Coupon Code to find your entry.", search_placeholder: "Enter Mobile or Coupon Code...", search_button: "Search", searching: "Searching...", entry_found: "Congratulations! Your entry has been found.", no_entry: "No entry found with these details.", empty_input: "Please enter something to search.", about_heading: "Our Commitment to Excellence", about_p1: "Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...", about_p2: "This lucky draw is our way of saying thank you for choosing HPCL...", winners_list_heading: "Lucky Draw Winners", th_round: "Round", th_prize: "Prize", th_name: "Winner Name", th_coupon: "Coupon Code", th_outlet: "Outlet", th_address: "Outlet Address", th_mobile: "Mobile", countdown_heading: "The lucky draw is about to begin, please stay on this page.", countdown_days: "Days", countdown_hours: "Hours", countdown_minutes: "Minutes", countdown_seconds: "Seconds", draw_live_message: "The draw has started! Stay on the Result Page to try your luck.", prize_info_heading: "Today's Prizes", draw_completed: "The lucky draw has concluded successfully. Congratulations to all the winners!", reel_title_waiting: "WINNER REVEALS HERE", reel_title_spinning: "COUPON CODE" }
 };
 
 let currentLang = 'en';
@@ -309,7 +246,6 @@ function setLanguage(lang) {
     document.getElementById('prize-info-heading').innerText = t.prize_info_heading;
     langHi.classList.toggle('active', lang === 'hi');
     langEn.classList.toggle('active', lang === 'en');
-
     if (localState && (localState.status === 'ended' || (localState.round && localState.round > totalRounds))) {
         document.getElementById('countdown-heading').innerText = translations[lang].draw_completed;
     }
@@ -340,32 +276,35 @@ function startCountdown() {
     }, 1000);
 }
 
-async function fetchData() {
-    try {
-        const participantsSnapshot = await participantsRef.get();
-        if (participantsSnapshot.exists()) {
-            const participantsData = participantsSnapshot.val();
+// 4. सुधारा हुआ fetchData फंक्शन (रियल-टाइम और भरोसेमंद)
+function fetchData() {
+    participantsRef.on('value', (snapshot) => {
+        if (snapshot.exists()) {
+            const participantsData = snapshot.val();
             allParticipants = Object.values(participantsData).map(p => ({ ...p, isWinner: false, prize: null }));
-        } else {
-            console.error('No participants found for this area in Firebase.');
-            subtitleText.innerText = "Error: Participants data not found.";
-            return;
-        }
-        const winnersSnapshot = await winnersRef.get();
-        if (winnersSnapshot.exists()) {
-            const winnersData = winnersSnapshot.val();
-            Object.values(winnersData).forEach(winner => {
-                const index = allParticipants.findIndex(p => p.CouponCode === winner.CouponCode);
-                if (index !== -1) {
-                    allParticipants[index].isWinner = true;
+            console.log("SUCCESS: Participants data loaded successfully for area:", salesArea);
+            
+            // अब विजेताओं का डेटा देखें ताकि सही स्थिति पता चले
+            winnersRef.once('value', (winnersSnapshot) => {
+                if (winnersSnapshot.exists()) {
+                    const winnersData = winnersSnapshot.val();
+                    Object.values(winnersData).forEach(winner => {
+                        const index = allParticipants.findIndex(p => p.CouponCode === winner.CouponCode);
+                        if (index !== -1) {
+                            allParticipants[index].isWinner = true;
+                        }
+                    });
                 }
+                console.log("Past winners status synced with participants list.");
             });
+        } else {
+            console.error("ERROR: No 'participants' node found at path:", participantsRef.toString());
+            subtitleText.innerText = "Error: Participants data not found.";
         }
-        console.log("Data and past winners loaded successfully from Firebase for area:", salesArea);
-    } catch (error) {
-        console.error('Data loading error from Firebase:', error);
+    }, (error) => {
+        console.error("Firebase read error:", error);
         subtitleText.innerText = "Error: Could not load data.";
-    }
+    });
 }
 
 function searchParticipant() {
@@ -375,15 +314,40 @@ function searchParticipant() {
         return;
     }
     searchResultContainer.innerHTML = `<div class="result-message">${translations[currentLang].searching}</div>`;
+    
     setTimeout(() => {
         const result = allParticipants.find(p => (p['CustomerPhone'] && String(p['CustomerPhone']) === searchTerm) || (p['CouponCode'] && p['CouponCode'] === searchTerm));
+        
         if (result) {
             const customerName = result.CustomerName || result['Costomer Name'] || 'N/A';
             const customerPhone = result['CustomerPhone'] || 'N/A';
             const vehicleNumber = result['VehicleNumber'] || 'N/A';
             const couponCode = result['CouponCode'] || 'N/A';
             const pumpName = result['PumpName'] || 'N/A';
-            searchResultContainer.innerHTML = `<div class="result-message success">${translations[currentLang].entry_found}</div><div class="result-card"><p><strong>Outlet Name:</strong> ${pumpName}</p><p><strong>Customer Name:</strong> ${customerName}</p><p><strong>Mobile Number:</strong> ${String(customerPhone).substring(0, 2) + '******' + String(customerPhone).substring(String(customerPhone).length - 2)}</p><p><strong>Vehicle Number:</strong> ${vehicleNumber}</p><p><strong>Coupon Code:</strong> ${couponCode}</p></div>`;
+            
+            // <<<--- यहाँ बदलाव किया गया है ---<<<
+            // 1. रिजल्ट कार्ड के अंदर क्लोज बटन ('&times;' का मतलब 'X' होता है) जोड़ा गया है
+            searchResultContainer.innerHTML = `
+                <div class="result-message success">${translations[currentLang].entry_found}</div>
+                <div class="result-card">
+                    <button id="close-search-result" class="close-btn">&times;</button>
+                    <p><strong>Outlet Name:</strong> ${pumpName}</p>
+                    <p><strong>Customer Name:</strong> ${customerName}</p>
+                    <p><strong>Mobile Number:</strong> ${String(customerPhone).substring(0, 2) + '******' + String(customerPhone).substring(String(customerPhone).length - 2)}</p>
+                    <p><strong>Vehicle Number:</strong> ${vehicleNumber}</p>
+                    <p><strong>Coupon Code:</strong> ${couponCode}</p>
+                </div>`;
+
+            // 2. अब उस क्लोज बटन को ढूंढें और उसे काम करने का तरीका बताएं
+            const closeButton = document.getElementById('close-search-result');
+            if(closeButton) {
+                closeButton.addEventListener('click', () => {
+                    // जब बटन पर क्लिक हो, तो पूरे रिजल्ट को खाली कर दें
+                    searchResultContainer.innerHTML = '';
+                });
+            }
+            // <<<--- बदलाव यहाँ खत्म ---<<<
+
         } else {
             searchResultContainer.innerHTML = `<div class="result-message error">${translations[currentLang].no_entry}</div>`;
         }
@@ -393,12 +357,11 @@ function searchParticipant() {
 async function fetchAndDisplayWinners() {
     const tableBody = document.getElementById('winners-table-body');
     tableBody.innerHTML = `<tr><td colspan="7" class="loading-message">Loading winners...</td></tr>`;
-    try {
-        const snapshot = await winnersRef.get();
+    winnersRef.on('value', (snapshot) => {
+        tableBody.innerHTML = '';
         if (snapshot.exists()) {
             const winnersData = snapshot.val();
             const winners = Object.values(winnersData);
-            tableBody.innerHTML = '';
             if (winners.length === 0) {
                 tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">No winners announced yet.</td></tr>`;
                 return;
@@ -412,23 +375,21 @@ async function fetchAndDisplayWinners() {
                     case "Motorcycle (Mega Prize)": prizeDisplayHtml = `Motorcycle <span class="prize-label mega-prize">MEGA PRIZE</span>`; break;
                     case "Refrigerator": prizeDisplayHtml = `Refrigerator <span class="prize-label high-tier">Star Prize</span>`; break;
                     case "LED TV": prizeDisplayHtml = `LED TV <span class="prize-label mid-tier">Bonus Prize</span>`; break;
-                       case "Dinner Set":
-                        prizeDisplayHtml = `Dinner Set <span class="prize-label regular-tier">Gift Prize</span>`;
-                        break;
+                    case "Dinner Set": prizeDisplayHtml = `Dinner Set <span class="prize-label regular-tier">Gift Prize</span>`; break;
                     default: prizeDisplayHtml = winner.Prize;
                 }
                 const row = document.createElement('tr');
                 const winnerName = winner.CustomerName || winner['Costomer Name'] || 'N/A';
-                row.innerHTML = ` <td>${winner.Round}</td> <td>${prizeDisplayHtml}</td> <td>${winnerName}</td> <td>${winner.CouponCode}</td> <td>${winner.PumpName}</td> <td>${outletAddress}</td> <td>${mobileDisplay}</td> `;
+                row.innerHTML = `<td>${winner.Round}</td><td>${prizeDisplayHtml}</td><td>${winnerName}</td><td>${winner.CouponCode}</td><td>${winner.PumpName}</td><td>${outletAddress}</td><td>${mobileDisplay}</td>`;
                 tableBody.appendChild(row);
             });
         } else {
             tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">No winners announced yet.</td></tr>`;
         }
-    } catch (error) {
+    }, (error) => {
         console.error('Error fetching winners from Firebase:', error);
         tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">Failed to load winners list. Please try again later.</td></tr>`;
-    }
+    });
 }
 
 function syncUIWithState(state) {
@@ -446,7 +407,7 @@ function syncUIWithState(state) {
     if (state.status !== 'finished') { stopCelebration(); }
     winnerPopupOverlay.classList.add('hidden');
     publicWinnerCard.classList.add('hidden');
-    
+
     if (state.status === 'waiting') {
         if (localState.status && localState.status !== 'waiting') { stopAllSounds(); }
         const prize = getPrizeDetails(state.round);
@@ -544,47 +505,32 @@ function handleAdminClick() {
 
 function runCountdown(currentNumber) {
     const filmLeader = document.querySelector('.film-leader');
-
-    // <<<--- यहाँ मुख्य बदलाव किया गया है ---<<<
-    // अब हम हर सेकंड रंग बदलने के लिए currentNumber का उपयोग करेंगे
     if (currentNumber > 0) {
-        // COUNTDOWN_SECONDS - currentNumber एक बढ़ता हुआ क्रम (0, 1, 2...) देगा
         const colorIndex = (COUNTDOWN_SECONDS - currentNumber) % countdownColors.length;
         const selectedColor = countdownColors[colorIndex];
         filmLeader.style.setProperty('--countdown-fill-color', selectedColor);
     } else {
-        // जब 'GO!' दिखे, तो आखिरी रंग का इस्तेमाल करें ताकि रंग अचानक न बदले
         const lastColorIndex = (COUNTDOWN_SECONDS - 1) % countdownColors.length;
         filmLeader.style.setProperty('--countdown-fill-color', countdownColors[lastColorIndex]);
     }
-
     const countdownNumberEl = document.getElementById('countdown-number');
     const rotatingWipe = document.getElementById('rotating-wipe');
-    
     rotatingWipe.classList.remove('animate');
     countdownNumberEl.innerText = currentNumber > 0 ? currentNumber : 'GO!';
     countdownNumberEl.style.fontSize = currentNumber > 0 ? '40vmin' : '30vmin';
-    
-    setTimeout(() => {
-        rotatingWipe.classList.add('animate');
-    }, 20);
+    setTimeout(() => { rotatingWipe.classList.add('animate'); }, 20);
 }
 
 function beginReelSpin(winnerCoupon) {
     if (reelCoupon.classList.contains('spinning')) return;
     playSound(spinSound);
-
-     document.getElementById('reel-title-coupon').innerText = translations[currentLang].reel_title_spinning;
-
+    document.getElementById('reel-title-coupon').innerText = translations[currentLang].reel_title_spinning;
     const pastWinners = allParticipants.filter(p => p.isWinner);
     const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName));
     const eligibleParticipantsForReel = allParticipants.filter(p => !p.isWinner && !winningOutletNames.has(p.PumpName));
-    
     const itemHeight = reelCoupon.querySelector('.reel-item')?.offsetHeight || 100;
-
     let reel = startContinuousReel(reelCoupon, eligibleParticipantsForReel, 'CouponCode', 10, itemHeight);
     reelCoupon.classList.add('spinning');
-
     setTimeout(() => {
         const stopTimeInSeconds = 5;
         stopReel(reel, winnerCoupon, stopTimeInSeconds, itemHeight);
@@ -668,7 +614,6 @@ async function handleSaveClick() {
     }
     const isSaved = await saveWinnerData(currentWinner, localState.round);
     if (isSaved) {
-        fetchAndDisplayWinners();
         if (localState.round >= totalRounds) {
             console.log("All rounds complete. Showing thank you popup.");
             gameStateRef.set({ status: 'ended', round: localState.round, winnerCoupon: null });
@@ -703,21 +648,12 @@ async function handleResetClick() {
 async function initializeApp() {
     const splashScreen = document.getElementById('splash-screen');
     const enterButton = document.getElementById('enter-button');
+    
     if (enterButton && splashScreen) {
-        enterButton.style.display = 'none';
+        // <<<--- यहाँ सारा बदलाव किया गया है ---<<<
+        // 3 सेकंड बाद, बटन पर 'visible' क्लास लगा दें
         setTimeout(() => {
-            enterButton.style.display = 'inline-block';
-            enterButton.style.padding = '15px 30px';
-            enterButton.style.fontSize = '1.2em';
-            enterButton.style.fontWeight = '600';
-            enterButton.style.color = '#ffffff';
-            enterButton.style.backgroundColor = '#d9232d';
-            enterButton.style.border = 'none';
-            enterButton.style.borderRadius = '50px';
-            enterButton.style.cursor = 'pointer';
-            enterButton.style.marginTop = '20px';
-            enterButton.style.boxShadow = '0 4px 15px rgba(0,0,0,0.2)';
-            enterButton.style.transition = 'transform 0.2s ease';
+            enterButton.classList.add('visible');
         }, 3000);
 
         enterButton.addEventListener('click', () => {
@@ -729,16 +665,54 @@ async function initializeApp() {
         }, { once: true });
     }
     
+    // बाकी का फंक्शन वैसा का वैसा ही रहेगा
     startPaperRain();
     startCountdown();
-    await fetchData();
+    fetchData();
     fetchAndDisplayWinners();
+    
     gameStateRef.on('value', (snapshot) => { const state = snapshot.val(); if (state) { syncUIWithState(state); } });
     const snapshot = await gameStateRef.get();
     if (snapshot.exists()) { syncUIWithState(snapshot.val()); } else if (userRole === 'admin') { handleResetClick(); }
     
     const connectedRef = database.ref('.info/connected');
-    connectedRef.on('value', (snapshot) => { if (snapshot.val() === true) { const userConnection = onlineUsersRef.push(); userConnection.onDisconnect().remove(); userConnection.set(true); } });
+    connectedRef.on('value', (snapshot) => { 
+        if (snapshot.val() === true) { 
+            const userConnection = onlineUsersRef.push(); 
+            userConnection.onDisconnect().remove(); 
+            userConnection.set(true); 
+        } 
+    });
+    
+    if (userRole === 'admin') {
+        const adminDashboard = document.getElementById('admin-dashboard');
+        const totalViewerCountEl = document.getElementById('viewer-count');
+        const viewerBreakdownEl = document.getElementById('viewer-breakdown');
+        if (adminDashboard) { adminDashboard.style.display = 'block'; }
+        const ALL_SALES_AREAS = ['akola', 'aurangabad1', 'aurangabad2', 'shirdi', 'jalna', 'ahemadnagar'];
+        const liveCounts = {};
+        function updateViewerDisplay() {
+            let totalViewers = 0;
+            let breakdownHtml = '<ul>';
+            ALL_SALES_AREAS.forEach(area => { 
+                const count = liveCounts[area] || 0; 
+                totalViewers += count; 
+                breakdownHtml += `<li><span class="area-name">${area}</span> <span class="area-count">${count}</span></li>`; 
+            });
+            breakdownHtml += '</ul>';
+            if (totalViewerCountEl) { totalViewerCountEl.innerText = totalViewers; }
+            if (viewerBreakdownEl) { viewerBreakdownEl.innerHTML = breakdownHtml; }
+        }
+        ALL_SALES_AREAS.forEach(areaName => { 
+            const areaOnlineUsersRef = database.ref(areaName).child('onlineUsers'); 
+            areaOnlineUsersRef.on('value', (snapshot) => { 
+                liveCounts[areaName] = snapshot.numChildren(); 
+                updateViewerDisplay(); 
+            }); 
+        });
+    }
+}
+    // <<<--- END: यहाँ तक ---<<<
     
     if (userRole === 'admin') {
         const adminDashboard = document.getElementById('admin-dashboard');
@@ -757,18 +731,16 @@ async function initializeApp() {
         }
         ALL_SALES_AREAS.forEach(areaName => { const areaOnlineUsersRef = database.ref(areaName).child('onlineUsers'); areaOnlineUsersRef.on('value', (snapshot) => { liveCounts[areaName] = snapshot.numChildren(); updateViewerDisplay(); }); });
     }
-}
 
 function showThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.remove('hidden'); } }
 function hideThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.add('hidden'); } }
+
 function initializeReels() {
     const defaultText = '<div class="reel-item">READY TO DRAW</div>';
     reelCoupon.innerHTML = defaultText;
     reelCoupon.style.transform = 'translateY(0px)';
     document.querySelectorAll('.reel-box').forEach(box => { box.style.border = '3px solid #FFD700'; });
     reelCoupon.classList.remove('spinning');
-    
-    // <<<--- यह नई लाइन जोड़ी गई है ---<<<
     document.getElementById('reel-title-coupon').innerText = translations[currentLang].reel_title_waiting;
 }
 
@@ -780,8 +752,7 @@ async function saveWinnerData(winner, round) {
         await specificWinnerRef.set(winnerDataWithPrize);
         console.log('SUCCESS: Winner saved to Firebase for area:', salesArea);
         try {
-            if (APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'यहाँ_अपना_कॉपी_किया_हुआ_URL_पेस्ट_करें') {
-                console.log("Attempting to save winner to Google Sheet...");
+            if (APPS_SCRIPT_URL) {
                 await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(winnerDataWithPrize) });
                 console.log('SUCCESS: Winner data sent to Google Sheet.');
             }
@@ -795,6 +766,7 @@ async function saveWinnerData(winner, round) {
     }
 }
 
+// --- Event Listeners ---
 if (userRole === 'admin') {
     drawButton.style.display = 'inline-block';
     drawButton.addEventListener('click', handleAdminClick);
@@ -806,7 +778,6 @@ if (userRole === 'admin') {
 }
 
 if (closeThankYouPopupButton) { closeThankYouPopupButton.addEventListener('click', hideThankYouPopup); }
-
 langHi.addEventListener('click', (e) => { e.preventDefault(); setLanguage('hi'); });
 langEn.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
 searchButton.addEventListener('click', searchParticipant);
@@ -826,8 +797,6 @@ tabButtons.forEach(button => {
     });
 });
 
-initializeApp();
-
 function startPaperRain() {
   if (typeof confetti !== 'function') { console.error("Confetti library is not loaded."); return; }
   const brandColors = ['#d9232d', '#003366', '#FFD700', '#ffffff'];
@@ -844,4 +813,29 @@ function startPaperRain() {
     });
   }, 1000);
 }
+
+// App को शुरू करें
+initializeApp();
+
+const logoutButton = document.getElementById('logout-button');
+
+// अगर यूजर एडमिन है, तो लॉगआउट बटन दिखाएं
+if (userRole === 'admin') {
+    logoutButton.style.display = 'inline-block';
+}
+
+logoutButton.addEventListener('click', () => {
+    auth.signOut()
+        .then(() => {
+            // लॉग आउट सफल हुआ
+            console.log('User signed out successfully.');
+            // यूजर को लॉगिन पेज पर भेजें
+            window.location.href = 'admin_login.html';
+        })
+        .catch((error) => {
+            // कोई एरर आई
+            console.error('Sign out error:', error);
+        });
+});
+
 // --- END: यहाँ तक कॉपी करें ---

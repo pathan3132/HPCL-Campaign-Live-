@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <link rel="stylesheet" href="login_style.css">
+</head>
+<body>
+    <div class="glass-container">
+        <h2>Admin Login</h2>
+        <form id="login-form">
+            <div class="input-group">
+                <input type="email" id="email" required autocomplete="email">
+                <label for="email">Email</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" required autocomplete="current-password">
+                <label for="password">Password</label>
+            </div>
+            <div class="options">
+                <label class="remember-me">
+                    <input type="checkbox" id="remember-me-checkbox"> Remember me
+                </label>
+                <a href="#">Forgot Password?</a>
+            </div>
+            
+            <!-- <<<--- सबसे ज़रूरी बदलाव: बटन को id="login-button" दिया गया है ---<<< -->
+            <button type="submit" class="login-button" id="login-button">Login</button>
+            
+            <div id="form-tooltip" class="form-tooltip"></div>
+            <p id="error-message" class="error-message"></p>
+        </form>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="login_script.js"></script>
+</body>
+</html>

@@ -89,7 +89,7 @@ body {
     gap: 25px;
 }
 .header-logos-left img, .header-logos-right img {
-    max-height: 50px;
+    max-height: 90px;
     width: auto;
 }
 .lang-switcher-mobile-container {
@@ -772,3 +772,98 @@ body {
         max-width: 220px;
     }
 }
+
+
+/* स्प्लैश स्क्रीन के बटन की स्टाइलिंग */
+#enter-button {
+    /* यह सारे स्टाइल JavaScript से यहाँ लाए गए हैं */
+    padding: 1px 30px;
+    font-size: 1.2em;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #d9232d;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, opacity 0.5s ease; /* <<<--- स्मूथ दिखाने के लिए Opacity ट्रांजीशन */
+    
+    /* <<<--- शुरू में बटन को छिपा कर रखें ---<<< */
+    opacity: 0;
+    visibility: hidden;
+}
+
+#enter-button.visible {
+    /* <<<--- जब यह क्लास लगेगी, तो बटन दिखेगा ---<<< */
+    opacity: 1;
+    visibility: visible;
+}
+
+/* --- START: इस कोड को style.css में सबसे नीचे जोड़ें --- */
+
+/* लॉगआउट बटन की स्टाइलिंग */
+#logout-button {
+    /* शुरू में छिपा हुआ रहेगा */
+    display: none; 
+
+    /* साइज़ और पैडिंग */
+    height: 42px;
+    padding: 0 20px;
+
+    /* रंग और बॉर्डर */
+    background-color: #d9232d; /* HPCL का लाल रंग */
+    border: 2px solid #FFD700; /* म्यूट बटन जैसा सुनहरा बॉर्डर */
+    border-radius: 25px; /* गोल कोने */
+    color: white;
+
+    /* टेक्स्ट की स्टाइलिंग */
+    font-size: 0.9em;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    /* अन्य स्टाइल */
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+/* होवर करने पर थोड़ा बड़ा होने का इफ़ेक्ट */
+#logout-button:hover {
+    transform: scale(1.1);
+}
+
+/* --- START: इस कोड को style.css में सबसे नीचे जोड़ें --- */
+
+/* सर्च रिजल्ट कार्ड को रिलेटिव बनाएं ताकि बटन को पोजिशन कर सकें */
+.result-card {
+    position: relative; /* <<<--- यह लाइन ज़रूरी है */
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    animation: fadeIn 0.5s;
+}
+
+/* क्लोज बटन ('X') की स्टाइलिंग */
+.close-btn {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaaaaa;
+    background: none;
+    border: none;
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px;
+}
+
+.close-btn:hover {
+    color: #333333;
+}
+
+/* --- END: यहाँ तक कॉपी करें --- */
+/* --- END: यहाँ तक कॉपी करें --- */
