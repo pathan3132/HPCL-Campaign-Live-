@@ -15,7 +15,8 @@ const firebaseConfig = {
 // Firebase को शुरू करें
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
-const database = firebase.database();
+const db = firebase.firestore(); // Firestore को शुरू करें
+const database = firebase.database(); // इसे ऑनलाइन यूजर्स के लिए रखें
 
 // 2. सुरक्षा गेटकीपर: यह बिना लॉगिन के एडमिन को पेज पर आने से रोकेगा
 auth.onAuthStateChanged(user => {
@@ -39,11 +40,12 @@ if (!salesArea) {
     throw new Error("Sales Area not specified in URL.");
 }
 
-const baseRef = database.ref(salesArea);
-const gameStateRef = baseRef.child('drawState');
-const winnersRef = baseRef.child('winners');
-const participantsRef = baseRef.child('participants');
-const onlineUsersRef = baseRef.child('onlineUsers');
+const salesAreaRef = db.collection(salesArea);
+const gameStateRef = salesAreaRef.doc('drawState');
+const winnersRef = salesAreaRef.collection('winners');
+const participantsRef = salesAreaRef.collection('participants');
+// ऑनलाइन यूजर्स के लिए पुराना रेफरेंस ही रहेगा
+const onlineUsersRef = database.ref(salesArea).child('onlineUsers');
 
 // 3. डीबगिंग कोड: यह कंसोल में बताएगा कि कोड डेटा कहाँ ढूंढ रहा है
 console.log("Searching for data in area:", salesArea);
@@ -57,7 +59,8 @@ const revealSound = document.getElementById('sound-reveal');
 const spinSound = document.getElementById('sound-spin');
 const winnerSound = document.getElementById('sound-winner');
 const celebrateSound = document.getElementById('sound-celebrate');
-const allSounds = [countdownSound, revealSound, spinSound, winnerSound, celebrateSound];
+const backgroundMusic = document.getElementById('sound-background');
+const allSounds = [countdownSound, revealSound, spinSound, winnerSound, celebrateSound, backgroundMusic];
 const muteButton = document.getElementById('mute-button');
 const muteIcon = document.getElementById('mute-icon');
 const unmuteIcon = document.getElementById('unmute-icon');
@@ -133,6 +136,11 @@ function primeSounds() {
     areSoundsPrimed = true;
     console.log("Audio context unlocked by user.");
     allSounds.forEach(sound => {
+        // अगर यह बैकग्राउंड म्यूजिक है, तो इसे छोड़कर आगे बढ़ें
+        if (sound.id === 'sound-background') {
+            return; 
+        }
+
         if (sound) {
             sound.play().then(() => {
                 sound.pause();
@@ -278,31 +286,28 @@ function startCountdown() {
 
 // 4. सुधारा हुआ fetchData फंक्शन (रियल-टाइम और भरोसेमंद)
 function fetchData() {
-    participantsRef.on('value', (snapshot) => {
-        if (snapshot.exists()) {
-            const participantsData = snapshot.val();
-            allParticipants = Object.values(participantsData).map(p => ({ ...p, isWinner: false, prize: null }));
+    participantsRef.get().then(querySnapshot => {
+        if (!querySnapshot.empty) {
+            allParticipants = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, isWinner: false, prize: null }));
             console.log("SUCCESS: Participants data loaded successfully for area:", salesArea);
-            
-            // अब विजेताओं का डेटा देखें ताकि सही स्थिति पता चले
-            winnersRef.once('value', (winnersSnapshot) => {
-                if (winnersSnapshot.exists()) {
-                    const winnersData = winnersSnapshot.val();
-                    Object.values(winnersData).forEach(winner => {
-                        const index = allParticipants.findIndex(p => p.CouponCode === winner.CouponCode);
-                        if (index !== -1) {
-                            allParticipants[index].isWinner = true;
+
+            winnersRef.get().then(winnersSnapshot => {
+                if (!winnersSnapshot.empty) {
+                    const winnerCoupons = new Set(winnersSnapshot.docs.map(doc => doc.data().CouponCode));
+                    allParticipants.forEach(p => {
+                        if (winnerCoupons.has(p.CouponCode)) {
+                            p.isWinner = true;
                         }
                     });
                 }
                 console.log("Past winners status synced with participants list.");
             });
         } else {
-            console.error("ERROR: No 'participants' node found at path:", participantsRef.toString());
+            console.error("ERROR: No 'participants' found in collection:", salesArea);
             subtitleText.innerText = "Error: Participants data not found.";
         }
-    }, (error) => {
-        console.error("Firebase read error:", error);
+    }).catch(error => {
+        console.error("Firestore read error:", error);
         subtitleText.innerText = "Error: Could not load data.";
     });
 }
@@ -357,37 +362,33 @@ function searchParticipant() {
 async function fetchAndDisplayWinners() {
     const tableBody = document.getElementById('winners-table-body');
     tableBody.innerHTML = `<tr><td colspan="7" class="loading-message">Loading winners...</td></tr>`;
-    winnersRef.on('value', (snapshot) => {
+
+    winnersRef.orderBy("Round", "desc").onSnapshot(querySnapshot => {
         tableBody.innerHTML = '';
-        if (snapshot.exists()) {
-            const winnersData = snapshot.val();
-            const winners = Object.values(winnersData);
-            if (winners.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">No winners announced yet.</td></tr>`;
-                return;
-            }
-            winners.sort((a, b) => b.Round - a.Round);
-            winners.forEach(winner => {
-                const mobileDisplay = String(winner.CustomerPhone).substring(0, 2) + '******' + String(winner.CustomerPhone).substring(String(winner.CustomerPhone).length - 2);
-                const outletAddress = winner.OutletAddress || 'N/A';
-                let prizeDisplayHtml;
-                switch (winner.Prize) {
-                    case "Motorcycle (Mega Prize)": prizeDisplayHtml = `Motorcycle <span class="prize-label mega-prize">MEGA PRIZE</span>`; break;
-                    case "Refrigerator": prizeDisplayHtml = `Refrigerator <span class="prize-label high-tier">Star Prize</span>`; break;
-                    case "LED TV": prizeDisplayHtml = `LED TV <span class="prize-label mid-tier">Bonus Prize</span>`; break;
-                    case "Dinner Set": prizeDisplayHtml = `Dinner Set <span class="prize-label regular-tier">Gift Prize</span>`; break;
-                    default: prizeDisplayHtml = winner.Prize;
-                }
-                const row = document.createElement('tr');
-                const winnerName = winner.CustomerName || winner['Costomer Name'] || 'N/A';
-                row.innerHTML = `<td>${winner.Round}</td><td>${prizeDisplayHtml}</td><td>${winnerName}</td><td>${winner.CouponCode}</td><td>${winner.PumpName}</td><td>${outletAddress}</td><td>${mobileDisplay}</td>`;
-                tableBody.appendChild(row);
-            });
-        } else {
+        if (querySnapshot.empty) {
             tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">No winners announced yet.</td></tr>`;
+            return;
         }
-    }, (error) => {
-        console.error('Error fetching winners from Firebase:', error);
+
+        querySnapshot.forEach(doc => {
+            const winner = doc.data();
+            const mobileDisplay = String(winner.CustomerPhone).substring(0, 2) + '******' + String(winner.CustomerPhone).substring(String(winner.CustomerPhone).length - 2);
+            const outletAddress = winner.OutletAddress || 'N/A';
+            let prizeDisplayHtml;
+            switch (winner.Prize) {
+                case "Motorcycle (Mega Prize)": prizeDisplayHtml = `Motorcycle <span class="prize-label mega-prize">MEGA PRIZE</span>`; break;
+                case "Refrigerator": prizeDisplayHtml = `Refrigerator <span class="prize-label high-tier">Star Prize</span>`; break;
+                case "LED TV": prizeDisplayHtml = `LED TV <span class="prize-label mid-tier">Bonus Prize</span>`; break;
+                case "Dinner Set": prizeDisplayHtml = `Dinner Set <span class="prize-label regular-tier">Gift Prize</span>`; break;
+                default: prizeDisplayHtml = winner.Prize;
+            }
+            const row = document.createElement('tr');
+            const winnerName = winner.CustomerName || winner['Costomer Name'] || 'N/A';
+            row.innerHTML = `<td>${winner.Round}</td><td>${prizeDisplayHtml}</td><td>${winnerName}</td><td>${winner.CouponCode}</td><td>${winner.PumpName}</td><td>${outletAddress}</td><td>${mobileDisplay}</td>`;
+            tableBody.appendChild(row);
+        });
+    }, error => {
+        console.error('Error fetching winners from Firestore:', error);
         tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">Failed to load winners list. Please try again later.</td></tr>`;
     });
 }
@@ -659,6 +660,7 @@ async function initializeApp() {
         enterButton.addEventListener('click', () => {
             console.log("Enter button clicked. Priming sounds...");
             primeSounds();
+             playSound(backgroundMusic);
             if (splashScreen) {
                 splashScreen.classList.add('hidden');
             }
@@ -671,9 +673,19 @@ async function initializeApp() {
     fetchData();
     fetchAndDisplayWinners();
     
-    gameStateRef.on('value', (snapshot) => { const state = snapshot.val(); if (state) { syncUIWithState(state); } });
-    const snapshot = await gameStateRef.get();
-    if (snapshot.exists()) { syncUIWithState(snapshot.val()); } else if (userRole === 'admin') { handleResetClick(); }
+    gameStateRef.onSnapshot((doc) => {
+    const state = doc.data();
+    if (state) {
+        syncUIWithState(state);
+    }
+});
+
+const doc = await gameStateRef.get();
+if (doc.exists) {
+    syncUIWithState(doc.data());
+} else if (userRole === 'admin') {
+    handleResetClick();
+}
     
     const connectedRef = database.ref('.info/connected');
     connectedRef.on('value', (snapshot) => { 
@@ -748,9 +760,13 @@ async function saveWinnerData(winner, round) {
     try {
         const prizeDetail = getPrizeDetails(round);
         const winnerDataWithPrize = { ...winner, Round: round, Prize: prizeDetail.prize, Timestamp: new Date().toISOString(), salesArea: salesArea };
-        const specificWinnerRef = winnersRef.child(winner.CouponCode);
+        
+        // Firestore में डॉक्यूमेंट सेट करें
+        const specificWinnerRef = winnersRef.doc(winner.CouponCode);
         await specificWinnerRef.set(winnerDataWithPrize);
-        console.log('SUCCESS: Winner saved to Firebase for area:', salesArea);
+        
+        console.log('SUCCESS: Winner saved to Firestore for area:', salesArea);
+        
         try {
             if (APPS_SCRIPT_URL) {
                 await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(winnerDataWithPrize) });
@@ -761,7 +777,7 @@ async function saveWinnerData(winner, round) {
         }
         return true;
     } catch (error) {
-        console.error('FIREBASE ERROR while saving winner:', error);
+        console.error('FIRESTORE ERROR while saving winner:', error);
         return false;
     }
 }
