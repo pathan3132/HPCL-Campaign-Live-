@@ -22,9 +22,15 @@ body {
 
 .glass-container {
     position: relative; width: 400px; padding: 40px; border-radius: 20px;
-    backdrop-filter: blur(15px); 
-    background: rgba(10, 25, 40, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+    
+    /* --- बेहतर ग्लास इफ़ेक्ट के लिए ये लाइनें बदलें --- */
+    background: rgba(10, 25, 40, 0.75); /* थोड़ा गहरा और कम पारदर्शी */
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* गहराई के लिए शैडो */
+    backdrop-filter: blur(10px); /* ब्लर को थोड़ा कम किया */
+    border: 1px solid rgba(255, 255, 255, 0.18); /* हल्की सफेद बॉर्डर */
+    /* --- यहाँ तक --- */
+
+    color: #fff;
     animation: form-load-animation 1s ease-out forwards;
     overflow: visible; 
 }
@@ -33,51 +39,37 @@ body {
     from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); }
 }
 
-.glass-container::before {
-    content: ''; 
-    position: absolute; 
-    top: -50%; 
-    left: -50%; 
-    width: 100%; 
-    height: 100%;
-    background-image: url('images/HP-logo.png'), linear-gradient(0deg, transparent 40%, rgba(217, 35, 45, 0.5) 60%, rgba(217, 35, 45, 0.5));
-    background-repeat: no-repeat;
-    background-position: 55% 15%; 
-    background-size: 50% auto, 100% 100%; 
-    transform-origin: bottom right;
-    animation: animate-border 6s linear infinite;
-    z-index: -1;
-    border-radius: 20px; 
-}
-
-.glass-container::after {
-    content: ''; 
-    position: absolute; 
-    top: -50%; 
-    left: -50%; 
-    width: 100%; 
-    height: 100%;
-    background-image: url('images/HP-Logoforanimation.png'), linear-gradient(0deg, transparent 40%, rgba(0, 51, 102, 0.5) 60%, rgba(0, 51, 102, 0.5));
-    background-repeat: no-repeat;
-    background-position: 55% 15%; 
-    background-size: 30% auto, 100% 100%; 
-    transform-origin: bottom right;
-    animation: animate-border 6s linear infinite;
-    animation-delay: -3s; 
-    z-index: -1;
-    border-radius: 20px; 
-}
-
-@keyframes animate-border {
-    0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); }
-}
-
 @keyframes shake {
     0%, 100% { transform: translateX(0); } 10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); } 20%, 40%, 60%, 80% { transform: translateX(10px); }
 }
 .shake { animation: shake 0.5s ease-in-out; }
 
-h2 { text-align: center; margin-bottom: 30px; font-weight: 600; font-size: 2em; }
+h2 { 
+    text-align: center; 
+    margin-bottom: 0; /* <<<--- इसे 0 कर दिया गया है */
+    font-weight: 600; 
+    font-size: 2em; 
+}
+.login-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px; /* लोगो और टेक्स्ट के बीच की जगह */
+}
+
+.logo-img {
+    height: 45px; /* लोगो का साइज़ */
+    width: auto;
+}
+
+.login-subtitle {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 30px; /* फॉर्म से दूरी बनाने के लिए */
+    font-size: 0.9em;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+}
 .input-group { position: relative; margin-bottom: 35px; }
 .input-group input {
     width: 100%; padding: 10px; font-size: 1em; color: #fff; background: transparent;

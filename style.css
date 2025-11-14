@@ -865,5 +865,24 @@ body {
     color: #333333;
 }
 
+/* --- START: इस कोड को style.css में सबसे नीचे जोड़ें --- */
+
+#current-area-display {
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    font-size: 0.9em;
+    text-align: center;
+    color: #ffffff; /* टेक्स्ट का रंग सफेद */
+}
+
+#current-area-name {
+    font-weight: 700;
+    color: #FFD700; /* सुनहरा रंग, जैसा बाकी जगह इस्तेमाल हुआ है */
+    text-transform: capitalize; /* 'akola' को 'Akola' जैसा दिखाएगा */
+    font-size: 1.1em; /* थोड़ा बड़ा दिखाने के लिए */
+}
+
+/* --- END: यहाँ तक --- */
 /* --- END: यहाँ तक कॉपी करें --- */
 /* --- END: यहाँ तक कॉपी करें --- */
