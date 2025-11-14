@@ -12,8 +12,13 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const appCheck = firebase.appCheck();
+appCheck.activate(
+    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY', // <<<--- यहाँ अपनी reCAPTCHA v3 Site Key पेस्ट करें
+    true
+);
 const auth = firebase.auth();
-const database = firebase.database();
 
 // --- DOM एलिमेंट्स को चुनें ---
 const glassContainer = document.querySelector('.glass-container');
@@ -81,20 +86,21 @@ loginForm.addEventListener('submit', (e) => {
     auth.setPersistence(persistence)
         .then(() => auth.signInWithEmailAndPassword(email, password))
         .then((userCredential) => {
-            const user = userCredential.user;
-            const userRolesRef = database.ref(`admin_roles/${user.uid}`);
-            return userRolesRef.once('value');
-        })
-        .then(snapshot => {
-            if (snapshot.exists()) {
-                const assignedArea = snapshot.val();
-                const targetArea = (assignedArea === 'all') ? 'akola' : assignedArea;
-                window.location.href = `index.html?role=admin&area=${targetArea}`;
-            } else {
-                auth.signOut();
-                throw new Error("Permission Denied");
-            }
-        })
+    const user = userCredential.user;
+    // Firestore से एडमिन की जानकारी प्राप्त करें
+    const adminDocRef = db.collection('admin_roles').doc(user.uid);
+    return adminDocRef.get();
+})
+.then(doc => {
+    if (doc.exists) {
+        const assignedArea = doc.data().area; // .val() की जगह .data().area
+        const targetArea = (assignedArea === 'all') ? 'akola' : assignedArea;
+        window.location.href = `index.html?role=admin&area=${targetArea}`;
+    } else {
+        auth.signOut();
+        throw new Error("Permission Denied");
+    }
+})
         .catch((error) => {
             glassContainer.classList.add('shake');
             if(error.message === "Permission Denied"){

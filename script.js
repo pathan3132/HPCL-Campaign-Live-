@@ -14,9 +14,13 @@ const firebaseConfig = {
 
 // Firebase को शुरू करें
 firebase.initializeApp(firebaseConfig);
+const appCheck = firebase.appCheck();
+appCheck.activate(
+    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY', // <<<--- यहाँ अपनी वही reCAPTCHA v3 Site Key पेस्ट करें
+    true
+);
 const auth = firebase.auth();
 const db = firebase.firestore(); // Firestore को शुरू करें
-const database = firebase.database(); // इसे ऑनलाइन यूजर्स के लिए रखें
 
 // 2. सुरक्षा गेटकीपर: यह बिना लॉगिन के एडमिन को पेज पर आने से रोकेगा
 auth.onAuthStateChanged(user => {
@@ -40,12 +44,16 @@ if (!salesArea) {
     throw new Error("Sales Area not specified in URL.");
 }
 
+// +++ यह फाइनल और सही कोड है +++
 const salesAreaRef = db.collection(salesArea);
+
+// 1. drawState डॉक्यूमेंट का सही रेफरेंस
 const gameStateRef = salesAreaRef.doc('drawState');
-const winnersRef = salesAreaRef.collection('winners');
-const participantsRef = salesAreaRef.collection('participants');
-// ऑनलाइन यूजर्स के लिए पुराना रेफरेंस ही रहेगा
-const onlineUsersRef = database.ref(salesArea).child('onlineUsers');
+
+// 2. 'data' डॉक्यूमेंट के अंदर की सब-कलेक्शन्स का रेफरेंस
+const winnersRef = salesAreaRef.doc('data').collection('winners');
+const participantsRef = salesAreaRef.doc('data').collection('participants');
+
 
 // 3. डीबगिंग कोड: यह कंसोल में बताएगा कि कोड डेटा कहाँ ढूंढ रहा है
 console.log("Searching for data in area:", salesArea);
@@ -686,43 +694,6 @@ if (doc.exists) {
 } else if (userRole === 'admin') {
     handleResetClick();
 }
-    
-    const connectedRef = database.ref('.info/connected');
-    connectedRef.on('value', (snapshot) => { 
-        if (snapshot.val() === true) { 
-            const userConnection = onlineUsersRef.push(); 
-            userConnection.onDisconnect().remove(); 
-            userConnection.set(true); 
-        } 
-    });
-    
-    if (userRole === 'admin') {
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const totalViewerCountEl = document.getElementById('viewer-count');
-        const viewerBreakdownEl = document.getElementById('viewer-breakdown');
-        if (adminDashboard) { adminDashboard.style.display = 'block'; }
-        const ALL_SALES_AREAS = ['akola', 'aurangabad1', 'aurangabad2', 'shirdi', 'jalna', 'ahemadnagar'];
-        const liveCounts = {};
-        function updateViewerDisplay() {
-            let totalViewers = 0;
-            let breakdownHtml = '<ul>';
-            ALL_SALES_AREAS.forEach(area => { 
-                const count = liveCounts[area] || 0; 
-                totalViewers += count; 
-                breakdownHtml += `<li><span class="area-name">${area}</span> <span class="area-count">${count}</span></li>`; 
-            });
-            breakdownHtml += '</ul>';
-            if (totalViewerCountEl) { totalViewerCountEl.innerText = totalViewers; }
-            if (viewerBreakdownEl) { viewerBreakdownEl.innerHTML = breakdownHtml; }
-        }
-        ALL_SALES_AREAS.forEach(areaName => { 
-            const areaOnlineUsersRef = database.ref(areaName).child('onlineUsers'); 
-            areaOnlineUsersRef.on('value', (snapshot) => { 
-                liveCounts[areaName] = snapshot.numChildren(); 
-                updateViewerDisplay(); 
-            }); 
-        });
-    }
 }
     // <<<--- END: यहाँ तक ---<<<
     
