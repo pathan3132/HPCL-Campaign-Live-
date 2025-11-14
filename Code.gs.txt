@@ -1,0 +1,55 @@
+// --- START: यह पूरा कोड कॉपी करें ---
+
+function doPost(e) {
+  try {
+    // अपनी Google Sheet ID यहाँ डालें
+    const SPREADSHEET_ID = "1JOMZvk207Vd6Ps0NLg15BgOhqaUKi4VY9RalAEUzCGw";
+    const spreadsheet = SpreadsheetApp.openById(SPREADSHEET_ID);
+    
+    // वेबसाइट से भेजा गया डेटा (JSON फॉर्मेट में)
+    const data = JSON.parse(e.postData.contents);
+    
+    // डेटा में से salesArea का नाम निकालें
+    const salesArea = data.salesArea;
+    if (!salesArea) {
+      throw new Error("Sales Area not provided in the data.");
+    }
+
+    // salesArea के नाम के आधार पर शीट का नाम बनाएं (जैसे "aurangabad1 winners")
+    const sheetName = salesArea + " winners";
+    const sheet = spreadsheet.getSheetByName(sheetName);
+
+    // अगर उस नाम की शीट नहीं मिलती है, तो एरर दिखाएं
+    if (!sheet) {
+       throw new Error("Sheet named '" + sheetName + "' was not found. Please create it first.");
+    }
+    
+    // शीट के हेडर (कॉलम के नाम) प्राप्त करें
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    
+    // हेडर के क्रम के अनुसार नई पंक्ति तैयार करें
+    const newRow = headers.map(header => {
+        // कस्टमर नेम की दोनों स्पेलिंग को हैंडल करें
+        if (header === "CustomerName") {
+            return data.CustomerName || data['Costomer Name'] || "";
+        }
+        // अगर डेटा में वह हेडर मौजूद है, तो उसकी वैल्यू डालें, वरना खाली छोड़ दें
+        return data[header] || "";
+    });
+    
+    // नई पंक्ति को शीट में जोड़ें
+    sheet.appendRow(newRow);
+    
+    // सफलता का मैसेज वापस भेजें
+    return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    // अगर कोई एरर आता है, तो उसे लॉग करें
+    Logger.log(error.toString());
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+// --- END: यहाँ तक कॉपी करें ---
