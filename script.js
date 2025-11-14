@@ -695,25 +695,7 @@ if (doc.exists) {
     handleResetClick();
 }
 }
-    // <<<--- END: यहाँ तक ---<<<
-    
-    if (userRole === 'admin') {
-        const adminDashboard = document.getElementById('admin-dashboard');
-        const totalViewerCountEl = document.getElementById('viewer-count');
-        const viewerBreakdownEl = document.getElementById('viewer-breakdown');
-        if (adminDashboard) { adminDashboard.style.display = 'block'; }
-        const ALL_SALES_AREAS = ['akola', 'aurangabad1', 'aurangabad2', 'shirdi', 'jalna', 'ahemadnagar'];
-        const liveCounts = {};
-        function updateViewerDisplay() {
-            let totalViewers = 0;
-            let breakdownHtml = '<ul>';
-            ALL_SALES_AREAS.forEach(area => { const count = liveCounts[area] || 0; totalViewers += count; breakdownHtml += `<li><span class="area-name">${area}</span> <span class="area-count">${count}</span></li>`; });
-            breakdownHtml += '</ul>';
-            if (totalViewerCountEl) { totalViewerCountEl.innerText = totalViewers; }
-            if (viewerBreakdownEl) { viewerBreakdownEl.innerHTML = breakdownHtml; }
-        }
-        ALL_SALES_AREAS.forEach(areaName => { const areaOnlineUsersRef = database.ref(areaName).child('onlineUsers'); areaOnlineUsersRef.on('value', (snapshot) => { liveCounts[areaName] = snapshot.numChildren(); updateViewerDisplay(); }); });
-    }
+  
 
 function showThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.remove('hidden'); } }
 function hideThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.add('hidden'); } }
