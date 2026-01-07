@@ -1,6 +1,3 @@
-// --- START: इस पूरे कोड को अपनी script.js फाइल में पेस्ट करें ---
-
-// 1. Firebase कॉन्फ़िगरेशन (यह आपकी अपनी कॉन्फ़िगरेशन होनी चाहिए)
 const firebaseConfig = {
     apiKey: "AIzaSyCAKoW_qCM9gF9k_vFvLOOpDORsFAfOgOQ",
     authDomain: "hpcl-campaign-live.firebaseapp.com",
@@ -16,13 +13,12 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const appCheck = firebase.appCheck();
 appCheck.activate(
-    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY', // <<<--- यहाँ अपनी वही reCAPTCHA v3 Site Key पेस्ट करें
+    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY',
     true
 );
 const auth = firebase.auth();
-const db = firebase.firestore(); // Firestore को शुरू करें
+const db = firebase.firestore();
 
-// 2. सुरक्षा गेटकीपर: यह बिना लॉगिन के एडमिन को पेज पर आने से रोकेगा
 auth.onAuthStateChanged(user => {
     const urlParams = new URLSearchParams(window.location.search);
     const userRole = urlParams.get('role');
@@ -34,7 +30,6 @@ auth.onAuthStateChanged(user => {
 
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxS4ReuKp0Evds7Ttj-tHQ0AhaEGuXZih1UnnKgtvXz9oN7bvF1uNqCezNpyKmnYZsQsA/exec';
 
-// URL और Firebase रेफरेंस
 const urlParams = new URLSearchParams(window.location.search);
 const userRole = urlParams.get('role');
 const salesArea = urlParams.get('area');
@@ -44,22 +39,14 @@ if (!salesArea) {
     throw new Error("Sales Area not specified in URL.");
 }
 
-// +++ यह फाइनल और सही कोड है +++
 const salesAreaRef = db.collection(salesArea);
-
-// 1. drawState डॉक्यूमेंट का सही रेफरेंस
 const gameStateRef = salesAreaRef.doc('drawState');
-
-// 2. 'data' डॉक्यूमेंट के अंदर की सब-कलेक्शन्स का रेफरेंस
 const winnersRef = salesAreaRef.doc('data').collection('winners');
 const participantsRef = salesAreaRef.doc('data').collection('participants');
 
-
-// 3. डीबगिंग कोड: यह कंसोल में बताएगा कि कोड डेटा कहाँ ढूंढ रहा है
 console.log("Searching for data in area:", salesArea);
 console.log("Full database path being checked:", participantsRef.toString());
 
-// --- साउंड वेरिएबल्स ---
 let isMuted = false;
 let areSoundsPrimed = false;
 const countdownSound = document.getElementById('sound-countdown');
@@ -73,7 +60,7 @@ const muteButton = document.getElementById('mute-button');
 const muteIcon = document.getElementById('mute-icon');
 const unmuteIcon = document.getElementById('unmute-icon');
 
-// --- DOM एलिमेंट्स और अन्य वेरिएबल्स ---
+// --- DOM एलिमेंट्स ---
 const subtitleText = document.getElementById('subtitle-text');
 const drawButton = document.getElementById('draw-button');
 const thankYouPopupOverlay = document.getElementById('thank-you-popup-overlay');
@@ -98,7 +85,7 @@ const popupCoupon = document.getElementById('popup-coupon');
 const popupOutlet = document.getElementById('popup-outlet');
 const popupAddress = document.getElementById('popup-address');
 const popupMobile = document.getElementById('popup-mobile');
-const saveNextButton = document.getElementById('save-next-button');
+let saveNextButton = document.getElementById('save-next-button');
 const resetButton = document.getElementById('reset-button');
 const publicWinnerCard = document.getElementById('public-winner-card');
 const publicHeading = document.getElementById('public-heading');
@@ -116,12 +103,34 @@ const minutesEl = document.getElementById('minutes');
 const secondsEl = document.getElementById('seconds');
 const tabBtnParticipants = document.getElementById('tab-btn-participants');
 const tabBtnWinner = document.getElementById('tab-btn-winner');
+let pastWinnersMap = {}; 
+const roundsGridContainer = document.getElementById('rounds-grid-container');
+const roundsGrid = document.getElementById('rounds-grid');
+const activeDrawView = document.getElementById('active-draw-view');
+const backToGridBtn = document.getElementById('back-to-grid-btn');
+const liveIndicatorText = document.getElementById('live-indicator-text');
 const countdownTargetDate = new Date("2025-11-14T12:00:00");
+
+// 1. ट्रैकिंग वेरिएबल्स
+let isUserWatchingLive = false; 
+let lastNotifiedRound = 0;      
+let isReplaying = false; 
+
+let localCountdownInterval = null; 
+let previousCountdownInt = null;
+// ---------------------  
+
+// 2. HTML एलिमेंट्स (Toast Notification)
+const liveToast = document.getElementById('live-toast');
+const toastRoundNum = document.getElementById('toast-round-num');
+const watchLiveBtn = document.getElementById('watch-live-btn');
+const dismissLiveBtn = document.getElementById('dismiss-live-btn');
+const closePublicPopupBtn = document.getElementById('close-public-popup'); // यह भी सुनिश्चित करें
+
 let allParticipants = [];
 let currentWinner = null;
 let localState = {};
 let celebrationIntervalId = null;
-const REEL_LENGTH = 1000;
 const totalRounds = 26;
 const prizeConfig = [
     { range: [1, 20], prize: "Dinner Set", image: "Prizeimages/prize_dinner_set.jpg" },
@@ -132,7 +141,7 @@ const prizeConfig = [
 const countdownColors = ['#FFADAD', '#A0C4FF', '#9BF6FF', '#CAFFBF', '#FDFFB6', '#FFD6A5', '#BDB2FF', '#FFC6FF', '#FFFFFC', '#84D2F6'];
 const COUNTDOWN_SECONDS = 10;
 
-// --- यहाँ से सारे फंक्शन्स शुरू होते हैं ---
+// --- Functions ---
 
 function getPrizeDetails(round) {
     if (round > totalRounds) return null;
@@ -142,13 +151,8 @@ function getPrizeDetails(round) {
 function primeSounds() {
     if (areSoundsPrimed) return;
     areSoundsPrimed = true;
-    console.log("Audio context unlocked by user.");
     allSounds.forEach(sound => {
-        // अगर यह बैकग्राउंड म्यूजिक है, तो इसे छोड़कर आगे बढ़ें
-        if (sound.id === 'sound-background') {
-            return; 
-        }
-
+        if (sound.id === 'sound-background') return;
         if (sound) {
             sound.play().then(() => {
                 sound.pause();
@@ -161,7 +165,7 @@ function primeSounds() {
 function playSound(soundElement) {
     if (!isMuted && soundElement) {
         soundElement.currentTime = 0;
-        soundElement.play().catch(e => console.warn("Audio play was interrupted or failed:", e));
+        soundElement.play().catch(e => console.warn("Audio play failed:", e));
     }
 }
 
@@ -194,12 +198,8 @@ if (muteButton) {
     muteButton.addEventListener('click', () => {
         isMuted = !isMuted;
         updateMuteStatus();
-        if (!isMuted && !areSoundsPrimed) {
-            primeSounds();
-        }
-        if (isMuted) {
-            stopAllSounds();
-        }
+        if (!isMuted && !areSoundsPrimed) primeSounds();
+        if (isMuted) stopAllSounds();
     });
     updateMuteStatus();
 }
@@ -240,8 +240,12 @@ function setLanguage(lang) {
     document.getElementById('tab-btn-participants').innerText = t.tab_participants;
     searchHeading.innerText = t.search_heading;
     searchSubheading.innerText = t.search_subheading;
+    if (searchInput) {
     searchInput.placeholder = t.search_placeholder;
+}
+if (searchButton) {
     searchButton.innerText = t.search_button;
+}
     document.getElementById('about-heading').innerText = t.about_heading;
     document.getElementById('about-p1').innerText = t.about_p1;
     document.getElementById('about-p2').innerText = t.about_p2;
@@ -275,10 +279,10 @@ function startCountdown() {
             clearInterval(countdownInterval);
             countdownContainer.classList.add('hidden');
             drawLiveMessage.classList.remove('hidden');
-            if (userRole !== 'admin') {
-                tabBtnParticipants.classList.add('disabled');
-                tabBtnWinner.click();
-            }
+           // if (userRole !== 'admin') {
+             //   tabBtnParticipants.classList.add('disabled');
+               // tabBtnWinner.click();
+            //}
             return;
         }
         const days = Math.floor(distance / (1000 * 60 * 60 * 24));
@@ -292,80 +296,56 @@ function startCountdown() {
     }, 1000);
 }
 
-// 4. सुधारा हुआ fetchData फंक्शन (रियल-टाइम और भरोसेमंद)
 function fetchData() {
-    participantsRef.get().then(querySnapshot => {
-        if (!querySnapshot.empty) {
-            allParticipants = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, isWinner: false, prize: null }));
-            console.log("SUCCESS: Participants data loaded successfully for area:", salesArea);
+    // 1. सबसे पहले चेक करें कि क्या यूजर ADMIN है
+    if (userRole !== 'admin') {
+        console.log("Public User: No participant data fetched to save bandwidth.");
+        // हम यहाँ return कर देंगे ताकि डेटाबेस से 'participants' का डेटा लोड ही न हो
+        return; 
+    }
 
-            winnersRef.get().then(winnersSnapshot => {
-                if (!winnersSnapshot.empty) {
-                    const winnerCoupons = new Set(winnersSnapshot.docs.map(doc => doc.data().CouponCode));
-                    allParticipants.forEach(p => {
-                        if (winnerCoupons.has(p.CouponCode)) {
-                            p.isWinner = true;
-                        }
-                    });
+    // --- नीचे का कोड सिर्फ एडमिन के लिए चलेगा ---
+    const cacheKey = `hpcl_participants_${salesArea}`; 
+    const cachedData = sessionStorage.getItem(cacheKey);
+
+    if (cachedData) {
+        console.log("Loading participants from Local Cache ✅");
+        allParticipants = JSON.parse(cachedData);
+        syncWinnersWithParticipants();
+    } 
+    else {
+        console.log("Fetching participants from Server (Admin Only) ⚠️");
+        // यह Read Operation सिर्फ एडमिन के लिए होगा
+        participantsRef.get().then(querySnapshot => {
+            if (!querySnapshot.empty) {
+                allParticipants = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id, isWinner: false, prize: null }));
+                
+                try {
+                    sessionStorage.setItem(cacheKey, JSON.stringify(allParticipants));
+                } catch (e) {
+                    console.warn("Data too big to cache.");
                 }
-                console.log("Past winners status synced with participants list.");
+
+                syncWinnersWithParticipants();
+            }
+        });
+    }
+}
+
+function syncWinnersWithParticipants() {
+    winnersRef.get().then(winnersSnapshot => {
+        if (!winnersSnapshot.empty) {
+            const winnerCoupons = new Set(winnersSnapshot.docs.map(doc => doc.data().CouponCode));
+            allParticipants.forEach(p => {
+                if (winnerCoupons.has(p.CouponCode)) {
+                    p.isWinner = true;
+                }
             });
-        } else {
-            console.error("ERROR: No 'participants' found in collection:", salesArea);
-            subtitleText.innerText = "Error: Participants data not found.";
         }
-    }).catch(error => {
-        console.error("Firestore read error:", error);
-        subtitleText.innerText = "Error: Could not load data.";
     });
 }
 
-function searchParticipant() {
-    const searchTerm = searchInput.value.trim();
-    if (!searchTerm) {
-        searchResultContainer.innerHTML = `<div class="result-message error">${translations[currentLang].empty_input}</div>`;
-        return;
-    }
-    searchResultContainer.innerHTML = `<div class="result-message">${translations[currentLang].searching}</div>`;
-    
-    setTimeout(() => {
-        const result = allParticipants.find(p => (p['CustomerPhone'] && String(p['CustomerPhone']) === searchTerm) || (p['CouponCode'] && p['CouponCode'] === searchTerm));
-        
-        if (result) {
-            const customerName = result.CustomerName || result['Costomer Name'] || 'N/A';
-            const customerPhone = result['CustomerPhone'] || 'N/A';
-            const vehicleNumber = result['VehicleNumber'] || 'N/A';
-            const couponCode = result['CouponCode'] || 'N/A';
-            const pumpName = result['PumpName'] || 'N/A';
-            
-            // <<<--- यहाँ बदलाव किया गया है ---<<<
-            // 1. रिजल्ट कार्ड के अंदर क्लोज बटन ('&times;' का मतलब 'X' होता है) जोड़ा गया है
-            searchResultContainer.innerHTML = `
-                <div class="result-message success">${translations[currentLang].entry_found}</div>
-                <div class="result-card">
-                    <button id="close-search-result" class="close-btn">&times;</button>
-                    <p><strong>Outlet Name:</strong> ${pumpName}</p>
-                    <p><strong>Customer Name:</strong> ${customerName}</p>
-                    <p><strong>Mobile Number:</strong> ${String(customerPhone).substring(0, 2) + '******' + String(customerPhone).substring(String(customerPhone).length - 2)}</p>
-                    <p><strong>Vehicle Number:</strong> ${vehicleNumber}</p>
-                    <p><strong>Coupon Code:</strong> ${couponCode}</p>
-                </div>`;
 
-            // 2. अब उस क्लोज बटन को ढूंढें और उसे काम करने का तरीका बताएं
-            const closeButton = document.getElementById('close-search-result');
-            if(closeButton) {
-                closeButton.addEventListener('click', () => {
-                    // जब बटन पर क्लिक हो, तो पूरे रिजल्ट को खाली कर दें
-                    searchResultContainer.innerHTML = '';
-                });
-            }
-            // <<<--- बदलाव यहाँ खत्म ---<<<
-
-        } else {
-            searchResultContainer.innerHTML = `<div class="result-message error">${translations[currentLang].no_entry}</div>`;
-        }
-    }, 500);
-}
 
 async function fetchAndDisplayWinners() {
     const tableBody = document.getElementById('winners-table-body');
@@ -373,13 +353,19 @@ async function fetchAndDisplayWinners() {
 
     winnersRef.orderBy("Round", "desc").onSnapshot(querySnapshot => {
         tableBody.innerHTML = '';
+        pastWinnersMap = {}; // Reset Map
+
         if (querySnapshot.empty) {
             tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">No winners announced yet.</td></tr>`;
+            if(localState && localState.round) renderGrid(localState.round, localState.status);
             return;
         }
 
         querySnapshot.forEach(doc => {
             const winner = doc.data();
+            
+            pastWinnersMap[winner.Round] = winner;
+
             const mobileDisplay = String(winner.CustomerPhone).substring(0, 2) + '******' + String(winner.CustomerPhone).substring(String(winner.CustomerPhone).length - 2);
             const outletAddress = winner.OutletAddress || 'N/A';
             let prizeDisplayHtml;
@@ -395,236 +381,556 @@ async function fetchAndDisplayWinners() {
             row.innerHTML = `<td>${winner.Round}</td><td>${prizeDisplayHtml}</td><td>${winnerName}</td><td>${winner.CouponCode}</td><td>${winner.PumpName}</td><td>${outletAddress}</td><td>${mobileDisplay}</td>`;
             tableBody.appendChild(row);
         });
+
+        if(localState && localState.round) renderGrid(localState.round, localState.status);
+
     }, error => {
         console.error('Error fetching winners from Firestore:', error);
         tableBody.innerHTML = `<tr><td colspan="7" class="no-winners-message">Failed to load winners list. Please try again later.</td></tr>`;
     });
 }
 
-function syncUIWithState(state) {
-    if (!state || allParticipants.length === 0) return;
-
-    if (state.status === 'ended' || (state.round && state.round > totalRounds)) {
-        const countdownHeading = document.getElementById('countdown-heading');
-        const countdownTimer = document.querySelector('.countdown-timer');
-        countdownHeading.innerText = translations[currentLang].draw_completed;
-        countdownContainer.classList.remove('hidden');
-        drawLiveMessage.classList.add('hidden');
-        if (countdownTimer) countdownTimer.classList.add('hidden');
-    }
-
-    if (state.status !== 'finished') { stopCelebration(); }
-    winnerPopupOverlay.classList.add('hidden');
-    publicWinnerCard.classList.add('hidden');
-
-    if (state.status === 'waiting') {
-        if (localState.status && localState.status !== 'waiting') { stopAllSounds(); }
-        const prize = getPrizeDetails(state.round);
-        if (prize) {
-            subtitleText.innerText = `Ready for Round ${state.round}/${totalRounds}: ${prize.prize}`;
-            if (userRole === 'admin') drawButton.disabled = false;
-        } else {
-            subtitleText.innerText = `All ${totalRounds} rounds are complete! Thank You!`;
-            if (userRole === 'admin') drawButton.disabled = true;
+function renderGrid(currentRound, status) {
+    if (!roundsGrid) return;
+    roundsGrid.innerHTML = ''; 
+    
+    for (let i = 1; i <= totalRounds; i++) {
+        const box = document.createElement('div');
+        box.className = 'round-box';
+        
+        // --- 1. PRIZE SETTINGS ---
+        let prizeClass = "";
+        let tagName = ""; 
+        
+        if (i >= 1 && i <= 20) {
+            prizeClass = 'tier-dinner';
+            tagName = "DINNER";
+        } else if (i >= 21 && i <= 23) {
+            prizeClass = 'tier-tv';
+            tagName = "LED TV";
+        } else if (i >= 24 && i <= 25) {
+            prizeClass = 'tier-fridge';
+            tagName = "FRIDGE";
+        } else if (i === 26) {
+            prizeClass = 'tier-bike';
+            tagName = "BIKE";
         }
-        initializeReels();
-        winnerBanner.classList.remove('zoomed-in');
-    } else {
-        if (userRole === 'admin') drawButton.disabled = true;
-    }
+        
+        box.classList.add(prizeClass);
 
-    if (state.status === 'countdown') {
-        if (localState.status !== 'countdown') { playSound(countdownSound); }
-        countdownOverlay.classList.remove('hidden', 'slide-down');
-        runCountdown(state.countdownValue);
-        winnerBanner.classList.remove('zoomed-in');
-    } else {
-        stopSound(countdownSound);
-        countdownOverlay.classList.add('hidden');
-    }
+        // --- 2. CREATE ELEMENTS ---
+        
+        const prizeTag = document.createElement('div');
+        prizeTag.className = 'prize-tag';
+        prizeTag.innerText = tagName;
 
-    if (state.status === 'spinning' && state.winnerCoupon) {
-        winnerBanner.classList.add('zoomed-in');
-        beginReelSpin(state.winnerCoupon);
-    }
+        // B. Round Number
+        const roundNum = document.createElement('div');
+        roundNum.className = 'round-number';
+        roundNum.innerText = i;
+        
+        // C. Status
+        const roundStatus = document.createElement('div');
+        roundStatus.className = 'round-status';
 
-    if (state.status === 'finished' && state.winnerCoupon) {
-        stopSound(spinSound);
-        const winner = allParticipants.find(p => p.CouponCode === state.winnerCoupon);
-        if (winner) {
-            if (localState.status !== 'finished') { playSound(winnerSound); }
-            const prizeDetail = getPrizeDetails(state.round);
-            const mobileDisplay = String(winner.CustomerPhone).substring(0, 2) + '******' + String(winner.CustomerPhone).substring(String(winner.CustomerPhone).length - 2);
-            const outletAddress = winner.OutletAddress || 'N/A';
-            reelCoupon.innerHTML = `<div class="reel-item final-winner">${winner.CouponCode}</div>`;
-            reelCoupon.style.transform = 'translateY(0)';
-            reelCoupon.parentElement.parentElement.style.border = '3px solid #d9232d';
-            if (userRole === 'admin') {
-                announceWinner(winner, state.round);
-                winnerBanner.classList.remove('zoomed-in');
+        // --- 3. STATUS LOGIC ---
+        if (pastWinnersMap[i]) {
+            // Completed
+            box.classList.add('completed');
+            roundStatus.innerText = "Winner"; 
+            box.onclick = () => playReplay(i);
+        } 
+        else if (i === currentRound && status !== 'ended') {
+            // Active
+            if (status === 'finished') {
+                box.classList.add('pending-save');
+                roundStatus.innerText = "Saving...";
             } else {
-                publicHeading.innerText = `Winner of Round ${state.round}: ${prizeDetail.prize}!`;
-                publicPrizeImage.src = prizeDetail.image;
-                publicName.innerText = winner.CustomerName || winner['Costomer Name'] || 'N/A';
-                publicCoupon.innerText = winner.CouponCode;
-                publicOutlet.innerText = winner.PumpName;
-                publicAddress.innerText = outletAddress;
-                publicMobile.innerText = mobileDisplay;
-                publicWinnerCard.classList.remove('hidden');
-                startContinuousCelebration();
+                box.classList.add('live');
+                roundStatus.innerText = "Live";
             }
+        } 
+        else {
+            // Locked
+            box.classList.add('locked');
+            roundStatus.innerText = "Locked"; 
+        }
+        
+        // --- 4. APPEND (Sequence Important) ---
+        box.appendChild(prizeTag);   // 1. Tag (Top)
+        box.appendChild(roundNum);   // 2. Number (Middle)
+        box.appendChild(roundStatus);// 3. Status (Bottom)
+        
+        roundsGrid.appendChild(box);
+    }
+}
+function playReplay(roundNum) {
+    const winnerData = pastWinnersMap[roundNum];
+    if (!winnerData) return;
+
+    isReplaying = true; 
+    
+    showLiveView(false); 
+    if(backToGridBtn) backToGridBtn.style.display = 'inline-block'; 
+    
+    const prizeDetail = getPrizeDetails(roundNum);
+    if(subtitleText) subtitleText.innerText = `REPLAY: Round ${roundNum} - ${prizeDetail.prize}`;
+    initializeReels(); 
+
+    setTimeout(() => {
+        beginReelSpin(winnerData.CouponCode);
+    }, 500);
+}
+
+function showGridView() {
+    isReplaying = false; 
+    
+    if(roundsGridContainer) roundsGridContainer.classList.remove('hidden');
+    if(activeDrawView) activeDrawView.classList.add('hidden');
+    if(backToGridBtn) backToGridBtn.style.display = 'none';
+    
+    if(localState) renderGrid(localState.round, localState.status);
+    
+    // Title Reset
+    if(translations[currentLang]) subtitleText.innerText = translations[currentLang].subtitle;
+}
+
+function showLiveView(isRealLive) {
+    if(roundsGridContainer) roundsGridContainer.classList.add('hidden');
+    if(activeDrawView) activeDrawView.classList.remove('hidden');
+    
+    if (isRealLive) {
+        if(liveIndicatorText) liveIndicatorText.style.display = 'block';
+        if(backToGridBtn) backToGridBtn.style.display = 'none'; 
+    } else {
+        if(liveIndicatorText) liveIndicatorText.style.display = 'none';
+    }
+}
+
+
+function syncUIWithState(state) {
+    // 1. डेटा चेक
+    if (userRole !== 'admin' && (!state || allParticipants.length === 0)) {
+        // Public user waiting
+    } else if (userRole === 'admin' && (!state || allParticipants.length === 0)) {
+        return; 
+    }
+
+    const isLiveAction = state.status === 'countdown' || state.status === 'spinning' || (state.status === 'finished' && !pastWinnersMap[state.round]);
+    
+    // 3. नोटिफिकेशन (Public Only)
+    if (isLiveAction && state.round !== lastNotifiedRound && userRole !== 'admin') {
+        lastNotifiedRound = state.round;
+        isUserWatchingLive = false; 
+        showLiveToast(state.round); 
+    }
+
+    // 4. View Control
+    if (isLiveAction) {
+        if (userRole === 'admin' || isUserWatchingLive) {
+            showLiveView(true);
+            handleLiveAnimation(state);
+        } else {
+             if (!backToGridBtn || backToGridBtn.style.display === 'none') {
+                showGridView();
+            }
+        }
+    } else {
+        if (state.status === 'waiting' && userRole === 'admin') {
+            drawButton.disabled = false; 
+            drawButton.innerText = "Reveal the Winner"; 
+        }
+
+        if (!backToGridBtn || backToGridBtn.style.display === 'none') {
+            showGridView();
+            initializeReels(); 
         }
     }
     
+    // Toast Logic
+    if(userRole !== 'admin') {
+        if(isLiveAction && liveToast && !liveToast.classList.contains('dismissed') && !isUserWatchingLive) {
+            liveToast.classList.remove('hidden');
+        } else if (liveToast) {
+            liveToast.classList.add('hidden');
+        }
+    }
+
+    // 5. राउंड समाप्त (Ended)
     if (state.status === 'ended') {
         showThankYouPopup();
+        if(liveToast) liveToast.classList.add('hidden');
         if (userRole === 'admin') drawButton.disabled = true;
         subtitleText.innerText = `All ${totalRounds} rounds are complete! Thank You!`;
     }
     
     localState = state;
+    renderGrid(state.round, state.status);
 }
-
 function handleAdminClick() {
+    if (localState.round > totalRounds) {
+        alert("All rounds represent completed!");
+        return;
+    }
+    
     playSound(revealSound);
     drawButton.disabled = true;
+    
     const pastWinners = allParticipants.filter(p => p.isWinner);
     const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName));
     const eligibleParticipants = allParticipants.filter(p => !p.isWinner && !winningOutletNames.has(p.PumpName));
+    
     if (eligibleParticipants.length === 0) {
-        alert("ड्रॉ के लिए कोई योग्य प्रतिभागी या आउटलेट नहीं बचा है!");
+        alert("No eligible participants left!");
         drawButton.disabled = false;
         stopSound(revealSound);
         return;
     }
+    
     const winner = eligibleParticipants[Math.floor(Math.random() * eligibleParticipants.length)];
-    gameStateRef.set({ status: 'countdown', round: localState.round, winnerCoupon: winner.CouponCode, countdownValue: COUNTDOWN_SECONDS }).then(() => {
-        let count = COUNTDOWN_SECONDS;
-        const countdownInterval = setInterval(() => {
-            count--;
-            if (count >= 0) {
-                gameStateRef.update({ countdownValue: count });
-            } else {
-                gameStateRef.update({ status: 'spinning' });
-                clearInterval(countdownInterval);
-            }
-        }, 1000);
+    
+    const targetTimestamp = Date.now() + (COUNTDOWN_SECONDS * 1000) + 1000;
+
+    gameStateRef.set({ 
+        status: 'countdown', 
+        round: localState.round, 
+        winnerCoupon: winner.CouponCode,
+        winnerDetails: winner,
+        targetTime: targetTimestamp 
     });
+
+    setTimeout(() => {
+        gameStateRef.update({ status: 'spinning' });
+    }, (COUNTDOWN_SECONDS * 1000) + 1500); // 11.5 सेकंड बाद स्पिनिंग
+}
+
+function handleLiveAnimation(state) {
+    if (state.status === 'countdown') {
+        if (localState.status !== 'countdown') { playSound(countdownSound); }
+        
+        countdownOverlay.classList.remove('hidden', 'slide-down');
+        
+        if (state.targetTime) {
+            if (localCountdownInterval) clearInterval(localCountdownInterval);
+             previousCountdownInt = null;
+
+            localCountdownInterval = setInterval(() => {
+                const now = Date.now();
+                const distance = state.targetTime - now;
+                
+                let secondsLeft = Math.ceil(distance / 1000);
+                
+                if (secondsLeft < 0) secondsLeft = 0;
+                
+                runCountdown(secondsLeft);
+
+                if (distance < 0) {
+                    clearInterval(localCountdownInterval);
+                }
+            }, 100); 
+        }
+        
+        // UI Fixes
+        if(winnerBanner) winnerBanner.classList.remove('zoomed-in');
+        initializeReels(); 
+
+    } else {
+        stopSound(countdownSound);
+        countdownOverlay.classList.add('hidden');
+        if (localCountdownInterval) clearInterval(localCountdownInterval);
+    }
+
+    if (state.status === 'spinning' && state.winnerCoupon) {
+        if(winnerBanner) winnerBanner.classList.add('zoomed-in');
+        beginReelSpin(state.winnerCoupon);
+    }
+    
+    if (state.status === 'finished' && state.winnerCoupon) {
+        if (userRole === 'admin') {
+            const winnerData = state.winnerDetails || allParticipants.find(p => p.CouponCode === state.winnerCoupon);
+            if(winnerData) {
+                announceWinner(winnerData, state.round);
+                reelCoupon.innerHTML = `<div class="reel-item final-winner">${state.winnerCoupon}</div>`;
+                reelCoupon.style.transform = 'translateY(0)';
+                if(winnerBanner) winnerBanner.classList.remove('zoomed-in');
+            }
+        }
+    }
+}
+
+function showLiveToast(round) {
+    if(!liveToast) return;
+    if(toastRoundNum) toastRoundNum.innerText = round;
+    liveToast.classList.remove('hidden');
+    liveToast.classList.remove('dismissed');
+    playSound(revealSound); 
 }
 
 function runCountdown(currentNumber) {
-    const filmLeader = document.querySelector('.film-leader');
-    if (currentNumber > 0) {
-        const colorIndex = (COUNTDOWN_SECONDS - currentNumber) % countdownColors.length;
-        const selectedColor = countdownColors[colorIndex];
-        filmLeader.style.setProperty('--countdown-fill-color', selectedColor);
-    } else {
-        const lastColorIndex = (COUNTDOWN_SECONDS - 1) % countdownColors.length;
-        filmLeader.style.setProperty('--countdown-fill-color', countdownColors[lastColorIndex]);
+    if (currentNumber === previousCountdownInt) {
+        return; 
     }
+    previousCountdownInt = currentNumber; 
+    const filmLeader = document.querySelector('.film-leader');
     const countdownNumberEl = document.getElementById('countdown-number');
     const rotatingWipe = document.getElementById('rotating-wipe');
+    
+    const displayNum = currentNumber > 10 ? 10 : currentNumber;
+
+    if (displayNum > 0 && displayNum <= 10) {
+        const colorIndex = (10 - displayNum) % countdownColors.length;
+        filmLeader.style.setProperty('--countdown-fill-color', countdownColors[colorIndex]);
+    }
+
+    if (currentNumber > 0) {
+        countdownNumberEl.innerText = currentNumber;
+        countdownNumberEl.style.fontSize = '40vmin';
+    } else {
+        countdownNumberEl.innerText = 'GO!';
+        countdownNumberEl.style.fontSize = '30vmin';
+    }
+
     rotatingWipe.classList.remove('animate');
-    countdownNumberEl.innerText = currentNumber > 0 ? currentNumber : 'GO!';
-    countdownNumberEl.style.fontSize = currentNumber > 0 ? '40vmin' : '30vmin';
-    setTimeout(() => { rotatingWipe.classList.add('animate'); }, 20);
+    void rotatingWipe.offsetWidth; 
+    
+    if (currentNumber > 0) {
+        rotatingWipe.classList.add('animate');
+    }
+}
+
+function generateRealisticCoupon() {
+    let prefix = "HPCL-GEN"; // Default fallback
+    
+    const area = (salesArea || "").toLowerCase().trim();
+
+    if (area.includes("aurangabad1")) {
+        prefix = "HPCL-AUR1";
+    } else if (area.includes("aurangabad2")) {
+        prefix = "HPCL-AUR2";
+    } else if (area.includes("shirdi")) {
+        prefix = "HPCL-SHRD3";
+    } else if (area.includes("jalna")) {
+        prefix = "HPCL-JLN4";
+    } else if (area.includes("ahmednagar") || area.includes("ahngr")) {
+        prefix = "HPCL-AHNGR5";
+    } else if (area.includes("akola")) {
+        prefix = "HPCL-AKL6";
+    }
+
+    const randomNum = Math.floor(Math.random() * 1000000);
+    const suffix = String(randomNum).padStart(6, '0');
+
+    return `${prefix}${suffix}`;
 }
 
 function beginReelSpin(winnerCoupon) {
     if (reelCoupon.classList.contains('spinning')) return;
-    playSound(spinSound);
+    
+    if(!localState || localState.status !== 'finished') {
+        playSound(spinSound);
+    }
+    
     document.getElementById('reel-title-coupon').innerText = translations[currentLang].reel_title_spinning;
-    const pastWinners = allParticipants.filter(p => p.isWinner);
-    const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName));
-    const eligibleParticipantsForReel = allParticipants.filter(p => !p.isWinner && !winningOutletNames.has(p.PumpName));
-    const itemHeight = reelCoupon.querySelector('.reel-item')?.offsetHeight || 100;
-    let reel = startContinuousReel(reelCoupon, eligibleParticipantsForReel, 'CouponCode', 10, itemHeight);
+    
+    const isMobile = window.innerWidth <= 768;
+    const itemHeight = isMobile ? 100 : 120;
+    
+    if(userRole === 'admin' && allParticipants.length > 0){
+        const pastWinners = allParticipants.filter(p => p.isWinner);
+        const winningOutletNames = new Set(pastWinners.map(winner => winner.PumpName));
+        const eligibleParticipantsForReel = allParticipants.filter(p => !p.isWinner && !winningOutletNames.has(p.PumpName));
+        startContinuousReel(reelCoupon, eligibleParticipantsForReel, 'CouponCode', 10, itemHeight);
+    } else {
+        const dummyData = Array.from({length: 200}, () => ({ 
+            CouponCode: generateRealisticCoupon() 
+        }));
+        startContinuousReel(reelCoupon, dummyData, 'CouponCode', 10, itemHeight);
+    }
+    
     reelCoupon.classList.add('spinning');
+    
     setTimeout(() => {
         const stopTimeInSeconds = 5;
-        stopReel(reel, winnerCoupon, stopTimeInSeconds, itemHeight);
+        stopReel(reelCoupon, winnerCoupon, stopTimeInSeconds, itemHeight);
+        
         setTimeout(() => {
+            stopSound(spinSound);
+            
             if (userRole === 'admin') {
-                gameStateRef.update({ status: 'finished' });
+                if (!isReplaying) {
+                    gameStateRef.update({ status: 'finished' });
+                }
+
+                let roundToShow = localState.round; 
+                
+                if (isReplaying) {
+                    for (const [r, w] of Object.entries(pastWinnersMap)) {
+                        if (w.CouponCode === winnerCoupon) {
+                            roundToShow = parseInt(r);
+                            break;
+                        }
+                    }
+                }
+
+                let winnerData = null;
+
+                if (!isReplaying && localState.winnerDetails && localState.winnerDetails.CouponCode === winnerCoupon) {
+                    winnerData = localState.winnerDetails;
+                }
+                else {
+                    winnerData = allParticipants.find(p => p.CouponCode === winnerCoupon);
+                }
+
+                if (winnerData) {
+                    console.log("Popup Opening for:", winnerData.CustomerName); // Debugging
+                    announceWinner(winnerData, roundToShow);
+                } else {
+                    console.log("Fetching winner from DB...");
+                     participantsRef.where('CouponCode', '==', winnerCoupon).get().then(snap => {
+                        if(!snap.empty) {
+                            announceWinner(snap.docs[0].data(), roundToShow);
+                        } else {
+                            alert("Error: Winner data not found!");
+                        }
+                    });
+                }
+            } 
+            
+            // --- PUBLIC LOGIC ---
+            if (userRole !== 'admin') {
+                showPublicWinnerPopup(winnerCoupon);
             }
-        }, (stopTimeInSeconds * 1000) + 2000);
-    }, 5000);
+
+        }, (stopTimeInSeconds * 1000) + 1000); 
+    }, 5000); 
 }
 
-function stopReel(reelObject, finalValue, stopTimeInSeconds, itemHeight) {
-    const { reelElement, FINAL_ITEMS_COUNT } = reelObject;
-    const TARGET_POS_IN_FINAL_CHUNK = 49;
-    const TOTAL_ITEMS_IN_REEL = reelElement.querySelectorAll('.reel-item').length;
-    const FINAL_POS_INDEX = TOTAL_ITEMS_IN_REEL - FINAL_ITEMS_COUNT + TARGET_POS_IN_FINAL_CHUNK;
-    let items = reelElement.querySelectorAll('.reel-item');
-    if (items.length > FINAL_POS_INDEX) {
-        items[FINAL_POS_INDEX].textContent = finalValue;
-        items[FINAL_POS_INDEX].classList.add('final-winner');
-    }
-    const finalScrollPosition = FINAL_POS_INDEX * itemHeight;
-    setTimeout(() => {
-        reelElement.style.transition = `transform ${stopTimeInSeconds}s cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
-        reelElement.style.transform = `translateY(-${finalScrollPosition}px)`;
+function stopReel(reelElement, finalValue, stopTimeInSeconds, itemHeight) {
+    const items = reelElement.querySelectorAll('.reel-item');
+    
+    const targetIndex = items.length - 2; 
+    const targetItem = items[targetIndex];
+    
+    if (targetItem) {
+        targetItem.innerHTML = finalValue; 
+        targetItem.classList.add('final-winner');
+        targetItem.style.color = '#FFD700';
+        
+        const exactPosition = targetItem.offsetTop;
+
+        void reelElement.offsetWidth;
+
+        reelElement.style.transition = `transform ${stopTimeInSeconds}s cubic-bezier(0.15, 0.9, 0.25, 1)`;
+        reelElement.style.transform = `translateY(-${exactPosition}px)`;
+        
         setTimeout(() => {
-            reelElement.parentElement.parentElement.style.border = '3px solid #d9232d';
+            if(reelElement.parentElement && reelElement.parentElement.parentElement) {
+                reelElement.parentElement.parentElement.style.border = '5px solid #d9232d';
+                reelElement.parentElement.parentElement.style.boxShadow = '0 0 20px #d9232d';
+            }
         }, stopTimeInSeconds * 1000);
-    }, 100);
+    }
 }
 
 function startContinuousReel(reelElement, participantsArray, key, speed, itemHeight) {
-    const FINAL_ITEMS_COUNT = 100;
     let entriesHtml = '';
-    for (let loop = 0; loop < 5; loop++) {
-        for (let i = 0; i < FINAL_ITEMS_COUNT; i++) {
-            if (participantsArray.length === 0) continue;
-            const randomIndex = Math.floor(Math.random() * participantsArray.length);
-            const participant = participantsArray[randomIndex];
-            let displayValue = participant[key] || 'N/A';
-            entriesHtml += `<div class="reel-item">${displayValue}</div>`;
-        }
+    const totalReelItems = 100; 
+    
+    for (let i = 0; i < totalReelItems; i++) {
+        const randomIndex = Math.floor(Math.random() * participantsArray.length);
+        const participant = participantsArray[randomIndex];
+        let displayValue = participant[key] || 'N/A';
+        entriesHtml += `<div class="reel-item">${displayValue}</div>`;
     }
+    
     reelElement.innerHTML = entriesHtml;
-    const rollDistance = reelElement.scrollHeight;
+    
     reelElement.style.transition = 'none';
     reelElement.style.transform = `translateY(0px)`;
+    
     setTimeout(() => {
+        const finalScrollHeight = (totalReelItems * itemHeight) - itemHeight; 
+        
         reelElement.style.transition = `transform ${speed}s linear`;
-        reelElement.style.transform = `translateY(-${rollDistance - (itemHeight * FINAL_ITEMS_COUNT)}px)`;
-    }, 100);
-    return { reelElement, FINAL_ITEMS_COUNT };
+        reelElement.style.transform = `translateY(-${finalScrollHeight}px)`;
+    }, 50);
 }
+
 
 function announceWinner(winner, round) {
     if (userRole !== 'admin') return;
-    currentWinner = winner;
+    
     const prizeDetail = getPrizeDetails(round);
+    
+    if (!prizeDetail) {
+        console.warn("Invalid round for prize:", round);
+        return; 
+    }
+
+    currentWinner = winner;
+    
     popupHeading.innerText = `Winner of Round ${round}: ${prizeDetail.prize}!`;
     prizeImage.src = prizeDetail.image;
     popupName.innerText = winner.CustomerName || winner['Costomer Name'] || 'N/A';
     popupCoupon.innerText = winner.CouponCode;
     popupOutlet.innerText = winner.PumpName;
     popupAddress.innerText = winner.OutletAddress || 'N/A';
+    
     let mobileDisplay = String(winner.CustomerPhone);
     popupMobile.innerText = mobileDisplay.substring(0, 2) + '******' + mobileDisplay.substring(mobileDisplay.length - 2);
+    
     winnerPopupOverlay.classList.remove('hidden');
     startContinuousCelebration();
+    
     saveNextButton.disabled = false;
-    saveNextButton.innerText = `Save & Ready for Round ${round + 1}`;
+
+    if (isReplaying) {
+        saveNextButton.innerText = "Close Popup";
+        
+        let newBtn = saveNextButton.cloneNode(true);
+        saveNextButton.parentNode.replaceChild(newBtn, saveNextButton);
+        saveNextButton = newBtn; // Reference update
+
+        saveNextButton.onclick = () => {
+            winnerPopupOverlay.classList.add('hidden');
+            stopCelebration();
+            showGridView(); 
+        };
+    } else {
+        if (round >= totalRounds) {
+            saveNextButton.innerText = "Finish Draw & Show Thank You";
+        } else {
+            saveNextButton.innerText = `Save & Ready for Round ${round + 1}`;
+        }
+        
+        let newBtn = saveNextButton.cloneNode(true);
+        saveNextButton.parentNode.replaceChild(newBtn, saveNextButton);
+        saveNextButton = newBtn; // Reference update
+        
+        saveNextButton.addEventListener('click', handleSaveClick);
+    }
 }
 
 async function handleSaveClick() {
     if (userRole !== 'admin' || !currentWinner) return;
+    
     stopCelebration();
     saveNextButton.disabled = true;
     saveNextButton.innerText = 'Saving...';
+    
+    // 1. Local Array Update
     const originalIndex = allParticipants.findIndex(p => p.CouponCode === currentWinner.CouponCode);
     if (originalIndex !== -1) {
         allParticipants[originalIndex].isWinner = true;
     }
+    
+    // 2. Save Data
     const isSaved = await saveWinnerData(currentWinner, localState.round);
+    
     if (isSaved) {
+        winnerPopupOverlay.classList.add('hidden'); 
+        
         if (localState.round >= totalRounds) {
-            console.log("All rounds complete. Showing thank you popup.");
             gameStateRef.set({ status: 'ended', round: localState.round, winnerCoupon: null });
         } else {
             gameStateRef.set({ status: 'waiting', round: localState.round + 1, winnerCoupon: null, countdownValue: null });
@@ -638,20 +944,30 @@ async function handleSaveClick() {
 
 async function handleResetClick() {
     if (!confirm("Are you sure you want to reset the draw to the last safe point?")) return;
-    console.log("Resetting draw state...");
+    
     stopCelebration();
-    const winnersSnapshot = await winnersRef.get();
+    stopAllSounds();
+    
+    drawButton.disabled = false;
+    isReplaying = false; 
+    
+    const winnersSnapshot = await winnersRef.orderBy("Round", "desc").limit(1).get();
     let lastCompletedRound = 0;
-    if (winnersSnapshot.exists()) {
-        const winnersData = winnersSnapshot.val();
-        const rounds = Object.values(winnersData).map(winner => winner.Round);
-        if (rounds.length > 0) {
-            lastCompletedRound = Math.max(...rounds);
-        }
+    if (!winnersSnapshot.empty) {
+        lastCompletedRound = winnersSnapshot.docs[0].data().Round;
     }
+    
     const nextRound = lastCompletedRound + 1;
-    console.log(`Resetting to start of round ${nextRound}.`);
-    gameStateRef.set({ status: 'waiting', round: nextRound, winnerCoupon: null, countdownValue: null });
+    
+    gameStateRef.set({ 
+        status: 'waiting', 
+        round: nextRound, 
+        winnerCoupon: null, 
+        countdownValue: null,
+        winnerDetails: null 
+    });
+    
+    alert("Draw reset successfully to Round " + nextRound);
 }
 
 async function initializeApp() {
@@ -659,62 +975,79 @@ async function initializeApp() {
     const enterButton = document.getElementById('enter-button');
     
     if (enterButton && splashScreen) {
-        // <<<--- यहाँ सारा बदलाव किया गया है ---<<<
-        // 3 सेकंड बाद, बटन पर 'visible' क्लास लगा दें
         setTimeout(() => {
             enterButton.classList.add('visible');
         }, 3000);
 
         enterButton.addEventListener('click', () => {
-            console.log("Enter button clicked. Priming sounds...");
             primeSounds();
-             playSound(backgroundMusic);
+            playSound(backgroundMusic);
             if (splashScreen) {
                 splashScreen.classList.add('hidden');
             }
         }, { once: true });
     }
     
-    // बाकी का फंक्शन वैसा का वैसा ही रहेगा
     startPaperRain();
     startCountdown();
-    fetchData();
+    fetchData(); 
     fetchAndDisplayWinners();
     
     gameStateRef.onSnapshot((doc) => {
-    const state = doc.data();
-    if (state) {
-        syncUIWithState(state);
-    }
-});
+        const state = doc.data();
+        if (state) {
+            syncUIWithState(state);
+        }
+    });
 
-const doc = await gameStateRef.get();
-if (doc.exists) {
-    syncUIWithState(doc.data());
-} else if (userRole === 'admin') {
-    handleResetClick();
-}
+    const doc = await gameStateRef.get();
+    if (doc.exists) {
+        syncUIWithState(doc.data());
+    } else if (userRole === 'admin') {
+        handleResetClick();
+    }
 }
   
+function showThankYouPopup() { 
+    if (thankYouPopupOverlay) { 
+        thankYouPopupOverlay.classList.remove('hidden'); 
+    } 
+}
 
-function showThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.remove('hidden'); } }
-function hideThankYouPopup() { if (thankYouPopupOverlay) { thankYouPopupOverlay.classList.add('hidden'); } }
+function hideThankYouPopup() { 
+    if (thankYouPopupOverlay) { 
+        thankYouPopupOverlay.classList.add('hidden'); 
+    } 
+}
 
 function initializeReels() {
-    const defaultText = '<div class="reel-item">READY TO DRAW</div>';
-    reelCoupon.innerHTML = defaultText;
-    reelCoupon.style.transform = 'translateY(0px)';
-    document.querySelectorAll('.reel-box').forEach(box => { box.style.border = '3px solid #FFD700'; });
-    reelCoupon.classList.remove('spinning');
-    document.getElementById('reel-title-coupon').innerText = translations[currentLang].reel_title_waiting;
+    const defaultText = '<div class="reel-item">READY</div>';
+    
+    if(reelCoupon) {
+        reelCoupon.innerHTML = defaultText;
+        
+        reelCoupon.style.transition = 'none'; // एनीमेशन हटाएं
+        reelCoupon.style.transform = 'translateY(0px)';
+        reelCoupon.classList.remove('spinning');
+        
+        const items = reelCoupon.querySelectorAll('.reel-item');
+        items.forEach(item => item.classList.remove('final-winner'));
+    }
+    
+    // Title reset
+    const titleEl = document.getElementById('reel-title-coupon');
+    if(titleEl && translations[currentLang]) {
+        titleEl.innerText = translations[currentLang].reel_title_waiting;
+    }
 }
 
 async function saveWinnerData(winner, round) {
     try {
         const prizeDetail = getPrizeDetails(round);
+        if (!prizeDetail) return false;
+
         const winnerDataWithPrize = { ...winner, Round: round, Prize: prizeDetail.prize, Timestamp: new Date().toISOString(), salesArea: salesArea };
         
-        // Firestore में डॉक्यूमेंट सेट करें
         const specificWinnerRef = winnersRef.doc(winner.CouponCode);
         await specificWinnerRef.set(winnerDataWithPrize);
         
@@ -722,11 +1055,17 @@ async function saveWinnerData(winner, round) {
         
         try {
             if (APPS_SCRIPT_URL) {
-                await fetch(APPS_SCRIPT_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(winnerDataWithPrize) });
-                console.log('SUCCESS: Winner data sent to Google Sheet.');
+                fetch(APPS_SCRIPT_URL, { 
+                    method: 'POST', 
+                    mode: 'no-cors', 
+                    headers: { 'Content-Type': 'application/json' }, 
+                    body: JSON.stringify(winnerDataWithPrize) 
+                }).catch(e => console.error("Sheet Error (Background):", e));
+                
+                console.log('Sent to Google Sheet (Background).');
             }
         } catch (sheetError) {
-            console.error('GOOGLE SHEET ERROR: Could not send data.', sheetError);
+            console.error('GOOGLE SHEET ERROR:', sheetError);
         }
         return true;
     } catch (error) {
@@ -746,10 +1085,12 @@ if (userRole === 'admin') {
     drawButton.style.display = 'none';
 }
 
-if (closeThankYouPopupButton) { closeThankYouPopupButton.addEventListener('click', hideThankYouPopup); }
+if (closeThankYouPopupButton) { 
+    closeThankYouPopupButton.addEventListener('click', hideThankYouPopup); 
+}
 langHi.addEventListener('click', (e) => { e.preventDefault(); setLanguage('hi'); });
 langEn.addEventListener('click', (e) => { e.preventDefault(); setLanguage('en'); });
-searchButton.addEventListener('click', searchParticipant);
+
 
 const tabButtons = document.querySelectorAll('.tab-button');
 const tabPanels = document.querySelectorAll('.tab-panel');
@@ -765,7 +1106,12 @@ tabButtons.forEach(button => {
         }
     });
 });
-
+if (backToGridBtn) {
+    backToGridBtn.addEventListener('click', () => {
+        stopAllSounds();
+        showGridView();
+    });
+}
 function startPaperRain() {
   if (typeof confetti !== 'function') { console.error("Confetti library is not loaded."); return; }
   const brandColors = ['#d9232d', '#003366', '#FFD700', '#ffffff'];
@@ -783,12 +1129,10 @@ function startPaperRain() {
   }, 1000);
 }
 
-// App को शुरू करें
 initializeApp();
 
 const logoutButton = document.getElementById('logout-button');
 
-// अगर यूजर एडमिन है, तो लॉगआउट बटन दिखाएं
 if (userRole === 'admin') {
     logoutButton.style.display = 'inline-block';
 }
@@ -796,15 +1140,90 @@ if (userRole === 'admin') {
 logoutButton.addEventListener('click', () => {
     auth.signOut()
         .then(() => {
-            // लॉग आउट सफल हुआ
             console.log('User signed out successfully.');
-            // यूजर को लॉगिन पेज पर भेजें
             window.location.href = 'admin_login.html';
         })
         .catch((error) => {
-            // कोई एरर आई
             console.error('Sign out error:', error);
         });
 });
 
-// --- END: यहाँ तक कॉपी करें ---
+if(watchLiveBtn) {
+    watchLiveBtn.addEventListener('click', () => {
+        isUserWatchingLive = true; 
+        liveToast.classList.add('hidden'); 
+        if(localState) syncUIWithState(localState);
+    });
+}
+
+if(dismissLiveBtn) {
+    dismissLiveBtn.addEventListener('click', () => {
+        liveToast.classList.add('hidden');
+        liveToast.classList.add('dismissed'); 
+    });
+}
+
+if (closePublicPopupBtn) {
+    closePublicPopupBtn.addEventListener('click', () => {
+        if(publicWinnerCard) publicWinnerCard.classList.add('hidden');
+        stopCelebration();
+        
+        isUserWatchingLive = false; 
+        showGridView();
+    });
+}
+
+if (backToGridBtn) {
+    backToGridBtn.addEventListener('click', () => {
+        stopAllSounds();
+        isUserWatchingLive = false;
+        showGridView();
+    });
+}
+
+function showPublicWinnerPopup(couponCode) {
+    let winnerData = Object.values(pastWinnersMap).find(w => w.CouponCode === couponCode);
+
+    if (!winnerData && localState && localState.winnerDetails && localState.winnerDetails.CouponCode === couponCode) {
+        winnerData = localState.winnerDetails;
+        winnerData.Round = localState.round;
+    }
+
+    if (winnerData) {
+        playSound(winnerSound); 
+        const currentRound = winnerData.Round || localState.round;
+        const prizeDetail = getPrizeDetails(currentRound);
+        
+        const mobileNum = String(winnerData.CustomerPhone || winnerData['CustomerPhone'] || '0000000000');
+        const mobileDisplay = mobileNum.substring(0, 2) + '******' + mobileNum.substring(mobileNum.length - 2);
+        const outletAddress = winnerData.OutletAddress || 'N/A';
+
+        publicHeading.innerText = `Winner of Round ${currentRound}: ${prizeDetail ? prizeDetail.prize : 'Prize'}!`;
+        if (prizeDetail) publicPrizeImage.src = prizeDetail.image;
+        
+        publicName.innerText = winnerData.CustomerName || winnerData['Costomer Name'] || 'N/A';
+        publicCoupon.innerText = winnerData.CouponCode;
+        publicOutlet.innerText = winnerData.PumpName;
+        publicAddress.innerText = outletAddress;
+        publicMobile.innerText = mobileDisplay;
+
+        if(publicWinnerCard) {
+            publicWinnerCard.classList.remove('hidden');
+            publicWinnerCard.style.animation = 'none';
+            publicWinnerCard.offsetHeight; /* trigger reflow */
+            publicWinnerCard.style.animation = 'zoomIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+        }
+        
+        startContinuousCelebration();
+    } else {
+        console.warn("Winner data not found anywhere for coupon:", couponCode);
+    }
+}
+
+
+if (closePublicPopupBtn) {
+    closePublicPopupBtn.addEventListener('click', () => {
+        publicWinnerCard.classList.add('hidden');
+        stopCelebration();
+    });
+}

@@ -1,8 +1,6 @@
-/* --- START: इस पूरे कोड को अपनी login_style.css फाइल में पेस्ट करें --- */
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
-/* <<<--- यहाँ बैकग्राउंड को पूरी तरह से स्थिर कर दिया गया है ---<<< */
 body {
     display: flex; 
     justify-content: center; 
@@ -10,26 +8,19 @@ body {
     min-height: 100vh;
     background-image: url('Background/Login-Background.jpg');
     
-    /* 1. एनीमेशन वाली लाइन हटा दी गई है */
-    
-    /* 2. इमेज को हर स्क्रीन पर फिट करने के लिए यह सबसे अच्छा तरीका है */
     background-size: cover; 
     background-position: center;
 }
-
-/* 3. @keyframes वाला पूरा ब्लॉक हटा दिया गया है */
 
 
 .glass-container {
     position: relative; width: 400px; padding: 40px; border-radius: 20px;
     
-    /* --- बेहतर ग्लास इफ़ेक्ट के लिए ये लाइनें बदलें --- */
-    background: rgba(10, 25, 40, 0.75); /* थोड़ा गहरा और कम पारदर्शी */
-    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); /* गहराई के लिए शैडो */
-    backdrop-filter: blur(10px); /* ब्लर को थोड़ा कम किया */
-    border: 1px solid rgba(255, 255, 255, 0.18); /* हल्की सफेद बॉर्डर */
-    /* --- यहाँ तक --- */
-
+    background: rgba(10, 25, 40, 0.75); 
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37); 
+    backdrop-filter: blur(10px); 
+    border: 1px solid rgba(255, 255, 255, 0.18); 
+    
     color: #fff;
     animation: form-load-animation 1s ease-out forwards;
     overflow: visible; 
@@ -46,7 +37,7 @@ body {
 
 h2 { 
     text-align: center; 
-    margin-bottom: 0; /* <<<--- इसे 0 कर दिया गया है */
+    margin-bottom: 0; 
     font-weight: 600; 
     font-size: 2em; 
 }
@@ -54,18 +45,18 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px; /* लोगो और टेक्स्ट के बीच की जगह */
+    gap: 15px; 
 }
 
 .logo-img {
-    height: 45px; /* लोगो का साइज़ */
+    height: 45px; 
     width: auto;
 }
 
 .login-subtitle {
     text-align: center;
     margin-top: 5px;
-    margin-bottom: 30px; /* फॉर्म से दूरी बनाने के लिए */
+    margin-bottom: 30px; 
     font-size: 0.9em;
     font-weight: 500;
     color: rgba(255, 255, 255, 0.8);

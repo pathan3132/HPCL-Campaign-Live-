@@ -1,4 +1,3 @@
-// --- START: इस पूरे कोड को अपनी login_script.js फाइल में पेस्ट करें ---
 
 const firebaseConfig = {
     apiKey: "AIzaSyCAKoW_qCM9gF9k_vFvLOOpDORsFAfOgOQ",
@@ -15,12 +14,12 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 const appCheck = firebase.appCheck();
 appCheck.activate(
-    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY', // <<<--- यहाँ अपनी reCAPTCHA v3 Site Key पेस्ट करें
+    '6LcWPgwsAAAAABmtXNz6XlIH_gAysJictdngUHKY',
     true
 );
 const auth = firebase.auth();
 
-// --- DOM एलिमेंट्स को चुनें ---
+
 const glassContainer = document.querySelector('.glass-container');
 const loginForm = document.getElementById('login-form');
 const emailInput = document.getElementById('email');
@@ -30,35 +29,28 @@ const rememberMeCheckbox = document.getElementById('remember-me-checkbox');
 const errorMessage = document.getElementById('error-message');
 const formTooltip = document.getElementById('form-tooltip');
 
-// <<<--- यहाँ बदलाव किया गया है ---<<<
-// शरारती बटन का लॉजिक (अब इंग्लिश में)
 loginButton.addEventListener('mouseover', () => {
     const emailValue = emailInput.value;
     const passwordValue = passwordInput.value;
 
     if (!emailValue) {
-        // अगर ईमेल खाली है
         const direction = Math.random() < 0.5 ? '-150%' : '50%';
         loginButton.style.transform = `translateX(${direction})`;
-        formTooltip.textContent = 'Please enter username first!'; // बदला हुआ मैसेज
+        formTooltip.textContent = 'Please enter username first!';
         formTooltip.classList.add('visible');
     } else if (!passwordValue) {
-        // अगर पासवर्ड खाली है
         const direction = Math.random() < 0.5 ? '-150%' : '50%';
         loginButton.style.transform = `translateX(${direction})`;
-        formTooltip.textContent = 'Now, please enter the password!'; // बदला हुआ मैसेज
+        formTooltip.textContent = 'Now, please enter the password!';
         formTooltip.classList.add('visible');
     }
 });
 
 loginButton.addEventListener('mouseout', () => {
-    // कर्सर हटाने पर बटन और टूलटिप को रीसेट करें
     loginButton.style.transform = 'translateX(0)';
     formTooltip.classList.remove('visible');
 });
 
-
-// --- लॉगिन फॉर्म सबमिट करने का लॉजिक (यह पहले से ही इंग्लिश में है) ---
 loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     const email = emailInput.value;
@@ -86,21 +78,20 @@ loginForm.addEventListener('submit', (e) => {
     auth.setPersistence(persistence)
         .then(() => auth.signInWithEmailAndPassword(email, password))
         .then((userCredential) => {
-    const user = userCredential.user;
-    // Firestore से एडमिन की जानकारी प्राप्त करें
-    const adminDocRef = db.collection('admin_roles').doc(user.uid);
-    return adminDocRef.get();
-})
-.then(doc => {
-    if (doc.exists) {
-        const assignedArea = doc.data().area; // .val() की जगह .data().area
-        const targetArea = (assignedArea === 'all') ? 'akola' : assignedArea;
-        window.location.href = `index.html?role=admin&area=${targetArea}`;
-    } else {
-        auth.signOut();
-        throw new Error("Permission Denied");
-    }
-})
+            const user = userCredential.user;
+            const adminDocRef = db.collection('admin_roles').doc(user.uid);
+            return adminDocRef.get();
+        })
+        .then(doc => {
+            if (doc.exists) {
+                const assignedArea = doc.data().area;
+                const targetArea = (assignedArea === 'all') ? 'akola' : assignedArea;
+                window.location.href = `index.html?role=admin&area=${targetArea}`;
+            } else {
+                auth.signOut();
+                throw new Error("Permission Denied");
+            }
+        })
         .catch((error) => {
             glassContainer.classList.add('shake');
             if(error.message === "Permission Denied"){
@@ -115,5 +106,3 @@ loginForm.addEventListener('submit', (e) => {
             loginButton.textContent = 'Login';
         });
 });
-
-// --- END: यहाँ तक कॉपी करें ---

@@ -1,4 +1,3 @@
-<!-- --- START: इस पूरी फ़ाइल को कॉपी करके अपनी पुरानी फ़ाइल से बदलें --- -->
 <!DOCTYPE html>
 <html lang="hi">
 <head>
@@ -136,26 +135,74 @@
                     <button id="reset-button" style="display: none;">Reset Draw</button>
                 </div>
                 
-                <div class="winner-banner" id="winner-banner">
-                    <div class="slot-machine-container single-reel-mode">
-                        <div class="reel-box single-reel-box">
-                            <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
-                            <div class="reel-window" id="reel-window-coupon">
-                                <div class="reel-text" id="reel-coupon"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div id="rounds-grid-container" class="rounds-grid-container">
+    <div class="rounds-grid" id="rounds-grid">
+
+    </div>
+</div>
+
+
+<div class="winner-banner hidden" id="active-draw-view">
+   <div class="live-indicator-text" id="live-indicator-text" style="display:none;">🔴 LIVE DRAW IN PROGRESS</div>
+    <button id="back-to-grid-btn" style="display:none;" class="back-btn">⬅ Back to Grid</button>
+    
+    <div class="slot-machine-container single-reel-mode">
+        <div class="reel-box single-reel-box">
+            <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
+            
+            
+            <div class="reel-window">
+                 <div class="reel-text" id="reel-coupon">
+                    <div class="reel-item">READY</div>
                 </div>
+            </div>
+            
+            
+        </div>
+    </div>
+</div>
+
+<!-- LIVE DRAW NOTIFICATION TOAST -->
+<div id="live-toast" class="live-toast hidden">
+    <div class="toast-content">
+        <span class="toast-icon">🔴</span>
+        <div class="toast-text">
+            <h4>Live Draw Started!</h4>
+            <p>Round <span id="toast-round-num">1</span> is revealing...</p>
+        </div>
+        <button id="watch-live-btn">👁️ Watch Now</button>
+        <button id="dismiss-live-btn">✕</button>
+    </div>
+</div>
                 
-                <div class="search-container">
-                    <h2 id="search-heading">Check Your Coupon Code</h2>
-                    <p class="search-subheading" id="search-subheading">Enter your Mobile Number or Coupon Code to find your entry.</p>
-                    <div class="search-form">
-                        <input type="text" id="search-input" placeholder="Enter Mobile or Coupon Code...">
-                        <button id="search-button">Search</button>
-                    </div>
-                    <div id="search-result-container"></div>
-                </div>
+    <div class="search-container">
+    <h2 id="search-heading">Check Your Coupon Code</h2>
+    
+    <p class="search-subheading" id="search-subheading">
+        To view your coupon details or verify participation, please visit our dedicated search portal.
+        <br>
+        (अपना कूपन कोड खोजने के लिए नीचे दिए गए बटन पर क्लिक करें)
+    </p>
+    
+   
+    <div class="external-search-container">
+    
+        <a href="https://script.google.com/macros/s/AKfycbwEFXlzDl-RC63fAeIGUDwUyLab_gd_LLsf5Dorp1pppoH56vBR_Rtwv1vCxxyNfFeB/exec" target="_blank" class="search-redirect-btn">
+            🔍 Search My Coupon Code
+        </a>
+    </div>
+
+   
+    <div class="external-list-container" style="margin-top: 20px;">
+        <a href="YOUR_GOOGLE_SHEET_LINK_HERE" target="_blank" id="check-list-btn" 
+           style="font-size: 0.9em; text-decoration: underline; color: #fff;">
+           📄 Or View Full List (PDF/Sheet)
+        </a>
+    </div>
+    
+   
+    <div id="search-result-container"></div>
+</div>
 
                 <hr class="section-divider">
                 <div class="winners-list-container">
@@ -180,13 +227,66 @@
             </div>
             
             <div class="tab-panel" data-tab="participants">
-                <div class="about-section">
-                    <h2 id="about-heading">Our Commitment to Excellence</h2>
-                    <p id="about-p1">Hindustan Petroleum Corporation Limited (HPCL) is one of India's leading oil and gas companies...</p>
-                    <p id="about-p2">This lucky draw is our way of saying thank you...</p>
+    
+    <div class="about-wrapper">
+        <!-- 1. HPCL Section -->
+        <div class="about-card">
+            <div class="about-header">
+                <img src="images/hpcl-logo.png" alt="HPCL Logo" class="about-logo">
+                <h3>Hindustan Petroleum Corporation Limited</h3>
+            </div>
+            <div class="about-body">
+                <p><strong>"Delivering Happiness, Fueling Dreams"</strong></p>
+                <p>
+                    हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (HPCL) एक महारत्न CPSE है और भारत की अग्रणी ऊर्जा कंपनियों में से एक है। 
+                    हम न केवल ईंधन प्रदान करते हैं, बल्कि अपने ग्राहकों के जीवन में खुशियां भरने के लिए प्रतिबद्ध हैं।
+                </p>
+                <p>
+                    यह 'लकी ड्रॉ' इवेंट हमारे वफादार ग्राहकों के प्रति आभार व्यक्त करने का एक छोटा सा प्रयास है। 
+                    आपकी यात्रा को सुगम और सुरक्षित बनाना ही हमारा एकमात्र लक्ष्य है।
+                </p>
+                <ul class="feature-list">
+                    <li>✅ World-class Fuel Quality</li>
+                    <li>✅ Customer-First Approach</li>
+                    <li>✅ Innovation & Sustainability</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 2. Aspire Business Link Section -->
+        <div class="about-card">
+            <div class="about-header">
+                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="about-logo" style="max-height: 50px;"> <!-- Adjust size if needed -->
+                <h3>Aspire Business Link</h3>
+            </div>
+            <div class="about-body">
+                <p><strong>"Empowering Business through Digital Excellence"</strong></p>
+                <p>
+                    Aspire Business Link एक प्रमुख सर्विस इंडस्ट्री पार्टनर है जो व्यवसायों को नई डिजिटल ऊंचाइयों तक ले जाने में मदद करती है। 
+                    हम इवेंट मैनेजमेंट, आईटी सॉल्यूशंस और डिजिटल मार्केटिंग में विशेषज्ञता रखते हैं।
+                </p>
+                <p>
+                    इस लकी ड्रॉ का पूरा तकनीकी प्रबंधन (Technical Management) और डिजिटल निष्पादन Aspire Business Link द्वारा किया जा रहा है, 
+                    ताकि आपको एक पारदर्शी और बेहतरीन अनुभव मिल सके।
+                </p>
+                <ul class="feature-list">
+                    <li>✅ End-to-End Event Management</li>
+                    <li>✅ Advanced IT & Digital Solutions</li>
+                    <li>✅ Corporate Branding Services</li>
+                </ul>
+                <div style="margin-top: 15px;">
+                    <a href="https://aspirebusinesslink.com" target="_blank" class="visit-btn">Visit Website</a>
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Footer Note -->
+    <div class="about-footer">
+        <p>Thank you for being part of our journey!</p>
+    </div>
+
+</div>
     </main>
     
     <div class="winner-popup-overlay hidden" id="winner-popup-overlay">
@@ -207,6 +307,7 @@
     </div>
 
     <div class="public-winner-card hidden" id="public-winner-card">
+    <button id="close-public-popup" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
         <h2 id="public-heading"></h2>
         <div class="prize-image-container">
             <img src="" alt="Prize Image" id="public-prize-image">
@@ -250,7 +351,7 @@
     <audio id="sound-background" src="sounds/background-music.mp3" preload="auto" loop></audio>
 
    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app-check.js"></script> <!-- <<<--- यह नई लाइन जोड़ें -->
+   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app-check.js"></script> 
    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
@@ -258,4 +359,3 @@
     
 </body>
 </html>
-<!-- --- END: यहाँ तक कॉपी करें --- -->
