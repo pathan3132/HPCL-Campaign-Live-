@@ -1,361 +1,212 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HPCL - Lucky Draw Event</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATC Entry System</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <!-- PWA Meta Tags -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a2a6c">
+<link rel="apple-touch-icon" href="images/ATC_Logo.png">
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>ATC Bill Entry Form</h1>
+            <p>Advance Transport Challan Management</p>
+        </header>
 
-    <div id="top-right-controls">
-        <div id="admin-dashboard" style="display: none;">
-            <div id="current-area-display">
-    Managing Draw for: <span id="current-area-name"></span>
-</div>
-            <div id="total-viewers">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="viewer-icon">
-                    <path d="M12,4.5C7,4.5,2.73,7.61,1,12c1.73,4.39,6,7.5,11,7.5s9.27-3.11,11-7.5C21.27,7.61,17,4.5,12,4.5z M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5S14.76,17,12,17z M12,9c-1.66,0-3,1.34-3,3s1.34,3,3,3,3-1.34,3-3S13.66,9,12,9z"/>
-                </svg>
-                <span id="viewer-count">0</span>
-            </div>
-            <div id="viewer-breakdown"></div>
-        </div>
-        <div class="mute-button" id="mute-button" title="Toggle Sound">
-            <svg id="unmute-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
-            </svg>
-            <svg id="mute-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
-            </svg>
-             <span class="mute-status-label">Sound: <span id="mute-status-text">ON</span></span>
-        </div>
-          <button id="logout-button">Logout</button>
-    </div>
-
-    <div class="countdown-overlay hidden" id="countdown-overlay">
-        <div class="film-leader">
-            <img src="images/Delivering-happiness.png" alt="Delivering-happiness" class="countdown-logo">
-            <div class="crosshair-h"></div>
-            <div class="crosshair-v"></div>
-            <div class="rotating-wipe" id="rotating-wipe"></div>
-            <div class="circle-border"></div>
-            <span class="countdown-number" id="countdown-number"></span>
-        </div>
-    </div>
-
-    <div class="splash-screen" id="splash-screen">
-        <div class="splash-content">
-            <h1 class="splash-header" id="splash-header">A Lucky Draw Event presented by<br><strong>Hindustan Petroleum Corporation Limited</strong></h1>
-            <div class="logo-animation">
-                <img src="images/HP-Logoforanimation.png" alt="HPCL Logo" class="logo-img hp-logo-splash">
-                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="logo-img aspire-logo-splash">
-            </div>
-            <p class="splash-tagline" id="splash-tagline">Elevating Service, Inspiring Success.</p>
-            <button id="enter-button">Click to Enter Event</button>
-        </div>
-    </div>
-
-    <header class="site-header">
-        <div class="header-logos-left">
-            <img src="images/hpcl-logo.png" alt="HPCL Logo">
-        </div>
-        <div class="header-logos-right">
-            <img src="images/Delivering-happiness.png" alt="Delivering-happiness">
-        </div>
-    </header>
-    
-    <div class="lang-switcher-mobile-container">
-        <div class="lang-switcher">
-            <a href="#" id="lang-hi" class="active">हिंदी</a>
-            <span>|</span>
-            <a href="#" id="lang-en">English</a>
-        </div>
-    </div>
-
-    <main class="main-content">
-        <div class="prize-info-container">
-            <h2 id="prize-info-heading">Today's Prizes</h2>
-            <div class="prize-cards-wrapper">
-                <div class="prize-card">
-                    <h4>Dinner Set</h4>
-                    <p class="winner-count">20</p>
-                    <p class="winner-label">Winners</p>
+        <form id="atcForm">
+            <!-- Row 1 -->
+            <div class="form-row">
+                <div class="input-group">
+                    <label>Bill Number (Auto)</label>
+                    <input type="text" id="billNo" value="Loading..." readonly class="auto-field">
                 </div>
-                <div class="prize-card">
-                    <h4>LED TV</h4>
-                    <p class="winner-count">3</p>
-                    <p class="winner-label">Winners</p>
-                </div>
-                <div class="prize-card">
-                    <h4>Refrigerator</h4>
-                    <p class="winner-count">2</p>
-                    <p class="winner-label">Winners</p>
-                </div>
-                <div class="prize-card mega-prize-card">
-                    <h4>Motorcycle</h4>
-                    <p class="winner-count">1</p>
-                    <p class="winner-label">Mega Prize</p>
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="date" required>
                 </div>
             </div>
-        </div>
-
-        <div class="subtitle-container">
-            <p class="subtitle" id="subtitle-text">Diwali Special Lucky Draw</p>
-        </div>
-
-        <div id="countdown-wrapper">
-            <div class="countdown-container" id="countdown-container">
-                <h2 id="countdown-heading">लकी ड्रॉ कुछ ही पलों में शुरू होने वाला है, कृपया पेज पर बने रहें।</h2>
-                <div class="countdown-timer">
-                    <div><span id="days">00</span><span class="label">दिन</span></div>
-                    <div><span id="hours">00</span><span class="label">घंटे</span></div>
-                    <div><span id="minutes">00</span><span class="label">मिनट</span></div>
-                    <div><span id="seconds">00</span><span class="label">सेकंड</span></div>
+            <!-- Row 2 -->
+            <div class="form-row">
+                <div class="input-group">
+                    <label>Lorry No</label>
+                    <input type="text" id="lorryNo" placeholder="MH 30 HG 3223" required style="text-transform: uppercase;">
                 </div>
+                <div class="input-group"><label>Driver Contact</label><input type="number" id="dContact"></div>
+                <div class="input-group"><label>Owner Contact</label><input type="number" id="oContact"></div>
             </div>
-            <div class="draw-live-message hidden" id="draw-live-message">
-                <h2>ड्रॉ शुरू हो चुका है! अपना भाग्य आज़माने के लिए रिजल्ट पेज पर बने रहें।</h2>
+            <!-- Row 3 -->
+            <div class="form-row">
+                <div class="input-group"><label>From (Origin)</label><input type="text" id="from" required></div>
+                <div class="input-group"><label>To (Destination)</label><input type="text" id="to" required></div>
             </div>
-        </div>
+            <!-- Row 4 -->
+            <div class="form-row">
+                <div class="input-group"><label>Party Name</label><input type="text" id="party" required></div>
+                <div class="input-group"><label>Material Name</label><input type="text" id="material"></div>
+            </div>
+            <!-- Row 5 -->
+            <div class="form-row calc-section">
+                <div class="input-group"><label>Capacity (Ton)</label><input type="number" id="capacity" step="0.001" required></div>
+                <div class="input-group"><label>Rate (Per Ton)</label><input type="number" id="rate" required></div>
+                <div class="input-group"><label>Freight Amount</label><input type="number" id="freight" readonly class="auto-field"></div>
+            </div>
+            <!-- Row 6 -->
+            <div class="form-row deduction-section">
+                <div class="input-group"><label>Commission</label><input type="number" id="comm" value="0"></div>
+                <div class="input-group"><label>RTGS Charge</label><input type="number" id="rtgs" value="0"></div>
+                <div class="input-group"><label>Cutting</label><input type="number" id="cutting" value="0"></div>
+                <div class="input-group"><label>Shortage</label><input type="number" id="shortage" value="0"></div>
+            </div>
 
-        <nav class="tab-nav">
-            <button class="tab-button active" data-tab="winner" id="tab-btn-winner">Result Page</button>
-            <button class="tab-button" data-tab="participants" id="tab-btn-participants">About Us</button>
-        </nav>
+            <div class="total-container">
+                <div class="remark-box"><label>Remark</label><textarea id="remark" rows="2"></textarea></div>
+                <div class="final-balance"><span>Net Payable:</span><h2 id="inAccountDisplay">₹ 0</h2></div>
+            </div>
 
-        <div class="tab-content">
-            <div class="tab-panel active" data-tab="winner">
-                <div class="draw-controls">
-                    <button id="draw-button" style="display: none;">Reveal the Winner</button>
-                    <button id="reset-button" style="display: none;">Reset Draw</button>
-                </div>
-                
-                <div id="rounds-grid-container" class="rounds-grid-container">
-    <div class="rounds-grid" id="rounds-grid">
-
+            <button type="submit" id="submitBtn">Save Data & Download PDF</button>
+        </form>
     </div>
-</div>
 
+    <!-- FIXED PDF TEMPLATE -->
+   <!-- FINAL PREMIUM PDF TEMPLATE -->
+<!-- FINAL FIXED: SINGLE PAGE PDF TEMPLATE -->
+<div id="pdf-wrapper" style="position: absolute; left: -9999px; top: 0;">
+    <div id="pdf-content" style="
+        width: 700px; 
+        padding: 30px; 
+        background-color: #ffffff;
+        background-image: url('images/Background.png');
+        background-repeat: no-repeat;
+        /* वाटरमार्क की पोजीशन नीचे */
+        background-position: center 95%; 
+        background-size: 60%;
+        color: #333; 
+        font-family: 'Segoe UI', Roboto, sans-serif; 
+        border: 2px solid #1a2a6c; 
+        box-sizing: border-box;
+        position: relative;
+        /* ऊँचाई कम की गई ताकि 1 पेज पर रहे */
+        height: auto;
+        min-height: 840px; 
+    ">
+        <!-- वाटरमार्क की Capacity (Opacity) -->
+        <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.90); z-index: 0;"></div>
 
-<div class="winner-banner hidden" id="active-draw-view">
-   <div class="live-indicator-text" id="live-indicator-text" style="display:none;">🔴 LIVE DRAW IN PROGRESS</div>
-    <button id="back-to-grid-btn" style="display:none;" class="back-btn">⬅ Back to Grid</button>
-    
-    <div class="slot-machine-container single-reel-mode">
-        <div class="reel-box single-reel-box">
-            <h3 class="reel-title" id="reel-title-coupon">Coupon Code</h3>
+        <div style="position: relative; z-index: 1;">
             
-            
-            <div class="reel-window">
-                 <div class="reel-text" id="reel-coupon">
-                    <div class="reel-item">READY</div>
-                </div>
+            <!-- Stylish Header -->
+            <div style="text-align: center; border-bottom: 3px solid #1a2a6c; padding-bottom: 15px; margin-bottom: 15px;">
+                <img src="images/ATC_Logo.png" alt="Logo" style="height: 60px; width: auto; margin-bottom: 5px;">
+                <h1 style="
+                    margin: 0; 
+                    color: #1a2a6c; 
+                    font-size: 28px; 
+                    text-transform: uppercase; 
+                    letter-spacing: 2px;
+                    font-weight: 900;
+                ">ATC CHALLAN RECEIPT</h1>
+                <div style="
+                    background: #f2994a; 
+                    color: white; 
+                    display: inline-block; 
+                    padding: 2px 15px; 
+                    border-radius: 15px; 
+                    font-size: 11px; 
+                    font-weight: bold; 
+                    margin-top: 5px;
+                    text-transform: uppercase;
+                ">This is a computer generated copy</div>
             </div>
-            
-            
-        </div>
-    </div>
-</div>
 
-<!-- LIVE DRAW NOTIFICATION TOAST -->
-<div id="live-toast" class="live-toast hidden">
-    <div class="toast-content">
-        <span class="toast-icon">🔴</span>
-        <div class="toast-text">
-            <h4>Live Draw Started!</h4>
-            <p>Round <span id="toast-round-num">1</span> is revealing...</p>
-        </div>
-        <button id="watch-live-btn">👁️ Watch Now</button>
-        <button id="dismiss-live-btn">✕</button>
-    </div>
-</div>
-                
-    <div class="search-container">
-    <h2 id="search-heading">Check Your Coupon Code</h2>
-    
-    <p class="search-subheading" id="search-subheading">
-        To view your coupon details or verify participation, please visit our dedicated search portal.
-        <br>
-        (अपना कूपन कोड खोजने के लिए नीचे दिए गए बटन पर क्लिक करें)
-    </p>
-    
-   
-    <div class="external-search-container">
-    
-        <a href="https://script.google.com/macros/s/AKfycbwEFXlzDl-RC63fAeIGUDwUyLab_gd_LLsf5Dorp1pppoH56vBR_Rtwv1vCxxyNfFeB/exec" target="_blank" class="search-redirect-btn">
-            🔍 Search My Coupon Code
-        </a>
-    </div>
+            <!-- Bill Details Grid -->
+            <table width="100%" style="border-collapse: collapse; font-size: 13px; margin-bottom: 15px;">
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><b>Bill No:</b> <span id="p-bill" style="color: #1a2a6c; font-weight: bold;"></span></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;" align="right"><b>Date:</b> <span id="p-date" style="font-weight: bold;"></span></td>
+                </tr>
+                <tr>
+                    <td style="padding: 10px; border: 1px solid #ddd;"><b>Lorry Number:</b> <b style="color: #d35400; font-size: 15px;" id="p-lorry"></b></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;" align="right"><b>Party:</b> <span id="p-party" style="font-weight: bold;"></span></td>
+                </tr>
+                <tr style="background: #f8f9fa;">
+                    <td style="padding: 10px; border: 1px solid #ddd;"><b>Route:</b> <span id="p-from"></span> <b style="color: #1a2a6c;">&rarr;</b> <span id="p-to"></span></td>
+                    <td style="padding: 10px; border: 1px solid #ddd;" align="right"><b>Material:</b> <span id="p-material" style="font-weight: bold;"></span></td>
+                </tr>
+            </table>
 
-   
-    <div class="external-list-container" style="margin-top: 20px;">
-        <a href="YOUR_GOOGLE_SHEET_LINK_HERE" target="_blank" id="check-list-btn" 
-           style="font-size: 0.9em; text-decoration: underline; color: #fff;">
-           📄 Or View Full List (PDF/Sheet)
-        </a>
-    </div>
-    
-   
-    <div id="search-result-container"></div>
-</div>
+            <!-- Financial Table -->
+            <table width="100%" style="border-collapse: collapse; font-size: 13px;">
+                <thead>
+                    <tr style="background: #1a2a6c; color: white;">
+                        <th style="padding: 10px; text-align: left;">Description of Charges</th>
+                        <th style="padding: 10px; text-align: right;">Amount (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">Total Freight Charges (Calculated)</td>
+                        <td style="padding: 10px; text-align: right; font-weight: bold;" id="p-freight"></td>
+                    </tr>
+                    <tr style="color: #c0392b; border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px;">Less: Transport Commission</td>
+                        <td style="padding: 8px; text-align: right;" id="p-comm"></td>
+                    </tr>
+                    <tr style="color: #c0392b; border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px;">Less: RTGS / Bank Transfer Charges</td>
+                        <td style="padding: 8px; text-align: right;" id="p-rtgs"></td>
+                    </tr>
+                    <tr style="color: #c0392b; border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px;">Less: Balance Cutting (Security Deposit)</td>
+                        <td style="padding: 8px; text-align: right;" id="p-cutting"></td>
+                    </tr>
+                    <tr style="color: #c0392b; border-bottom: 1px solid #eee;">
+                        <td style="padding: 8px;">Less: Material Shortage / Damage</td>
+                        <td style="padding: 8px; text-align: right;" id="p-shortage"></td>
+                    </tr>
+                    <tr style="background: #27ae60; color: white;">
+                        <td style="padding: 12px; font-size: 15px; font-weight: bold;">NET PAYABLE IN ACCOUNT</td>
+                        <td style="padding: 12px; font-size: 18px; font-weight: bold; text-align: right;" id="p-total"></td>
+                    </tr>
+                </tbody>
+            </table>
 
-                <hr class="section-divider">
-                <div class="winners-list-container">
-                    <h2 id="winners-list-heading">Lucky Draw Winners</h2>
-                    <div class="table-wrapper">
-                        <table class="winners-table">
-                            <thead>
-                                <tr>
-                                    <th id="th-round">Round</th>
-                                    <th id="th-prize">Prize</th>
-                                    <th id="th-name">Winner Name</th>
-                                    <th id="th-coupon">Coupon Code</th>
-                                    <th id="th-outlet">Outlet</th>
-                                    <th id="th-address">Outlet Address</th>
-                                    <th id="th-mobile">Mobile</th>
-                                </tr>
-                            </thead>
-                            <tbody id="winners-table-body"></tbody>
-                        </table>
+            <!-- Remark Section -->
+            <div style="margin-top: 15px; padding: 10px; background: #fffdf9; border: 1px dashed #f2994a; border-left: 5px solid #f2994a;">
+                <b style="color: #1a2a6c; font-size: 11px; text-transform: uppercase;">Note / Remark:</b><br>
+                <span id="p-remark" style="font-style: italic; color: #555; font-size: 12px;"></span>
+            </div>
+
+            <!-- Signature Area -->
+            <div style="margin-top: 35px; position: relative;">
+                <div style="float: right; width: 220px; text-align: center;">
+                    <img src="images/sign.png" id="p-sign" style="width: 120px; height: auto; margin-bottom: -12px; position: relative; z-index: 2;">
+                    <div style="border-top: 2px solid #1a2a6c; padding-top: 5px;">
+                        <b style="font-size: 13px; color: #1a2a6c;">Authorized Signature</b>
+                        <p style="margin: 0; font-size: 9px; color: #7f8c8d;">ATC Transport Management</p>
                     </div>
                 </div>
+                <div style="clear: both;"></div>
             </div>
             
-            <div class="tab-panel" data-tab="participants">
-    
-    <div class="about-wrapper">
-        <!-- 1. HPCL Section -->
-        <div class="about-card">
-            <div class="about-header">
-                <img src="images/hpcl-logo.png" alt="HPCL Logo" class="about-logo">
-                <h3>Hindustan Petroleum Corporation Limited</h3>
-            </div>
-            <div class="about-body">
-                <p><strong>"Delivering Happiness, Fueling Dreams"</strong></p>
-                <p>
-                    हिंदुस्तान पेट्रोलियम कॉर्पोरेशन लिमिटेड (HPCL) एक महारत्न CPSE है और भारत की अग्रणी ऊर्जा कंपनियों में से एक है। 
-                    हम न केवल ईंधन प्रदान करते हैं, बल्कि अपने ग्राहकों के जीवन में खुशियां भरने के लिए प्रतिबद्ध हैं।
-                </p>
-                <p>
-                    यह 'लकी ड्रॉ' इवेंट हमारे वफादार ग्राहकों के प्रति आभार व्यक्त करने का एक छोटा सा प्रयास है। 
-                    आपकी यात्रा को सुगम और सुरक्षित बनाना ही हमारा एकमात्र लक्ष्य है।
-                </p>
-                <ul class="feature-list">
-                    <li>✅ World-class Fuel Quality</li>
-                    <li>✅ Customer-First Approach</li>
-                    <li>✅ Innovation & Sustainability</li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- 2. Aspire Business Link Section -->
-        <div class="about-card">
-            <div class="about-header">
-                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo" class="about-logo" style="max-height: 50px;"> <!-- Adjust size if needed -->
-                <h3>Aspire Business Link</h3>
-            </div>
-            <div class="about-body">
-                <p><strong>"Empowering Business through Digital Excellence"</strong></p>
-                <p>
-                    Aspire Business Link एक प्रमुख सर्विस इंडस्ट्री पार्टनर है जो व्यवसायों को नई डिजिटल ऊंचाइयों तक ले जाने में मदद करती है। 
-                    हम इवेंट मैनेजमेंट, आईटी सॉल्यूशंस और डिजिटल मार्केटिंग में विशेषज्ञता रखते हैं।
-                </p>
-                <p>
-                    इस लकी ड्रॉ का पूरा तकनीकी प्रबंधन (Technical Management) और डिजिटल निष्पादन Aspire Business Link द्वारा किया जा रहा है, 
-                    ताकि आपको एक पारदर्शी और बेहतरीन अनुभव मिल सके।
-                </p>
-                <ul class="feature-list">
-                    <li>✅ End-to-End Event Management</li>
-                    <li>✅ Advanced IT & Digital Solutions</li>
-                    <li>✅ Corporate Branding Services</li>
-                </ul>
-                <div style="margin-top: 15px;">
-                    <a href="https://aspirebusinesslink.com" target="_blank" class="visit-btn">Visit Website</a>
-                </div>
+            <!-- Footer -->
+            <div style="margin-top: 30px; text-align: center; color: #999; font-size: 10px; border-top: 1px solid #eee; padding-top: 8px;">
+                Thank you for your business! | Generated via ATC Billing System
             </div>
         </div>
     </div>
-    
-    <!-- Footer Note -->
-    <div class="about-footer">
-        <p>Thank you for being part of our journey!</p>
-    </div>
-
 </div>
-    </main>
-    
-    <div class="winner-popup-overlay hidden" id="winner-popup-overlay">
-        <div class="winner-popup" id="winner-popup">
-            <h2 id="popup-heading"></h2>
-            <div class="prize-image-container">
-                <img src="" alt="Prize Image" id="prize-image">
-            </div>
-            <div class="winner-details-popup">
-                <p><strong>Winner:</strong> <span id="popup-name"></span></p>
-                <p><strong>Coupon Code:</strong> <span id="popup-coupon"></span></p>
-                <p><strong>Outlet:</strong> <span id="popup-outlet"></span></p>
-                <p><strong>Address:</strong> <span id="popup-address"></span></p>
-                <p><strong>Mobile:</strong> <span id="popup-mobile"></span></p>
-            </div>
-            <button id="save-next-button">Save & Ready for Next Round</button>
-        </div>
-    </div>
-
-    <div class="public-winner-card hidden" id="public-winner-card">
-    <button id="close-public-popup" style="position:absolute; top:10px; right:10px; background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
-        <h2 id="public-heading"></h2>
-        <div class="prize-image-container">
-            <img src="" alt="Prize Image" id="public-prize-image">
-        </div>
-        <div class="winner-details-popup">
-            <p><strong>Winner:</strong> <span id="public-name"></span></p>
-            <p><strong>Coupon Code:</strong> <span id="public-coupon"></span></p>
-            <p><strong>Outlet:</strong> <span id="public-outlet"></span></p>
-            <p><strong>Address:</strong> <span id="public-address"></span></p>
-            <p><strong>Mobile:</strong> <span id="public-mobile"></span></p>
-        </div>
-    </div>
-    
-    <div class="thank-you-popup-overlay hidden" id="thank-you-popup-overlay">
-        <div class="thank-you-popup">
-            <button class="close-popup-btn" id="close-thank-you-popup">&times;</button>
-            <div class="popup-logos">
-                <img src="images/hpcl-logo.png" alt="HPCL Logo">
-                <img src="images/aspire-logo.png" alt="Aspire Business Link Logo">
-            </div>
-            <h2>Thank You for Participating!</h2>
-            <div class="company-info">
-                <p>यह लकी ड्रॉ इवेंट <strong>Hindustan Petroleum Corporation Limited (HPCL)</strong> द्वारा सफलतापूर्वक आयोजित किया गया। हम आपके भरोसे और भागीदारी के लिए आभारी हैं।</p>
-                <p>इवेंट मैनेजमेंट और डिजिटल सॉल्यूशंस <strong>Aspire Business Link</strong> द्वारा प्रदान किए गए, जो आपके व्यवसाय को नई ऊंचाइयों पर ले जाने के लिए प्रतिबद्ध हैं।</p>
-            </div>
-            <hr class="popup-divider">
-            <p>किसी भी प्रकार के डिजिटल इवेंट या आईटी समाधान के लिए, हमसे संपर्क करें।</p>
-           <a href="https://aspirebusinesslink.com/index.html" target="_blank" class="aspire-link">Connect with Aspire Business Link</a>
-        </div>
-    </div>
-
-    <footer class="site-footer">
-        <p>© 2025 Hindustan Petroleum Corporation Limited. All Rights Reserved.</p>
-    </footer>
-
-    <audio id="sound-countdown" src="sounds/countdown.mp3" preload="auto"></audio>
-    <audio id="sound-reveal" src="sounds/reveal-button.mp3" preload="auto"></audio>
-    <audio id="sound-spin" src="sounds/slot-machine.mp3" preload="auto" loop></audio>
-    <audio id="sound-winner" src="sounds/winner-popup.mp3" preload="auto"></audio>
-    <audio id="sound-celebrate" src="sounds/fire-effect.mp3" preload="auto" loop></audio>
-    <audio id="sound-background" src="sounds/background-music.mp3" preload="auto" loop></audio>
-
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app-check.js"></script> 
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
-   <script src="script.js"></script>
-    
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js');
+    });
+  }
+</script>
+    <script src="script.js"></script>
 </body>
 </html>
